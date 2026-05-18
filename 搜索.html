@@ -1,0 +1,1318 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能搜索工具</title>
+    <style>
+        :root {
+            --primary: #4a6cf7;
+            --primary-dark: #3b5de7;
+            --primary-light: rgba(74, 108, 247, 0.08);
+            --bg: #fff;
+            --text: #333;
+            --text-secondary: #888;
+            --border: #e0e5f0;
+            --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(0, 0, 0, 0.1);
+            --shadow-btn: 0 4px 16px rgba(74, 108, 247, 0.4), 0 2px 6px rgba(0, 0, 0, 0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* ========== 搜索组件容器 ========== */
+        .search-widget-container {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 2147483647;
+            font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+            direction: ltr;
+            line-height: 1.5;
+        }
+
+        /* ========== 折叠按钮 ========== */
+        .search-toggle-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 22px;
+            box-shadow: var(--shadow-btn);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all var(--transition);
+            position: relative;
+            outline: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 2;
+        }
+        .search-toggle-btn:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 6px 24px rgba(74, 108, 247, 0.55), 0 3px 10px rgba(0, 0, 0, 0.22);
+            transform: scale(1.1);
+        }
+        .search-toggle-btn:active {
+            transform: scale(0.92);
+            transition: all 0.12s ease;
+        }
+        .search-toggle-btn.hidden {
+            opacity: 0;
+            transform: scale(0.25);
+            pointer-events: none;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .search-toggle-btn .icon-svg {
+            width: 24px;
+            height: 24px;
+            fill: #fff;
+            pointer-events: none;
+        }
+
+        /* ========== 展开面板 ========== */
+        .search-panel {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 460px;
+            max-width: calc(100vw - 56px);
+            background: var(--bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            padding: 20px 22px;
+            transform-origin: bottom right;
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+            transition: all var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 85vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .search-panel.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: all;
+        }
+        .search-panel::-webkit-scrollbar {
+            width: 5px;
+        }
+        .search-panel::-webkit-scrollbar-thumb {
+            background: #d0d5e0;
+            border-radius: 10px;
+        }
+
+        /* 面板头部 */
+        .search-panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .search-panel-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .search-panel-title .title-icon {
+            font-size: 18px;
+        }
+        .search-panel-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background: #f3f4f6;
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            flex-shrink: 0;
+        }
+        .search-panel-close:hover {
+            background: #e5e7eb;
+            color: #333;
+        }
+
+        /* 输入行 */
+        .search-input-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .search-keyword-input {
+            flex: 1 1 170px;
+            min-width: 140px;
+            height: 44px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0 14px;
+            font-size: 14px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.25s ease;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .search-keyword-input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .search-keyword-input::placeholder {
+            color: #b0b8c8;
+        }
+        .search-link-input {
+            flex: 0 1 170px;
+            min-width: 130px;
+            width: 170px;
+            height: 44px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0 12px;
+            font-size: 13px;
+            color: #555;
+            outline: none;
+            transition: all 0.25s ease;
+            background: #fafbfc;
+            font-family: inherit;
+        }
+        .search-link-input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .search-link-input::placeholder {
+            color: #b0b8c8;
+            font-size: 11px;
+        }
+
+        /* 链接预览标签 */
+        .link-preview-tag {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--primary);
+            background: #f0f4ff;
+            padding: 4px 10px;
+            border-radius: 20px;
+            flex-shrink: 0;
+            max-width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            cursor: default;
+        }
+        .link-preview-tag.visible {
+            display: inline-flex;
+        }
+        .link-preview-tag .tag-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #4a6cf7;
+            flex-shrink: 0;
+            animation: pulse-dot 1.5s infinite;
+        }
+        @keyframes pulse-dot {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+        .link-preview-tag .tag-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* 按钮行 */
+        .search-btn-row {
+            display: flex;
+            gap: 7px;
+            flex-shrink: 0;
+            flex-wrap: wrap;
+        }
+        .search-btn {
+            flex: 1 1 auto;
+            min-width: 70px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            transition: all 0.25s ease;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            white-space: nowrap;
+            padding: 0 10px;
+            font-family: inherit;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .search-btn-page {
+            background: var(--primary);
+            color: #fff;
+        }
+        .search-btn-page:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 4px 14px rgba(74, 108, 247, 0.35);
+            transform: translateY(-1px);
+        }
+        .search-btn-jump {
+            background: #10b981;
+            color: #fff;
+        }
+        .search-btn-jump:hover {
+            background: #059669;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+            transform: translateY(-1px);
+        }
+        .search-btn-baidu {
+            background: #fff;
+            color: #f97316;
+            border: 2px solid #f97316;
+        }
+        .search-btn-baidu:hover {
+            background: #fff7ed;
+            box-shadow: 0 4px 14px rgba(249, 115, 22, 0.18);
+            transform: translateY(-1px);
+        }
+        .search-btn-clear {
+            background: #f5f5f5;
+            color: #777;
+            flex: 0 0 auto;
+            min-width: 50px;
+            padding: 0 14px;
+        }
+        .search-btn-clear:hover {
+            background: #e8e8e8;
+            color: #444;
+        }
+        .search-btn:active {
+            transform: scale(0.95);
+            transition: all 0.1s ease;
+        }
+
+        /* iframe预览区 */
+        .iframe-preview-container {
+            display: none;
+            flex-direction: column;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: all var(--transition);
+            background: #f9fafb;
+        }
+        .iframe-preview-container.visible {
+            display: flex;
+        }
+        .iframe-preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #f3f4f6;
+            font-size: 11px;
+            color: #666;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        .iframe-preview-url {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #555;
+            font-size: 11px;
+        }
+        .iframe-preview-close-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: #e5e7eb;
+            color: #666;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .iframe-preview-close-preview:hover {
+            background: #d1d5db;
+            color: #333;
+        }
+        .iframe-preview-body {
+            position: relative;
+            width: 100%;
+            height: 320px;
+            background: #fff;
+            flex-shrink: 0;
+        }
+        .iframe-preview-body iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+            background: #fff;
+        }
+        .iframe-loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #888;
+            pointer-events: none;
+            transition: opacity 0.4s;
+            z-index: 2;
+        }
+        .iframe-loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .iframe-error-msg {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #fff;
+            color: #e88b35;
+            font-size: 13px;
+            text-align: center;
+            padding: 20px;
+            z-index: 3;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .iframe-error-msg.visible {
+            display: flex;
+        }
+        .iframe-error-msg .error-icon {
+            font-size: 32px;
+        }
+
+        /* 结果提示 */
+        .search-result-info {
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            min-height: 18px;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            letter-spacing: 0.2px;
+        }
+        .search-result-info.success {
+            color: #4a6cf7;
+            font-weight: 600;
+        }
+        .search-result-info.warning {
+            color: #e88b35;
+            font-weight: 500;
+        }
+        .search-result-info.error-text {
+            color: #e53e3e;
+            font-weight: 500;
+        }
+
+        /* ========== 页面高亮样式 ========== */
+        .search-highlight {
+            background: #ffe347;
+            color: #222;
+            border-radius: 2px;
+            padding: 1px 3px;
+            box-shadow: 0 0 0 1px rgba(255, 200, 30, 0.5);
+            font-weight: inherit;
+            transition: background 0.2s ease;
+        }
+        .search-highlight.active-highlight {
+            background: #ff9632 !important;
+            color: #fff !important;
+            box-shadow: 0 0 0 3px rgba(255, 140, 30, 0.7) !important;
+            border-radius: 3px !important;
+            padding: 2px 4px !important;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 520px) {
+            .search-widget-container {
+                bottom: 16px;
+                right: 16px;
+            }
+            .search-panel {
+                width: calc(100vw - 32px);
+                max-width: 400px;
+                right: -4px;
+                border-radius: 14px;
+                padding: 14px 15px;
+                gap: 8px;
+                max-height: 80vh;
+            }
+            .search-link-input {
+                flex: 1 1 100%;
+                width: 100%;
+                min-width: 100%;
+            }
+            .search-keyword-input {
+                flex: 1 1 100%;
+                min-width: 100%;
+            }
+            .search-input-row {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .search-btn-row {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            .search-btn {
+                font-size: 12px;
+                height: 36px;
+                min-width: 60px;
+                padding: 0 8px;
+            }
+            .search-toggle-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 20px;
+            }
+            .iframe-preview-body {
+                height: 220px;
+            }
+            .search-panel-title {
+                font-size: 13px;
+            }
+        }
+        @media (max-width: 380px) {
+            .search-panel {
+                width: calc(100vw - 20px);
+                padding: 12px;
+                right: -2px;
+                border-radius: 12px;
+                gap: 6px;
+            }
+            .search-btn {
+                font-size: 11px;
+                height: 32px;
+                padding: 0 6px;
+                gap: 3px;
+            }
+            .iframe-preview-body {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 搜索组件 ==================== -->
+    <div class="search-widget-container" id="searchWidget">
+        <!-- 折叠按钮 -->
+        <button class="search-toggle-btn" id="searchToggleBtn" title="打开搜索工具 (Ctrl+Shift+F)">
+            <svg class="icon-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+        </button>
+
+        <!-- 展开面板 -->
+        <div class="search-panel" id="searchPanel">
+            <!-- 头部 -->
+            <div class="search-panel-header">
+                <span class="search-panel-title">
+                    <span class="title-icon">🔍</span> 智能搜索
+                </span>
+                <button class="search-panel-close" id="searchPanelClose" title="收起 (ESC)">✕</button>
+            </div>
+
+            <!-- 输入行 -->
+            <div class="search-input-row">
+                <input
+                type="text"
+                class="search-keyword-input"
+                id="searchKeyword"
+                placeholder="输入搜索关键词..."
+                autocomplete="off"
+                >
+                <input
+                type="text"
+                class="search-link-input"
+                id="searchLink"
+                placeholder="目标网页链接 (可选)"
+                autocomplete="off"
+                >
+                <span class="link-preview-tag" id="linkPreviewTag" title="已识别链接">
+                    <span class="tag-dot"></span>
+                    <span class="tag-text" id="linkPreviewText"></span>
+                </span>
+            </div>
+
+            <!-- 按钮行 -->
+            <div class="search-btn-row">
+                <button class="search-btn search-btn-page" id="btnPageSearch" title="在当前页面中搜索并高亮">📄 页面搜索</button>
+                <button class="search-btn search-btn-jump" id="btnJumpSearch" title="跳转到目标网页并在其中搜索">🚀 跳转搜索</button>
+                <button class="search-btn search-btn-baidu" id="btnBaiduSearch" title="通过百度site搜索该网站">🌐 百度检索</button>
+                <button class="search-btn search-btn-clear" id="btnClear" title="清除所有高亮和输入">🗑 清除</button>
+            </div>
+
+            <!-- iframe预览区 -->
+            <div class="iframe-preview-container" id="iframePreviewContainer">
+                <div class="iframe-preview-header">
+                    <span>📺 网页预览</span>
+                    <span class="iframe-preview-url" id="iframePreviewUrl" title=""></span>
+                    <button class="iframe-preview-close-preview" id="btnClosePreview" title="关闭预览">✕</button>
+                </div>
+                <div class="iframe-preview-body" id="iframePreviewBody">
+                    <div class="iframe-loading-overlay" id="iframeLoadingOverlay">⏳ 加载中...</div>
+                    <div class="iframe-error-msg" id="iframeErrorMsg">
+                        <span class="error-icon">🚫</span>
+                        <span>该网站不允许嵌入预览</span>
+                        <span style="font-size:11px;color:#999;">将直接在新窗口打开</span>
+                    </div>
+                    <iframe
+                    id="searchIframe"
+                    sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+                    loading="lazy"
+                    referrerpolicy="no-referrer"
+                    title="目标网页预览"
+                    ></iframe>
+                </div>
+            </div>
+
+            <!-- 结果提示 -->
+            <div class="search-result-info" id="searchResultInfo"></div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ========== DOM元素 ==========
+            var widgetContainer = document.getElementById('searchWidget');
+            var toggleBtn = document.getElementById('searchToggleBtn');
+            var searchPanel = document.getElementById('searchPanel');
+            var panelClose = document.getElementById('searchPanelClose');
+            var keywordInput = document.getElementById('searchKeyword');
+            var linkInput = document.getElementById('searchLink');
+            var btnPageSearch = document.getElementById('btnPageSearch');
+            var btnJumpSearch = document.getElementById('btnJumpSearch');
+            var btnBaiduSearch = document.getElementById('btnBaiduSearch');
+            var btnClear = document.getElementById('btnClear');
+            var resultInfo = document.getElementById('searchResultInfo');
+            var iframePreviewContainer = document.getElementById('iframePreviewContainer');
+            var iframePreviewUrl = document.getElementById('iframePreviewUrl');
+            var iframePreviewBody = document.getElementById('iframePreviewBody');
+            var searchIframe = document.getElementById('searchIframe');
+            var iframeLoadingOverlay = document.getElementById('iframeLoadingOverlay');
+            var iframeErrorMsg = document.getElementById('iframeErrorMsg');
+            var btnClosePreview = document.getElementById('btnClosePreview');
+            var linkPreviewTag = document.getElementById('linkPreviewTag');
+            var linkPreviewText = document.getElementById('linkPreviewText');
+
+            var isPanelOpen = false;
+            var highlightSpans = []; // 主页面高亮span
+            var currentHighlightIndex = -1;
+            var iframeHighlightSpans = []; // iframe内高亮span
+            var iframeCurrentHighlightIndex = -1;
+            var iframeLoadedURL = ''; // 当前iframe加载的URL
+            var iframeIsSameOrigin = false; // iframe是否同源
+            var iframeLoadTimeout = null;
+            var searchComponentEl = widgetContainer;
+            var previewVisible = false;
+
+            // ========== 工具函数 ==========
+            function escapeRegExp(str) {
+                return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            }
+
+            function extractDomain(url) {
+                var domain = url.trim();
+                domain = domain.replace(/^https?:\/\//i, '');
+                domain = domain.split('/')[0];
+                domain = domain.split(':')[0];
+                return domain;
+            }
+
+            function normalizeUrl(url) {
+                url = url.trim();
+                if (!url) return '';
+                if (!/^https?:\/\//i.test(url)) {
+                    url = 'https://' + url;
+                }
+                return url;
+            }
+
+            function setResult(msg, type) {
+                resultInfo.textContent = msg;
+                resultInfo.className = 'search-result-info';
+                if (type) {
+                    resultInfo.classList.add(type);
+                }
+            }
+
+            function clearResult() {
+                resultInfo.textContent = '';
+                resultInfo.className = 'search-result-info';
+            }
+
+            // ========== 判断节点是否在搜索组件内部 ==========
+            function isInsideSearchComponent(node) {
+                var current = node;
+                while (current) {
+                    if (current === searchComponentEl) return true;
+                    current = current.parentNode;
+                }
+                return false;
+            }
+
+            // ========== 打开/关闭面板 ==========
+            function openPanel() {
+                isPanelOpen = true;
+                toggleBtn.classList.add('hidden');
+                searchPanel.classList.add('active');
+                setTimeout(function() {
+                    keywordInput.focus();
+                }, 350);
+                // 如果有缓存URL，恢复预览
+                if (iframeLoadedURL && !previewVisible) {
+                    // 不自动恢复，用户可重新搜索
+                }
+            }
+
+            function closePanel() {
+                isPanelOpen = false;
+                searchPanel.classList.remove('active');
+                toggleBtn.classList.remove('hidden');
+                clearResult();
+            }
+
+            function togglePanel() {
+                if (isPanelOpen) {
+                    closePanel();
+                } else {
+                    openPanel();
+                }
+            }
+
+            // ========== iframe预览区 ==========
+            function showIframePreview(url) {
+                iframePreviewContainer.classList.add('visible');
+                previewVisible = true;
+                iframePreviewUrl.textContent = url;
+                iframePreviewUrl.title = url;
+                iframeLoadingOverlay.classList.remove('hidden');
+                iframeErrorMsg.classList.remove('visible');
+                iframeLoadedURL = url;
+                searchIframe.src = url;
+                iframeIsSameOrigin = false;
+                // 重置iframe高亮
+                iframeHighlightSpans = [];
+                iframeCurrentHighlightIndex = -1;
+
+                // 清除之前的超时
+                if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+
+                // 设置加载超时
+                iframeLoadTimeout = setTimeout(function() {
+                    iframeLoadingOverlay.classList.add('hidden');
+                    // 尝试检测是否同源
+                    checkIframeAccess();
+                }, 4000);
+            }
+
+            function hideIframePreview() {
+                iframePreviewContainer.classList.remove('visible');
+                previewVisible = false;
+                iframeLoadedURL = '';
+                iframeIsSameOrigin = false;
+                searchIframe.src = 'about:blank';
+                iframeHighlightSpans = [];
+                iframeCurrentHighlightIndex = -1;
+                iframeLoadingOverlay.classList.remove('hidden');
+                iframeErrorMsg.classList.remove('visible');
+                if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+                iframePreviewUrl.textContent = '';
+                iframePreviewUrl.title = '';
+            }
+
+            function checkIframeAccess() {
+                try {
+                    var doc = searchIframe.contentDocument || searchIframe.contentWindow.document;
+                    if (doc && doc.body && doc.body.innerHTML.trim() !== '') {
+                        iframeIsSameOrigin = true;
+                        iframeErrorMsg.classList.remove('visible');
+                        // 清除iframe内旧高亮
+                        clearIframeHighlights();
+                        return true;
+                    }
+                } catch (e) {
+                    // 跨域，无法访问
+                    iframeIsSameOrigin = false;
+                }
+                iframeIsSameOrigin = false;
+                return false;
+            }
+
+            // iframe加载完成
+            searchIframe.addEventListener('load', function() {
+                iframeLoadingOverlay.classList.add('hidden');
+                if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+                checkIframeAccess();
+                // 如果iframe加载了但内容为空（可能是被阻止），且非about:blank
+                if (searchIframe.src && searchIframe.src !== 'about:blank') {
+                    try {
+                        var doc = searchIframe.contentDocument || searchIframe.contentWindow.document;
+                        if (!doc || !doc.body || doc.body.innerHTML.trim() === '') {
+                            // 可能被X-Frame-Options阻止
+                            if (!iframeIsSameOrigin) {
+                                iframeErrorMsg.classList.add('visible');
+                            }
+                        }
+                    } catch (e) {
+                        iframeErrorMsg.classList.add('visible');
+                    }
+                }
+            });
+
+            // iframe加载错误
+            searchIframe.addEventListener('error', function() {
+                iframeLoadingOverlay.classList.add('hidden');
+                if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+                iframeErrorMsg.classList.add('visible');
+                iframeIsSameOrigin = false;
+            });
+
+            // 关闭预览按钮
+            btnClosePreview.addEventListener('click', function(e) {
+                e.stopPropagation();
+                hideIframePreview();
+            });
+
+            // ========== 链接输入实时预览 ==========
+            linkInput.addEventListener('input', function() {
+                var val = linkInput.value.trim();
+                if (val && val.length > 3 && /\./.test(val)) {
+                    var normalized = normalizeUrl(val);
+                    linkPreviewText.textContent = extractDomain(normalized) || normalized;
+                    linkPreviewTag.classList.add('visible');
+                } else {
+                    linkPreviewTag.classList.remove('visible');
+                }
+            });
+
+            linkInput.addEventListener('blur', function() {
+                setTimeout(function() {
+                    linkPreviewTag.classList.remove('visible');
+                }, 200);
+            });
+
+            linkInput.addEventListener('focus', function() {
+                var val = linkInput.value.trim();
+                if (val && val.length > 3 && /\./.test(val)) {
+                    linkPreviewTag.classList.add('visible');
+                }
+            });
+
+            // ========== 主页面搜索高亮 ==========
+            function clearAllHighlights() {
+                highlightSpans.forEach(function(span) {
+                    if (span.parentNode) {
+                        var textNode = document.createTextNode(span.textContent);
+                        span.parentNode.replaceChild(textNode, span);
+                    }
+                });
+                highlightSpans = [];
+                currentHighlightIndex = -1;
+                try { document.body.normalize(); } catch (e) {}
+            }
+
+            function searchInPage(keyword) {
+                clearAllHighlights();
+                if (!keyword || keyword.trim() === '') {
+                    setResult('请输入搜索关键词', 'warning');
+                    return;
+                }
+                var trimmedKeyword = keyword.trim();
+                var regex = new RegExp(escapeRegExp(trimmedKeyword), 'gi');
+                var matchCount = 0;
+                var textNodes = [];
+
+                var walker = document.createTreeWalker(
+                    document.body,
+                    NodeFilter.SHOW_TEXT,
+                    {
+                        acceptNode: function(node) {
+                            if (!node.textContent || node.textContent.trim() === '') return NodeFilter.FILTER_REJECT;
+                            if (isInsideSearchComponent(node)) return NodeFilter.FILTER_REJECT;
+                            var parentTag = node.parentNode.tagName;
+                            if (parentTag === 'SCRIPT' || parentTag === 'STYLE' || parentTag === 'NOSCRIPT' ||
+                                parentTag === 'TEXTAREA' || parentTag === 'INPUT' || parentTag === 'SELECT' ||
+                                parentTag === 'IFRAME' || parentTag === 'SVG' || parentTag === 'CODE') {
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                            if (node.parentNode.classList && node.parentNode.classList.contains('search-highlight')) {
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                            if (regex.test(node.textContent)) {
+                                regex.lastIndex = 0;
+                                return NodeFilter.FILTER_ACCEPT;
+                            }
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                    }
+                );
+
+                var node;
+                while ((node = walker.nextNode())) {
+                    textNodes.push(node);
+                }
+                if (textNodes.length === 0) {
+                    setResult('未找到匹配内容：「' + trimmedKeyword + '」', 'warning');
+                    return;
+
+                }
+
+                textNodes.forEach(function(textNode) {
+                    var text = textNode.textContent;
+                    var parent = textNode.parentNode;
+                    var fragment = document.createDocumentFragment();
+                    var lastIndex = 0;
+                    var localRegex = new RegExp(escapeRegExp(trimmedKeyword), 'gi');
+                    var match;
+                    while ((match = localRegex.exec(text)) !== null) {
+                        if (match.index > lastIndex) {
+                            fragment.appendChild(document.createTextNode(text.substring(lastIndex, match.index)));
+                        }
+                        var span = document.createElement('span');
+                        span.className = 'search-highlight';
+                        span.textContent = match[0];
+                        span.setAttribute('data-search-highlight', 'true');
+                        fragment.appendChild(span);
+                        highlightSpans.push(span);
+                        matchCount++;
+                        lastIndex = localRegex.lastIndex;
+                    }
+                    if (lastIndex < text.length) {
+                        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+                    }
+                    if (fragment.childNodes.length > 0) {
+                        parent.replaceChild(fragment, textNode);
+                    }
+                });
+
+                if (matchCount > 0) {
+                    setResult('找到 ' + matchCount + ' 个匹配项', 'success');
+                    scrollToHighlight(0);
+                } else {
+                    setResult('未找到匹配内容：「' + trimmedKeyword + '」', 'warning');
+                }
+            }
+
+            function scrollToHighlight(index) {
+                if (highlightSpans.length === 0) return;
+                if (index < 0) index = 0;
+                if (index >= highlightSpans.length) index = highlightSpans.length - 1;
+                highlightSpans.forEach(function(span) { span.classList.remove('active-highlight'); });
+                currentHighlightIndex = index;
+                var targetSpan = highlightSpans[index];
+                targetSpan.classList.add('active-highlight');
+                targetSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                setResult('找到 ' + highlightSpans.length + ' 个匹配项（当前第 ' + (index + 1) + ' 个）', 'success');
+            }
+
+            function nextHighlight() {
+                if (highlightSpans.length === 0) return;
+                var nextIndex = currentHighlightIndex + 1;
+                if (nextIndex >= highlightSpans.length) nextIndex = 0;
+                scrollToHighlight(nextIndex);
+            }
+
+            function prevHighlight() {
+                if (highlightSpans.length === 0) return;
+                var prevIndex = currentHighlightIndex - 1;
+                if (prevIndex < 0) prevIndex = highlightSpans.length - 1;
+                scrollToHighlight(prevIndex);
+            }
+
+            // ========== iframe内搜索（同源） ==========
+            function clearIframeHighlights() {
+                iframeHighlightSpans.forEach(function(span) {
+                    if (span.parentNode) {
+                        var textNode = document.createTextNode(span.textContent);
+                        span.parentNode.replaceChild(textNode, span);
+                    }
+                });
+                iframeHighlightSpans = [];
+                iframeCurrentHighlightIndex = -1;
+                try {
+                    var doc = searchIframe.contentDocument || searchIframe.contentWindow.document;
+                    if (doc && doc.body) doc.body.normalize();
+                } catch (e) {}
+            }
+
+            function injectIframeHighlightCSS() {
+                try {
+                    var doc = searchIframe.contentDocument || searchIframe.contentWindow.document;
+                    if (!doc) return false;
+                    var existingStyle = doc.getElementById('search-highlight-style');
+                    if (existingStyle) return true;
+                    var style = doc.createElement('style');
+                    style.id = 'search-highlight-style';
+                    style.textContent =
+                        '.search-highlight{background:#ffe347;color:#222;border-radius:2px;padding:1px 3px;box-shadow:0 0 0 1px rgba(255,200,30,0.5);font-weight:inherit;transition:background 0.2s ease;}' +
+                        '.search-highlight.active-highlight{background:#ff9632!important;color:#fff!important;box-shadow:0 0 0 3px rgba(255,140,30,0.7)!important;border-radius:3px!important;padding:2px 4px!important;z-index:1;position:relative;}';
+                    doc.head.appendChild(style);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+
+            function searchInIframe(keyword) {
+                clearIframeHighlights();
+                if (!keyword || keyword.trim() === '') return 0;
+                if (!iframeIsSameOrigin) return -1;
+
+                try {
+                    var doc = searchIframe.contentDocument || searchIframe.contentWindow.document;
+                    if (!doc || !doc.body) return -1;
+                    injectIframeHighlightCSS();
+                    var trimmedKeyword = keyword.trim();
+                    var regex = new RegExp(escapeRegExp(trimmedKeyword), 'gi');
+                    var matchCount = 0;
+                    var textNodes = [];
+                    var walker = doc.createTreeWalker(
+                        doc.body,
+                        NodeFilter.SHOW_TEXT,
+                        {
+                            acceptNode: function(node) {
+                                if (!node.textContent || node.textContent.trim() === '') return NodeFilter
+                                    .FILTER_REJECT;
+                                var parentTag = node.parentNode.tagName;
+                                if (parentTag === 'SCRIPT' || parentTag === 'STYLE' || parentTag === 'NOSCRIPT' ||
+                                    parentTag === 'TEXTAREA' || parentTag === 'INPUT' || parentTag === 'SELECT' ||
+                                    parentTag === 'IFRAME' || parentTag === 'SVG') {
+                                    return NodeFilter.FILTER_REJECT;
+                                }
+                                if (node.parentNode.classList && node.parentNode.classList.contains(
+                                        'search-highlight')) {
+                                    return NodeFilter.FILTER_REJECT;
+                                }
+                                if (regex.test(node.textContent)) {
+                                    regex.lastIndex = 0;
+                                    return NodeFilter.FILTER_ACCEPT;
+                                }
+                                return NodeFilter.FILTER_REJECT;
+                            }
+                        }
+                    );
+                    var node;
+                    while ((node = walker.nextNode())) {
+                        textNodes.push(node);
+                    }
+                    if (textNodes.length === 0) return 0;
+
+                    textNodes.forEach(function(textNode) {
+                        var text = textNode.textContent;
+                        var parent = textNode.parentNode;
+                        var fragment = doc.createDocumentFragment();
+                        var lastIndex = 0;
+                        var localRegex = new RegExp(escapeRegExp(trimmedKeyword), 'gi');
+                        var match;
+                        while ((match = localRegex.exec(text)) !== null) {
+                            if (match.index > lastIndex) {
+                                fragment.appendChild(doc.createTextNode(text.substring(lastIndex, match
+                                    .index)));
+                            }
+                            var span = doc.createElement('span');
+                            span.className = 'search-highlight';
+                            span.textContent = match[0];
+                            span.setAttribute('data-search-highlight', 'true');
+                            fragment.appendChild(span);
+                            iframeHighlightSpans.push(span);
+                            matchCount++;
+                            lastIndex = localRegex.lastIndex;
+                        }
+                        if (lastIndex < text.length) {
+                            fragment.appendChild(doc.createTextNode(text.substring(lastIndex)));
+                        }
+                        if (fragment.childNodes.length > 0) {
+                            parent.replaceChild(fragment, textNode);
+                        }
+                    });
+
+                    if (matchCount > 0 && iframeHighlightSpans.length > 0) {
+                        iframeCurrentHighlightIndex = 0;
+                        iframeHighlightSpans[0].classList.add('active-highlight');
+                        iframeHighlightSpans[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return matchCount;
+                } catch (e) {
+                    iframeIsSameOrigin = false;
+                    return -1;
+                }
+            }
+
+            // ========== 跳转搜索（核心功能） ==========
+            function jumpAndSearch(keyword, link) {
+                if (!keyword || keyword.trim() === '') {
+                    setResult('请输入搜索关键词', 'warning');
+                    keywordInput.focus();
+                    return;
+                }
+                if (!link || link.trim() === '') {
+                    setResult('请输入目标网页链接', 'warning');
+                    linkInput.focus();
+                    return;
+                }
+
+                var normalizedURL = normalizeUrl(link);
+                var trimmedKeyword = keyword.trim();
+
+                // 显示iframe预览
+                showIframePreview(normalizedURL);
+
+                // 先尝试同源iframe搜索
+                var accessOK = checkIframeAccess();
+                if (accessOK && iframeIsSameOrigin) {
+                    // 同源：在iframe中搜索
+                    injectIframeHighlightCSS();
+                    var count = searchInIframe(trimmedKeyword);
+                    if (count > 0) {
+                        setResult('✅ 在目标网页中找到 ' + count + ' 个匹配项', 'success');
+                    } else if (count === 0) {
+                        setResult('⚠️ 目标网页中未找到匹配内容', 'warning');
+                    } else {
+                        setResult('⚠️ 无法搜索目标网页内容', 'warning');
+                    }
+                } else {
+                    // 跨域：使用#:~:text=在新窗口打开
+                    var encodedKeyword = encodeURIComponent(trimmedKeyword);
+                    // 移除已有hash
+                    var baseURL = normalizedURL.replace(/#.*$/, '');
+                    var jumpURL = baseURL + '#:~:text=' + encodedKeyword;
+                    setResult('🔗 正在新窗口打开目标网页并搜索...', 'success');
+                    setTimeout(function() {
+                        var newWindow = window.open(jumpURL, '_blank', 'noopener,noreferrer');
+                        if (newWindow) {
+                            setResult('✅ 已在新窗口打开，支持Chrome/Edge自动高亮', 'success');
+                        } else {
+                            setResult('⚠️ 弹窗被拦截，请允许本站弹窗或手动打开链接', 'warning');
+                        }
+                    }, 400);
+                }
+            }
+
+            // ========== 百度site搜索 ==========
+            function baiduSiteSearch(keyword, link) {
+                if (!keyword || keyword.trim() === '') {
+                    setResult('请输入搜索关键词', 'warning');
+                    keywordInput.focus();
+                    return;
+                }
+                var domain;
+                if (link && link.trim() !== '') {
+                    domain = extractDomain(link.trim());
+                } else {
+                    domain = window.location.hostname;
+                    if (!domain || domain === '' || domain === 'localhost' || domain === '127.0.0.1') {
+                        setResult('请填写目标网站链接（本地页面无法自动获取域名）', 'warning');
+                        linkInput.focus();
+                        return;
+                    }
+                }
+                if (!domain || domain === '') {
+                    setResult('无法解析域名，请检查链接格式', 'warning');
+                    return;
+                }
+                var searchQuery = 'site:' + domain + ' ' + keyword.trim();
+                var baiduSearchUrl = 'https://www.baidu.com/s?wd=' + encodeURIComponent(searchQuery);
+                setResult('🔗 正在跳转百度站内搜索...', 'success');
+                setTimeout(function() {
+                    window.open(baiduSearchUrl, '_blank', 'noopener,noreferrer');
+                    setResult('✅ 已在新标签页打开百度搜索结果', 'success');
+                }, 300);
+            }
+
+            // ========== 事件绑定 ==========
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openPanel();
+            });
+
+            panelClose.addEventListener('click', function(e) {
+                e.stopPropagation();
+                closePanel();
+            });
+
+            document.addEventListener('click', function(e) {
+                if (isPanelOpen && !searchComponentEl.contains(e.target)) {
+                    closePanel();
+                }
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isPanelOpen) {
+                    closePanel();
+                }
+                // Ctrl+Shift+F 打开搜索
+                if (e.ctrlKey && e.shiftKey && e.key === 'F') {
+                    e.preventDefault();
+                    if (!isPanelOpen) {
+                        openPanel();
+                    } else {
+                        closePanel();
+                    }
+                }
+                // F3导航主页面高亮
+                if (e.key === 'F3' && isPanelOpen && highlightSpans.length > 0) {
+                    e.preventDefault();
+                    if (e.shiftKey) {
+                        prevHighlight();
+                    } else {
+                        nextHighlight();
+                    }
+                }
+            });
+
+            // 关键词输入框Enter
+            keywordInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    var linkVal = linkInput.value.trim();
+                    if (linkVal !== '') {
+                        jumpAndSearch(keywordInput.value, linkVal);
+                    } else {
+                        searchInPage(keywordInput.value);
+                    }
+                }
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    baiduSiteSearch(keywordInput.value, linkInput.value);
+                }
+            });
+
+            // 链接输入框Enter
+            linkInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (keywordInput.value.trim() !== '') {
+                        jumpAndSearch(keywordInput.value, linkInput.value);
+                    } else if (linkInput.value.trim() !== '') {
+                        // 仅预览链接
+                        var normalizedURL = normalizeUrl(linkInput.value);
+                        showIframePreview(normalizedURL);
+                        setResult('📺 正在预览网页，输入关键词后可搜索', 'success');
+                    }
+                }
+            });
+
+            // 页面搜索按钮
+            btnPageSearch.addEventListener('click', function(e) {
+                e.stopPropagation();
+                searchInPage(keywordInput.value);
+            });
+
+            // 跳转搜索按钮
+            btnJumpSearch.addEventListener('click', function(e) {
+                e.stopPropagation();
+
+                jumpAndSearch(keywordInput.value, linkInput.value);
+            });
+
+            // 百度检索按钮
+            btnBaiduSearch.addEventListener('click', function(e) {
+                e.stopPropagation();
+                baiduSiteSearch(keywordInput.value, linkInput.value);
+            });
+
+            // 清除按钮
+            btnClear.addEventListener('click', function(e) {
+                e.stopPropagation();
+                clearAllHighlights();
+                clearIframeHighlights();
+                keywordInput.value = '';
+                linkInput.value = '';
+                hideIframePreview();
+                clearResult();
+                linkPreviewTag.classList.remove('visible');
+                keywordInput.focus();
+            });
+
+            // 阻止面板内点击冒泡
+            searchPanel.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+
+            // ========== 初始状态 ==========
+            searchPanel.classList.remove('active');
+            toggleBtn.classList.remove('hidden');
+            iframePreviewContainer.classList.remove('visible');
+            linkPreviewTag.classList.remove('visible');
+
+            console.log('✅ 智能搜索组件已就绪');
+            console.log('   🔍 点击右下角按钮打开搜索工具');
+            console.log('   📄 "页面搜索" - 在当前页面搜索高亮');
+            console.log('   🚀 "跳转搜索" - 输入链接后直接跳转并在目标网页中搜索');
+            console.log('   🌐 "百度检索" - 通过百度site搜索目标网站');
+            console.log('   📺 输入链接后可预览网页（同源支持iframe内搜索）');
+            console.log('   ⌨ 快捷键：Ctrl+Shift+F 打开 | F3导航高亮 | ESC关闭');
+            console.log('   💡 跨域网页使用 #:~:text= 在Chrome/Edge中自动高亮');
+        })();
+    </script>
+</body>
+</html>
+<body>
+</body>
+</html>

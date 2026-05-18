@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澪鸢 · 资源库 - 搜索结果</title>
+	<link rel="icon" href="images/favicon.ico">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background-image: url(images/6.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            position: relative;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        html.light body::before {
+            background-color: rgba(255, 248, 240, 0.28);
+        }
+        html.dark body::before {
+            background-color: rgba(8, 8, 16, 0.82);
+            backdrop-filter: blur(1px);
+        }
+        nav, main, footer, .relative, .container {
+            position: relative;
+            z-index: 2;
+        }
+   
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .result-card {
+            transition: box-shadow 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.8) !important; 
+            backdrop-filter: blur(2px);
+        }
+        html.dark .result-card {
+            background-color: rgba(20, 20, 32, 0.75) !important;
+        }
+        .result-card:hover {
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2);
+        }
+  
+        .gradient-text {
+            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        html.dark .gradient-text {
+            background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+<div class="relative flex h-screen flex-col">
+  
+    <nav class="bg-background/80 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm transition-colors duration-300">
+        <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
+            <div class="flex items-center">
+                <a class="flex items-center gap-1" href="index.html">
+                    <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
+                </a>
+                <ul class="ml-4 hidden gap-4 sm:flex">
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="游戏.html">游戏</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="动漫.html">动漫</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="杂乱.html">杂乱</a></li>
+                </ul>
+            </div>
+            <div class="hidden items-center gap-2 sm:flex">
+                <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-ovo">
+                    <svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
+                </a>
+                <button type="button" role="switch" aria-checked="false" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80">
+                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0">
+                        <svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容：搜索结果区域（修复后） -->
+    <main class="max-w-8xl container mx-auto px-6 py-8 pt-20">
+        <div class="flex flex-col gap-4 px-1 pt-4 md:px-10">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1px_1fr]">
+                <!-- 左侧卡片列表（半透明背景） -->
+                <div class="md:pr-6">
+                    <div class="relative overflow-hidden h-[600px] md:h-[700px] scrollbar-hide" style="overflow-y: auto;">
+                        <div class="flex flex-col">
+                            <!-- 卡片 1 -->
+                            <div class="p-2">
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm result-card">
+                                    <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://docs.qq.com/aio/DYXBaZW1KU0pLeHR2?p=VGPdke7LauXwKDFwMQwYiR" target="_blank" class="text-lg text-blue-600 hover:underline">寄子游戏</a>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm break-all">&nbsp;</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 卡片 2 -->
+                            <div class="p-2">
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm result-card">
+                                    <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.flysheep6.com/" target="_blank" class="text-lg text-blue-600 hover:underline">flysheep</a>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm break-all">&nbsp;</p>
+                                    </div>
+                                </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.wygamer.com/" target="_blank" class="text-lg text-blue-600 hover:underline">无忧游戏</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                   </div>
+                                </div>
+                            </div>
+						  <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://steamui.com/" target="_blank" class="text-lg text-blue-600 hover:underline">steam游戏库</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							<div class="p-2">
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm result-card">
+                                    <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.nexusmods.com/games/phasmophobia" target="_blank" class="text-lg text-blue-600 hover:underline">Nexusmods</a>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm break-all">&nbsp;</p>
+                                  </div>
+                                </div>
+                            </div>
+                        <!-- 卡片 3 --></div>
+                    </div>
+                </div>
+
+                
+                <div aria-orientation="vertical" role="separator" class="bg-gray-300 dark:bg-gray-600 shrink-0 h-full w-px hidden md:block"></div>
+
+               
+                <div class="hidden md:block md:pl-2">
+                    <div class="gradient-text text-3xl lg:text-4xl font-semibold tracking-tight">
+                        澪鸢ovo
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+(function() {
+    function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
+    function applyTheme(theme) {
+        const root = document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(theme);
+        root.style.colorScheme = theme;
+        localStorage.setItem('theme', theme);
+        const btns = document.querySelectorAll('button[role="switch"]');
+        btns.forEach(btn => {
+            const isDark = (theme === 'dark');
+            btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
+            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+            const span = btn.querySelector('span');
+            if (span) {
+                let svg = span.querySelector('svg');
+                if (!svg) {
+                    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', '16');
+                    svg.setAttribute('viewBox', '0 0 24 24');
+                    span.innerHTML = '';
+                    span.appendChild(svg);
+                }
+                if (isDark) {
+                    svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
+                } else {
+                    svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
+                }
+            }
+        });
+    }
+    function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
+    function bindEvents() {
+        document.querySelectorAll('button[role="switch"]').forEach(btn => {
+            btn.removeEventListener('click', toggleTheme);
+            btn.addEventListener('click', toggleTheme);
+        });
+    }
+    applyTheme(getStoredTheme());
+    bindEvents();
+    new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+</body>
+</html>

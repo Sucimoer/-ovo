@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="preload" href="https://www.shinnku.com/_next/static/media/83afe278b6a6bb3c-s.p.3a6ba036.woff2" as="font" crossorigin="" type="font/woff2">
+<link rel="preload" href="https://www.shinnku.com/_next/static/media/b8b552e8609c5636-s.p.25aba60b.woff2" as="font" crossorigin="" type="font/woff2">
+<link rel="stylesheet" href="./澪鸢_files/e1d869172d1d37b2.css" data-precedence="next">
+<link rel="stylesheet" href="./澪鸢_files/b2e5f33a2de64e7f.css" data-precedence="next">
+<link rel="preload" as="script" fetchpriority="low" href="./澪鸢_files/e378ad44953f052c.js">
+<meta name="next-size-adjust" content="">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f0eb">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0c">
+<title>澪鸢 ovo</title>
+<link rel="icon" href="images/favicon.ico">
+
+
+<style>
+
+body {
+	background-image: url(images/6.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center center;
+	background-attachment: fixed;
+	position: relative;
+	transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;   
+  z-index: 0;
+  transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+
+html.light body::before {
+  background-color: rgba(255, 248, 240, 0.28);
+}
+
+
+html.dark body::before {
+  background-color: rgba(8, 8, 16, 0.82);
+  backdrop-filter: blur(1px);
+}
+
+nav, main, footer, .box, [class*="container"], .relative {
+  position: relative;
+  z-index: 2;
+}
+
+#box-main, .box {
+  opacity: 0 !important;
+  display: none;
+}
+
+
+html.dark body,
+html.dark .text-default-600,
+html.dark .text-foreground,
+html.dark .text-muted-foreground,
+html.dark .text-default-500,
+html.dark p,
+html.dark span:not(.bg-clip-text),
+html.dark .text-sm,
+html.dark .tracking-tight,
+html.dark .font-semibold,
+html.dark .font-medium {
+  color: #f0f0f4 !important;
+}
+
+html.dark .bg-clip-text,
+html.light .bg-clip-text {
+  color: transparent !important; 
+  background-clip: text;
+  -webkit-background-clip: text;
+}
+
+html.light nav {
+  background-color: rgba(255, 248, 245, 0.8) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+html.dark nav {
+  background-color: rgba(12, 12, 20, 0.85) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+html.dark nav a, 
+html.dark nav p,
+html.dark .hover\:text-foreground\/80 {
+  color: #e5e9f0 !important;
+}
+html.dark nav a:hover {
+  color: #ffb7c5 !important;
+}
+
+html.light input[type="search"] {
+  background-color: #ffffffdd;
+  border-color: rgba(0,0,0,0.16);
+  color: #1e1b26;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+html.dark input[type="search"] {
+  background-color: #1e1e2c !important;
+  border-color: rgba(255,255,255,0.2) !important;
+  color: #f5f3ff !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+
+html.dark input[type="search"]::placeholder {
+  color: #b0b0c0 !important;
+}
+
+html.dark .absolute svg,
+html.dark .text-muted-foreground svg {
+  color: #b9bbd0 !important;
+}
+html.light .absolute svg {
+  color: #5a5a70;
+}
+
+html.dark .border-input,
+html.dark .bg-background,
+html.dark .border {
+  background-color: #242433 !important;
+  border-color: rgba(255,255,255,0.18) !important;
+  color: #f0eff7 !important;
+}
+
+html.dark .hover\:bg-accent:hover,
+html.dark button:hover,
+html.dark a[class*="rounded-full"]:hover {
+  background-color: #3a3a50 !important;
+  border-color: #ff9ebb !important;
+  color: white !important;
+  transition: all 0.2s;
+}
+
+html.light .bg-background {
+  background-color: rgba(255, 250, 245, 0.9);
+}
+
+html.dark footer .text-default-600,
+html.dark footer span,
+html.dark footer a {
+  color: #cbcbe0 !important;
+}
+html.light footer .text-default-600 {
+  color: #54546b;
+}
+
+html.dark .gap-3 a {
+  background-color: #262638 !important;
+  border-color: #4e4a68 !important;
+  color: #f1eefb !important;
+}
+html.dark .gap-3 a:hover {
+  background-color: #453c5c !important;
+  border-color: #ffa5bc !important;
+}
+
+html.dark kbd {
+  background-color: #2a2a3a;
+  border-color: #5a5a78;
+  color: #eaeefc;
+}
+
+html.dark .shadow-sm {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+html.dark ::-webkit-scrollbar {
+  background: #1a1a24;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: #4f4f6e;
+  border-radius: 10px;
+}
+
+
+.bg-linear-to-b {
+  background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+}
+html.dark .bg-linear-to-b {
+  background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
+}
+</style>
+
+<script src="./澪鸢_files/ac27970e37dc9af0.js" async=""></script>
+<script src="./澪鸢_files/1b95a6110d68a2ae.js" async=""></script>
+<script src="./澪鸢_files/cbd8c294ce7b45fc.js" async=""></script>
+<script src="./澪鸢_files/turbopack-2aee67c5cf8ba285.js" async=""></script>
+<script src="./澪鸢_files/afe3f347d675a533.js" async=""></script>
+<script src="./澪鸢_files/f65b8856f8b8e189.js" async=""></script>
+<script src="./澪鸢_files/eb98fa2dfdd1ca44.js" async=""></script>
+<script src="./澪鸢_files/7db01e2891a3e602.js" async=""></script>
+<script src="./澪鸢_files/56ee0e063ea88deb.js" async=""></script>
+<script src="./澪鸢_files/d9475fd406da3a86.js" async=""></script>
+<script src="./澪鸢_files/6480889cb5315ea4.js" async=""></script>
+<link rel="preload" href="./澪鸢_files/js" as="script">
+<link rel="preload" href="./澪鸢_files/beacon.min.js" as="script">
+<script src="./澪鸢_files/450556b3c2c2814b.js"></script>
+<script src="./澪鸢_files/184a74f763288f2e.js"></script>
+<script src="./澪鸢_files/e71393d4d3656fd4.js"></script>
+<script src="./澪鸢_files/15ee787c560d0ea1.js"></script>
+<style>
+.Po4BvhR1CK2tJaywJ6AN path { fill: var(--icon-path-fill); }
+.Oz4yDjua3Qe6thqkZYf_ path { transition: 0.2s all; }
+.Oz4yDjua3Qe6thqkZYf_:hover path { fill: var(--icon-hover-fill); }
+.ibW4Oa5B7s2zJKKZ4pCg { user-select: none; }
+.AtqKyJetjrG4smuk35Np { max-width: 346px; width: auto; height: 36px; background-color: var(--quark-style-white-color, #fff); padding-left: 10px; padding-right: 4px; display: flex; align-items: center; box-sizing: border-box; border: 1px solid var(--quark-style-gray-20-color, rgba(6, 10, 38, 0.12)); box-shadow: 0 12px 32px -6px var(--quark-style-gray-30-fixed-color, rgba(6, 10, 38, 0.24)); border-radius: 10px; }
+:root {
+  --bprogress-color: #FF5B8E;
+  --bprogress-height: 3px;
+  --bprogress-spinner-size: 18px;
+  --bprogress-z-index: 99999;
+}
+.bprogress .bar { background: var(--bprogress-color); position: fixed; top: 0; left: 0; width: 100%; height: var(--bprogress-height); z-index: var(--bprogress-z-index); }
+</style>
+</head>
+<body class="bg-background min-h-screen font-sans antialiased inter_d542793-module__-uZNGW__variable">
+<div hidden=""><!--$--><!--/$--></div>
+<div class="box bg-[url('/assets/GT5Bjdba4AAbCkU.jpeg')] md:bg-[url('/assets/81320307_p0.jpg')]" id="box-main" style="opacity:0.24; display:none;"></div>
+
+<script>((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","light",null,["light","dark"],null,true,true)</script>
+
+<div class="relative flex h-screen flex-col">
+  <nav class="bg-background/80 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm transition-colors duration-300">
+    <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
+      <div class="flex items-center">
+        <a class="flex items-center gap-1" href="index.html">
+        <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
+        </a>
+        <ul class="ml-4 hidden gap-4 sm:flex">
+          <li><a class="hover:text-foreground/80 text-sm transition-colors" href="游戏.html">游戏</a></li>
+          <li><a class="hover:text-foreground/80 text-sm transition-colors" href="动漫.html">动漫</a></li>
+          <li><a class="hover:text-foreground/80 text-sm transition-colors" href="杂乱.html">杂乱</a></li>
+        </ul>
+      </div>
+      <div class="hidden items-center gap-2 sm:flex">
+        <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-ovo">
+          <svg height="24" viewBox="0 0 24 24" width="24" class="text-default-500"><path clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z" fill="currentColor" fill-rule="evenodd"></path></svg>
+        </a>
+        <button type="button" role="switch" aria-checked="false" data-state="unchecked" value="on" class="peer focus-visible:ring-ring focus-visible:ring-offset-background data-[state=checked]:bg-primary data-[state=unchecked]:bg-input inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer px-px transition-opacity hover:opacity-80" aria-label="Switch theme mode">
+          <span data-state="unchecked" class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0">
+            <svg aria-hidden="true" focusable="false" height="16" role="presentation" viewBox="0 0 24 24" width="16"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"></path><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"></path></g></svg>
+          </span>
+        </button>
+      </div>
+      <div class="flex items-center gap-2 sm:hidden">
+        <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-">
+          <svg height="24" viewBox="0 0 24 24" width="24" class="text-default-500"><path clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z" fill="currentColor" fill-rule="evenodd"></path></svg>
+        </a>
+        <button type="button" role="switch" aria-checked="false" data-state="unchecked" class="peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80" aria-label="Switch theme mode">
+          <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"><svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg></span>
+        </button>
+        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu size-5"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></button>
+      </div>
+    </div>
+  </nav>
+  <main class="max-w-8xl container mx-auto grow px-6 pt-16">
+    <section class="flex h-[calc(100vh-128px)] flex-col items-center justify-center gap-4">
+      <div class="inline-block max-w-xl text-center">
+        <span class="tracking-tight inline font-semibold from-[#FF72E1] to-[#F54C7A] text-[2.3rem] lg:text-5xl leading-9 bg-clip-text text-transparent bg-linear-to-b">澪鸢</span>
+        <span class="tracking-tight inline font-semibold text-[2.3rem] lg:text-5xl leading-9 bg-clip-text text-transparent bg-gradient-to-r from-[#FFB3D9] to-[#FF4D6D]" style="background-image: linear-gradient(135deg, #FF72E1, #F54C7A); background-clip: text; -webkit-background-clip: text; color: transparent;">&nbsp;</span>
+        <div class="w-full md:w-1/2 my-2 text-base lg:text-lg text-default-600 block max-w-full mt-6">         ElPsyCongroo！</div>
+      </div>
+      <div class="mt-10 flex w-full items-center justify-center">
+        <div class="w-full max-w-3xl gap-4">
+          <div class="relative mx-auto w-full max-w-2xl">
+            <svg aria-hidden="true" fill="none" focusable="false" height="1em" role="presentation" viewBox="0 0 24 24" width="1em" class="text-muted-foreground absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2"><path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M22 22L20 20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            <input class="border-input bg-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-12 w-full rounded-full border px-4 text-base focus-visible:ring-1 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 pr-14 pl-10 shadow-sm transition-colors" type="search" aria-label="Search" placeholder="请搜索游戏名称或关键词" value="">
+            <kbd class="bg-muted text-muted-foreground rounded border px-1.5 py-0.5 font-sans text-xs absolute top-1/2 right-4 hidden -translate-y-1/2 lg:block">Enter</kbd>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 flex gap-3">
+        <a href="留言2.html" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full">留言</a>
+        <a rel="noopener noreferrer" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full" href="云图库.html">云图库</a>
+      </div>
+      <div class="mt-2 flex gap-3"></div>
+    </section>
+  </main>
+  <footer class="flex w-full items-center justify-center py-3"></footer>
+</div>
+
+<script>
+(function() {
+  function getStoredTheme() {
+    return localStorage.getItem('theme') || 'light';
+  }
+
+  function applyTheme(theme) {
+    const root = document.documentElement;
+    root.classList.remove('light', 'dark');
+    root.classList.add(theme);
+    root.style.colorScheme = theme;
+    localStorage.setItem('theme', theme);
+
+    const btns = document.querySelectorAll('button[role="switch"]');
+    btns.forEach(btn => {
+      const isDark = (theme === 'dark');
+      btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
+      btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+      const spanWrap = btn.querySelector('span');
+      if (spanWrap) {
+        let svg = spanWrap.querySelector('svg');
+        if (!svg) {
+          svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('width', '16');
+          svg.setAttribute('height', '16');
+          svg.setAttribute('viewBox', '0 0 24 24');
+          spanWrap.innerHTML = '';
+          spanWrap.appendChild(svg);
+        }
+        if (isDark) {
+          svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
+        } else {
+          svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
+        }
+      }
+    });
+  }
+
+  function toggleTheme() {
+    const cur = getStoredTheme();
+    const next = cur === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  }
+
+  function bindEvents() {
+    const btns = document.querySelectorAll('button[role="switch"]');
+    btns.forEach(btn => {
+      btn.removeEventListener('click', toggleTheme);
+      btn.addEventListener('click', toggleTheme);
+    });
+  }
+
+  function init() {
+    const initialTheme = getStoredTheme();
+    applyTheme(initialTheme);
+    bindEvents();
+    const observer = new MutationObserver(() => bindEvents());
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+<script src="./澪鸢_files/e378ad44953f052c.js" id="_R_" async=""></script>
+<script src="./澪鸢_files/js" async="" data-nscript="afterInteractive"></script>
+<script id="google-analytics" data-nscript="afterInteractive">
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-61P3NL510C');
+</script>
+<script src="./澪鸢_files/beacon.min.js" defer="" data-cf-beacon="{&quot;token&quot;: &quot;65325546c71740a78ecc6e8fa7815010&quot;}" data-nscript="afterInteractive"></script>
+</body>
+</html>

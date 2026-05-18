@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澪鸢 · 资源库 - 搜索结果</title>
+	<link rel="icon" href="images/favicon.ico">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background-image: url(images/6.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            position: relative;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        html.light body::before {
+            background-color: rgba(255, 248, 240, 0.28);
+        }
+        html.dark body::before {
+            background-color: rgba(8, 8, 16, 0.82);
+            backdrop-filter: blur(1px);
+        }
+        nav, main, footer, .relative, .container {
+            position: relative;
+            z-index: 2;
+        }
+   
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .result-card {
+            transition: box-shadow 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.8) !important; 
+            backdrop-filter: blur(2px);
+        }
+        html.dark .result-card {
+            background-color: rgba(20, 20, 32, 0.75) !important;
+        }
+        .result-card:hover {
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2);
+        }
+  
+        .gradient-text {
+            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        html.dark .gradient-text {
+            background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+<div class="relative flex h-screen flex-col">
+  
+    <nav class="bg-background/80 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm transition-colors duration-300">
+        <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
+            <div class="flex items-center">
+                <a class="flex items-center gap-1" href="index.html">
+                    <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
+                </a>
+                <ul class="ml-4 hidden gap-4 sm:flex">
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="游戏.html">游戏</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="动漫.html">动漫</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="杂乱.html">杂乱</a></li>
+                </ul>
+            </div>
+            <div class="hidden items-center gap-2 sm:flex">
+                <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-ovo">
+                    <svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
+                </a>
+                <button type="button" role="switch" aria-checked="false" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80">
+                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0">
+                        <svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容：搜索结果区域（修复后） -->
+    <main class="max-w-8xl container mx-auto px-6 py-8 pt-20">
+        <div class="flex flex-col gap-4 px-1 pt-4 md:px-10">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1px_1fr]">
+                <!-- 左侧卡片列表（半透明背景） -->
+                <div class="md:pr-6">
+                    <div class="relative overflow-hidden h-[600px] md:h-[700px] scrollbar-hide" style="overflow-y: auto;">
+                        <div class="flex flex-col">
+                            <!-- 卡片 1 -->
+                             <div class="p-2">
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm result-card">
+                                    <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://gal.saop.cc/" target="_blank" class="text-lg text-blue-600 hover:underline">VNS</a>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm break-all">&nbsp;</p>
+                                  </div>
+                                </div>
+                            </div>
+                            <!-- 卡片 2 -->
+                            <div class="p-2">
+                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm result-card">
+                                    <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.shinnku.com/" target="_blank" class="text-lg text-blue-600 hover:underline">真红小站</a>
+                                        <p class="text-gray-600 dark:text-gray-300 text-sm break-all">&nbsp;</p>
+                                  </div>
+                                </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://saop.cc/" target="_blank" class="text-lg text-blue-600 hover:underline">定位宅</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+						  <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.sharotto.com/" target="_blank" class="text-lg text-blue-600 hover:underline">Sharotto</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://pan.touchgal.net/profile/7NuO" target="_blank" class="text-lg text-blue-600 hover:underline">Touchgal</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.xygalgame.com/" target="_blank" class="text-lg text-blue-600 hover:underline">初音的青葱</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://game.acgs.one/" target="_blank" class="text-lg text-blue-600 hover:underline">绮梦</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://18moe.net/up.html" target="_blank" class="text-lg text-blue-600 hover:underline">萌次元</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.ttloli.com/" target="_blank" class="text-lg text-blue-600 hover:underline">Mygalgame</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.sshs.pw/" target="_blank" class="text-lg text-blue-600 hover:underline">绅士会所</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://bbs2.seikuu.com/" target="_blank" class="text-lg text-blue-600 hover:underline">星空论坛</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://bbs4.2djgame.net/home/forum.php" target="_blank" class="text-lg text-blue-600 hover:underline">2DJgame</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://link3.cc/avalonsec" target="_blank" class="text-lg text-blue-600 hover:underline">avalon</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+							 <div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://inarigal.moe/" target="_blank" class="text-lg text-blue-600 hover:underline">稻荷acg</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                               </div>
+                            </div>
+                        <!-- 卡片 3 --></div>
+                    </div>
+                </div>
+
+                
+                <div aria-orientation="vertical" role="separator" class="bg-gray-300 dark:bg-gray-600 shrink-0 h-full w-px hidden md:block"></div>
+
+               
+                <div class="hidden md:block md:pl-2">
+                    <div class="gradient-text text-3xl lg:text-4xl font-semibold tracking-tight">
+                        澪鸢ovo
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+(function() {
+    function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
+    function applyTheme(theme) {
+        const root = document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(theme);
+        root.style.colorScheme = theme;
+        localStorage.setItem('theme', theme);
+        const btns = document.querySelectorAll('button[role="switch"]');
+        btns.forEach(btn => {
+            const isDark = (theme === 'dark');
+            btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
+            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+            const span = btn.querySelector('span');
+            if (span) {
+                let svg = span.querySelector('svg');
+                if (!svg) {
+                    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', '16');
+                    svg.setAttribute('viewBox', '0 0 24 24');
+                    span.innerHTML = '';
+                    span.appendChild(svg);
+                }
+                if (isDark) {
+                    svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
+                } else {
+                    svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
+                }
+            }
+        });
+    }
+    function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
+    function bindEvents() {
+        document.querySelectorAll('button[role="switch"]').forEach(btn => {
+            btn.removeEventListener('click', toggleTheme);
+            btn.addEventListener('click', toggleTheme);
+        });
+    }
+    applyTheme(getStoredTheme());
+    bindEvents();
+    new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可拖拽智能搜索工具（高亮修复版）</title>
+    <style>
+        :root {
+            --primary: #4a6cf7;
+            --primary-dark: #3b5de7;
+            --primary-light: rgba(74, 108, 247, 0.08);
+            --bg: #fff;
+            --text: #333;
+            --text-secondary: #888;
+            --border: #e0e5f0;
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.2), 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-btn: 0 4px 16px rgba(74,108,247,0.4), 0 2px 6px rgba(0,0,0,0.15);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+        }
+        * { box-sizing: border-box; }
+        .search-widget-container {
+            position: fixed; z-index: 2147483647;
+            font-family: "Microsoft YaHei","PingFang SC","Segoe UI","Helvetica Neue",Arial,sans-serif;
+            direction: ltr; line-height: 1.5; user-select: none;
+        }
+        .search-toggle-btn {
+            width: 52px; height: 52px; border-radius: 50%;
+            background: var(--primary); color: #fff; border: none; cursor: grab;
+            font-size: 22px; box-shadow: var(--shadow-btn);
+            display: flex; align-items: center; justify-content: center;
+            transition: all var(--transition); outline: none;
+            -webkit-tap-highlight-color: transparent; z-index: 2;
+        }
+        .search-toggle-btn:active { cursor: grabbing; }
+        .search-toggle-btn:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 6px 24px rgba(74,108,247,0.55), 0 3px 10px rgba(0,0,0,0.22);
+            transform: scale(1.08);
+        }
+        .search-toggle-btn.hidden {
+            opacity: 0; transform: scale(0.25); pointer-events: none;
+            visibility: hidden; transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .search-toggle-btn .icon-svg { width: 24px; height: 24px; fill: #fff; pointer-events: none; }
+        .search-panel {
+            position: absolute; bottom: 0; right: 0;
+            width: 460px; max-width: calc(100vw - 56px);
+            background: var(--bg); border-radius: 16px;
+            box-shadow: var(--shadow-lg); padding: 20px 22px;
+            transform-origin: bottom right; transform: scale(0); opacity: 0;
+            pointer-events: none; transition: all var(--transition);
+            display: flex; flex-direction: column; gap: 10px;
+            max-height: 85vh; overflow-y: auto; overflow-x: hidden;
+        }
+        .search-panel.active { transform: scale(1); opacity: 1; pointer-events: all; }
+        .search-panel::-webkit-scrollbar { width: 5px; }
+        .search-panel::-webkit-scrollbar-thumb { background: #d0d5e0; border-radius: 10px; }
+        .search-panel-header { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; cursor: grab; }
+        .search-panel-header:active { cursor: grabbing; }
+        .search-panel-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: 0.3px; display: flex; align-items: center; gap: 7px; pointer-events: none; }
+        .search-panel-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: #f3f4f6; color: #666; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; outline: none; flex-shrink: 0; cursor: default; }
+        .search-panel-close:hover { background: #e5e7eb; color: #333; }
+        .search-input-row { display: flex; gap: 8px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+        .search-keyword-input, .search-link-input {
+            height: 44px; border: 2px solid var(--border); border-radius: var(--radius-sm);
+            padding: 0 14px; font-size: 14px; color: var(--text); outline: none;
+            transition: all 0.25s; background: #fafbfc; font-family: inherit; user-select: text;
+        }
+        .search-keyword-input { flex: 1 1 170px; min-width: 140px; }
+        .search-link-input { flex: 0 1 170px; min-width: 130px; width: 170px; font-size: 13px; }
+        .search-keyword-input:focus, .search-link-input:focus {
+            border-color: var(--primary); background: #fff;
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .link-preview-tag { display: none; align-items: center; gap: 6px; font-size: 11px; color: var(--primary); background: #f0f4ff; padding: 4px 10px; border-radius: 20px; flex-shrink: 0; }
+        .link-preview-tag.visible { display: inline-flex; }
+        .search-btn-row { display: flex; gap: 7px; flex-shrink: 0; flex-wrap: wrap; align-items: center; }
+        .search-btn {
+            flex: 1 1 auto; min-width: 60px; height: 40px; border-radius: var(--radius-sm);
+            border: none; cursor: pointer; font-size: 13px; font-weight: 600;
+            letter-spacing: 0.2px; transition: all 0.25s; outline: none;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+            white-space: nowrap; padding: 0 8px; font-family: inherit;
+            -webkit-tap-highlight-color: transparent; user-select: none;
+        }
+        .nav-btn {
+            flex: 0 0 auto; min-width: 36px; height: 36px; border-radius: 50%;
+            background: #f0f2f5; color: #555; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer; transition: all 0.2s;
+        }
+        .nav-btn:hover { background: #e0e3e8; color: #333; }
+        .nav-btn:disabled { opacity: 0.4; cursor: default; }
+        .search-btn-page { background: var(--primary); color: #fff; }
+        .search-btn-page:hover { background: var(--primary-dark); box-shadow: 0 4px 14px rgba(74,108,247,0.35); }
+        .search-btn-jump { background: #10b981; color: #fff; }
+        .search-btn-jump:hover { background: #059669; box-shadow: 0 4px 14px rgba(16,185,129,0.35); }
+        .search-btn-baidu { background: #fff; color: #f97316; border: 2px solid #f97316; }
+        .search-btn-baidu:hover { background: #fff7ed; box-shadow: 0 4px 14px rgba(249,115,22,0.18); }
+        .search-btn-clear { background: #f5f5f5; color: #777; flex: 0 0 auto; min-width: 50px; }
+        .search-btn-clear:hover { background: #e8e8e8; color: #444; }
+        .iframe-preview-container { display: none; flex-direction: column; border: 2px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; flex-shrink: 0; background: #f9fafb; }
+        .iframe-preview-container.visible { display: flex; }
+        .iframe-preview-header { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; background: #f3f4f6; font-size: 11px; color: #666; gap: 8px; flex-shrink: 0; }
+        .iframe-preview-url { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #555; font-size: 11px; }
+        .iframe-preview-body { position: relative; width: 100%; height: 320px; background: #fff; flex-shrink: 0; }
+        .iframe-preview-body iframe { width: 100%; height: 100%; border: none; display: block; background: #fff; }
+        .iframe-loading-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.85); display: flex; align-items: center; justify-content: center; font-size: 13px; color: #888; pointer-events: none; z-index: 2; }
+        .iframe-loading-overlay.hidden { opacity: 0; }
+        .iframe-error-msg { display: none; align-items: center; justify-content: center; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #fff; color: #e88b35; font-size: 13px; text-align: center; padding: 20px; z-index: 3; flex-direction: column; gap: 8px; }
+        .iframe-error-msg.visible { display: flex; }
+        .search-result-info { font-size: 12px; color: #888; text-align: center; min-height: 18px; transition: all 0.3s; flex-shrink: 0; }
+        .search-result-info.success { color: #4a6cf7; font-weight: 600; }
+        .search-result-info.warning { color: #e88b35; font-weight: 500; }
+        .search-highlight {
+            background: #ffe347; color: #222; border-radius: 2px;
+            padding: 1px 3px; box-shadow: 0 0 0 1px rgba(255,200,30,0.5);
+            font-weight: inherit; transition: background 0.2s;
+        }
+        .search-highlight.active-highlight {
+            background: #ff9632 !important; color: #fff !important;
+            box-shadow: 0 0 0 3px rgba(255,140,30,0.7) !important;
+            border-radius: 3px !important; padding: 2px 4px !important;
+            z-index: 1; position: relative;
+        }
+        @media (max-width: 520px) {
+            .search-panel { width: calc(100vw - 32px); max-width: 400px; right: -4px; border-radius: 14px; padding: 14px 15px; gap: 8px; max-height: 80vh; }
+            .search-link-input, .search-keyword-input { flex: 1 1 100%; min-width: 100%; }
+            .search-input-row { flex-direction: column; gap: 6px; }
+            .search-btn { font-size: 12px; height: 36px; min-width: 50px; padding: 0 6px; }
+            .nav-btn { width: 32px; height: 32px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="search-widget-container" id="searchWidget">
+    <button class="search-toggle-btn" id="searchToggleBtn" title="打开搜索工具 (可拖拽)">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    </button>
+
+    <div class="search-panel" id="searchPanel">
+        <div class="search-panel-header" id="searchPanelHeader" title="拖动标题栏移动面板">
+            <span class="search-panel-title"><span class="title-icon">🔍</span> 智能搜索</span>
+            <button class="search-panel-close" id="searchPanelClose" title="收起 (ESC)">✕</button>
+        </div>
+
+        <div class="search-input-row">
+            <input type="text" class="search-keyword-input" id="searchKeyword" placeholder="输入搜索关键词..." autocomplete="off">
+            <input type="text" class="search-link-input" id="searchLink" placeholder="目标网页链接 (可选)" autocomplete="off">
+            <span class="link-preview-tag" id="linkPreviewTag"><span class="tag-dot"></span><span class="tag-text" id="linkPreviewText"></span></span>
+        </div>
+
+        <div class="search-btn-row">
+            <button class="search-btn search-btn-page" id="btnPageSearch">📄 页面搜索</button>
+            <button class="search-btn search-btn-jump" id="btnJumpSearch">🚀 跳转搜索</button>
+            <button class="search-btn search-btn-baidu" id="btnBaiduSearch">🌐 百度检索</button>
+            <button class="nav-btn" id="btnPrevHighlight" title="上一个匹配 (Shift+F3)">▲</button>
+            <button class="nav-btn" id="btnNextHighlight" title="下一个匹配 (F3)">▼</button>
+            <button class="search-btn search-btn-clear" id="btnClear">🗑 清除</button>
+        </div>
+
+        <div class="iframe-preview-container" id="iframePreviewContainer">
+            <div class="iframe-preview-header">
+                <span>📺 网页预览</span>
+                <span class="iframe-preview-url" id="iframePreviewUrl"></span>
+                <button class="iframe-preview-close-preview" id="btnClosePreview">✕</button>
+            </div>
+            <div class="iframe-preview-body" id="iframePreviewBody">
+                <div class="iframe-loading-overlay" id="iframeLoadingOverlay">⏳ 加载中...</div>
+                <div class="iframe-error-msg" id="iframeErrorMsg">
+                    <span class="error-icon">🚫</span>
+                    <span>该网站不允许嵌入预览</span>
+                    <span style="font-size:11px;color:#999;">将直接在新窗口打开</span>
+                </div>
+                <iframe id="searchIframe" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="no-referrer"></iframe>
+            </div>
+        </div>
+
+        <div class="search-result-info" id="searchResultInfo"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // DOM 元素
+    var widgetContainer = document.getElementById('searchWidget');
+    var toggleBtn = document.getElementById('searchToggleBtn');
+    var searchPanel = document.getElementById('searchPanel');
+    var panelHeader = document.getElementById('searchPanelHeader');
+    var panelClose = document.getElementById('searchPanelClose');
+    var keywordInput = document.getElementById('searchKeyword');
+    var linkInput = document.getElementById('searchLink');
+    var btnPageSearch = document.getElementById('btnPageSearch');
+    var btnJumpSearch = document.getElementById('btnJumpSearch');
+    var btnBaiduSearch = document.getElementById('btnBaiduSearch');
+    var btnClear = document.getElementById('btnClear');
+    var btnPrev = document.getElementById('btnPrevHighlight');
+    var btnNext = document.getElementById('btnNextHighlight');
+    var resultInfo = document.getElementById('searchResultInfo');
+    var iframePreviewContainer = document.getElementById('iframePreviewContainer');
+    var iframePreviewUrl = document.getElementById('iframePreviewUrl');
+    var searchIframe = document.getElementById('searchIframe');
+    var iframeLoadingOverlay = document.getElementById('iframeLoadingOverlay');
+    var iframeErrorMsg = document.getElementById('iframeErrorMsg');
+    var btnClosePreview = document.getElementById('btnClosePreview');
+    var linkPreviewTag = document.getElementById('linkPreviewTag');
+    var linkPreviewText = document.getElementById('linkPreviewText');
+
+    var isPanelOpen = false;
+    var highlightSpans = [];
+    var currentHighlightIndex = -1;
+    var iframeHighlightSpans = [];
+    var iframeCurrentHighlightIndex = -1;
+    var iframeLoadedURL = '';
+    var iframeIsSameOrigin = false;
+    var iframeLoadTimeout = null;
+    var previewVisible = false;
+
+    // 拖拽相关
+    var isDragging = false;
+    var dragStartMouseX, dragStartMouseY, dragStartLeft, dragStartTop;
+    var hasMovedDuringDrag = false;
+    var dragPreventClick = false;
+
+    // 工具函数
+    function escapeRegExp(str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function extractDomain(url) { var d = url.trim().replace(/^https?:\/\//i, '').split('/')[0].split(':')[0]; return d; }
+    function normalizeUrl(url) { url = url.trim(); if (!url) return ''; if (!/^https?:\/\//i.test(url)) url = 'https://' + url; return url; }
+    function setResult(msg, type) { resultInfo.textContent = msg; resultInfo.className = 'search-result-info'; if (type) resultInfo.classList.add(type); }
+    function clearResult() { resultInfo.textContent = ''; resultInfo.className = 'search-result-info'; }
+    function isInsideSearchComponent(node) { var c = node; while (c) { if (c === widgetContainer) return true; c = c.parentNode; } return false; }
+
+    // 位置初始化
+    function setInitialPosition() {
+        if (!widgetContainer.style.left || widgetContainer.style.left === 'auto') {
+            var left = window.innerWidth - 52 - 28;
+            var top = window.innerHeight - 52 - 28;
+            widgetContainer.style.left = Math.max(0, left) + 'px';
+            widgetContainer.style.top = Math.max(0, top) + 'px';
+        }
+    }
+    function constrainPosition() {
+        var rect = widgetContainer.getBoundingClientRect();
+        var maxX = window.innerWidth - 30, maxY = window.innerHeight - 30;
+        if (rect.right > maxX) widgetContainer.style.left = (maxX - rect.width) + 'px';
+        if (rect.bottom > maxY) widgetContainer.style.top = (maxY - rect.height) + 'px';
+        if (rect.left < 10) widgetContainer.style.left = '10px';
+        if (rect.top < 10) widgetContainer.style.top = '10px';
+    }
+    setInitialPosition();
+    window.addEventListener('resize', constrainPosition);
+
+    // 拖拽逻辑
+    function startDrag(e) {
+        var target = e.target;
+        if (!target.closest('#searchToggleBtn') && !target.closest('#searchPanelHeader')) return;
+        if (target.closest('#searchPanelClose') || target.closest('#btnClosePreview')) return;
+        if (target.closest('input, textarea, select, button:not(#searchToggleBtn)')) return;
+        e.preventDefault();
+        var cx = e.touches ? e.touches[0].clientX : e.clientX;
+        var cy = e.touches ? e.touches[0].clientY : e.clientY;
+        isDragging = true; hasMovedDuringDrag = false;
+        dragStartMouseX = cx; dragStartMouseY = cy;
+        var rect = widgetContainer.getBoundingClientRect();
+        dragStartLeft = rect.left; dragStartTop = rect.top;
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchmove', onDragMove, { passive: false });
+        document.addEventListener('touchend', onDragEnd);
+        document.body.style.userSelect = 'none';
+    }
+    function onDragMove(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+        var cx = e.touches ? e.touches[0].clientX : e.clientX;
+        var cy = e.touches ? e.touches[0].clientY : e.clientY;
+        var newLeft = dragStartLeft + (cx - dragStartMouseX);
+        var newTop = dragStartTop + (cy - dragStartMouseY);
+        newLeft = Math.min(Math.max(newLeft, -30), window.innerWidth - 30);
+        newTop = Math.min(Math.max(newTop, -30), window.innerHeight - 30);
+        widgetContainer.style.left = newLeft + 'px';
+        widgetContainer.style.top = newTop + 'px';
+        if (Math.abs(cx - dragStartMouseX) > 3 || Math.abs(cy - dragStartMouseY) > 3) hasMovedDuringDrag = true;
+    }
+    function onDragEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        document.body.style.userSelect = '';
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('touchend', onDragEnd);
+        if (hasMovedDuringDrag) { dragPreventClick = true; setTimeout(function(){ dragPreventClick = false; }, 150); }
+        constrainPosition();
+    }
+    toggleBtn.addEventListener('mousedown', startDrag);
+    toggleBtn.addEventListener('touchstart', startDrag, { passive: false });
+    panelHeader.addEventListener('mousedown', startDrag);
+    panelHeader.addEventListener('touchstart', startDrag, { passive: false });
+    toggleBtn.addEventListener('click', function(e) {
+        if (dragPreventClick) { e.stopImmediatePropagation(); e.preventDefault(); dragPreventClick = false; return; }
+        if (!isPanelOpen) openPanel(); else closePanel();
+    });
+
+    // 面板开关
+    function openPanel() {
+        isPanelOpen = true;
+        toggleBtn.classList.add('hidden');
+        searchPanel.classList.add('active');
+        setTimeout(function(){ keywordInput.focus(); constrainPosition(); }, 350);
+    }
+    function closePanel() {
+        isPanelOpen = false;
+        searchPanel.classList.remove('active');
+        toggleBtn.classList.remove('hidden');
+        clearResult();
+        constrainPosition();
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isPanelOpen) closePanel();
+        if (e.ctrlKey && e.shiftKey && e.key === 'F') { e.preventDefault(); if (!isPanelOpen) openPanel(); else closePanel(); }
+        if (e.key === 'F3' && isPanelOpen && highlightSpans.length > 0) { e.preventDefault(); if (e.shiftKey) prevHighlight(); else nextHighlight(); }
+    });
+    document.addEventListener('click', function(e) { if (isPanelOpen && !widgetContainer.contains(e.target)) closePanel(); });
+    panelClose.addEventListener('click', function(e) { e.stopPropagation(); closePanel(); });
+
+    // iframe 预览
+    function showIframePreview(url) {
+        iframePreviewContainer.classList.add('visible');
+        previewVisible = true;
+        iframePreviewUrl.textContent = url; iframePreviewUrl.title = url;
+        iframeLoadingOverlay.classList.remove('hidden');
+        iframeErrorMsg.classList.remove('visible');
+        iframeLoadedURL = url; searchIframe.src = url;
+        iframeIsSameOrigin = false;
+        iframeHighlightSpans = []; iframeCurrentHighlightIndex = -1;
+        if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+        iframeLoadTimeout = setTimeout(function(){ iframeLoadingOverlay.classList.add('hidden'); checkIframeAccess(); }, 4000);
+    }
+    function hideIframePreview() {
+        iframePreviewContainer.classList.remove('visible');
+        previewVisible = false; iframeLoadedURL = ''; iframeIsSameOrigin = false;
+        searchIframe.src = 'about:blank';
+        iframeHighlightSpans = []; iframeCurrentHighlightIndex = -1;
+        iframeLoadingOverlay.classList.remove('hidden'); iframeErrorMsg.classList.remove('visible');
+        if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+    }
+    function checkIframeAccess() {
+        try { var doc = searchIframe.contentDocument || searchIframe.contentWindow.document; if (doc && doc.body && doc.body.innerHTML.trim() !== '') { iframeIsSameOrigin = true; iframeErrorMsg.classList.remove('visible'); return true; } } catch(e) {}
+        iframeIsSameOrigin = false; return false;
+    }
+    searchIframe.addEventListener('load', function() {
+        iframeLoadingOverlay.classList.add('hidden');
+        if (iframeLoadTimeout) clearTimeout(iframeLoadTimeout);
+        checkIframeAccess();
+        if (searchIframe.src && searchIframe.src !== 'about:blank') {
+            try { var doc = searchIframe.contentDocument || searchIframe.contentWindow.document; if (!doc || !doc.body || doc.body.innerHTML.trim() === '') { if (!iframeIsSameOrigin) iframeErrorMsg.classList.add('visible'); } } catch(e) { iframeErrorMsg.classList.add('visible'); }
+        }
+    });
+    searchIframe.addEventListener('error', function(){ iframeLoadingOverlay.classList.add('hidden'); iframeErrorMsg.classList.add('visible'); iframeIsSameOrigin = false; });
+    btnClosePreview.addEventListener('click', function(e){ e.stopPropagation(); hideIframePreview(); });
+
+    // ========== 核心修复：先收集再替换，避免DOM修改中断遍历 ==========
+    function injectHighlightCSS(doc) {
+        try {
+            if (!doc || !doc.head) return false;
+            if (doc.getElementById('search-highlight-style')) return true;
+            var style = doc.createElement('style');
+            style.id = 'search-highlight-style';
+            style.textContent = '.search-highlight{background:#ffe347;color:#222;border-radius:2px;padding:1px 3px;box-shadow:0 0 0 1px rgba(255,200,30,0.5);} .search-highlight.active-highlight{background:#ff9632!important;color:#fff!important;box-shadow:0 0 0 3px rgba(255,140,30,0.7)!important;}';
+            doc.head.appendChild(style);
+            return true;
+        } catch(e) { return false; }
+    }
+
+    function clearHighlightsInDoc(doc) {
+        try {
+            var existing = doc.querySelectorAll('.search-highlight');
+            existing.forEach(function(span) {
+                if (span.parentNode) {
+                    var txt = doc.createTextNode(span.textContent);
+                    span.parentNode.replaceChild(txt, span);
+                }
+            });
+            doc.body.normalize();
+        } catch(e) {}
+    }
+
+    function highlightInDocument(doc, keyword) {
+        clearHighlightsInDoc(doc);
+        if (!keyword || keyword.trim() === '') return { spans: [], count: 0 };
+
+        var trimmedKeyword = keyword.trim();
+        var lowerKeyword = trimmedKeyword.toLowerCase();
+        var spans = [];
+        var matchCount = 0;
+
+        // 第一步：遍历收集所有需要处理的文本节点
+        var textNodesToProcess = [];
+        var walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, {
+            acceptNode: function(node) {
+                if (!node.textContent || node.textContent.trim() === '') return NodeFilter.FILTER_REJECT;
+                var tag = node.parentNode.tagName;
+                if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'NOSCRIPT' || tag === 'IFRAME' || tag === 'SVG' || tag === 'CODE' || tag === 'TEXTAREA' || tag === 'INPUT') return NodeFilter.FILTER_REJECT;
+                if (node.parentNode.classList && node.parentNode.classList.contains('search-highlight')) return NodeFilter.FILTER_REJECT;
+                if (node.textContent.toLowerCase().indexOf(lowerKeyword) !== -1) return NodeFilter.FILTER_ACCEPT;
+                return NodeFilter.FILTER_REJECT;
+            }
+        });
+        var node;
+        while ((node = walker.nextNode())) {
+            textNodesToProcess.push(node);
+        }
+
+        // 第二步：对收集到的文本节点逐一替换（此时不会干扰遍历）
+        textNodesToProcess.forEach(function(textNode) {
+            if (!textNode.parentNode) return; // 可能已被之前的替换移除
+            var text = textNode.textContent;
+            var parent = textNode.parentNode;
+            var fragment = doc.createDocumentFragment();
+            var lastIndex = 0;
+            var localRegex = new RegExp(escapeRegExp(trimmedKeyword), 'gi');
+            var match;
+            while ((match = localRegex.exec(text)) !== null) {
+                if (match.index > lastIndex) {
+                    fragment.appendChild(doc.createTextNode(text.substring(lastIndex, match.index)));
+                }
+                var span = doc.createElement('span');
+                span.className = 'search-highlight';
+                span.textContent = match[0];
+                fragment.appendChild(span);
+                spans.push(span);
+                matchCount++;
+                lastIndex = localRegex.lastIndex;
+            }
+            if (lastIndex < text.length) {
+                fragment.appendChild(doc.createTextNode(text.substring(lastIndex)));
+            }
+            if (fragment.childNodes.length > 0) {
+                parent.replaceChild(fragment, textNode);
+            }
+        });
+
+        if (spans.length > 0) {
+            spans[0].classList.add('active-highlight');
+            spans[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return { spans: spans, count: matchCount };
+    }
+
+    // 当前页面搜索
+    function searchInPage(keyword) {
+        // 清除上次高亮
+        highlightSpans.forEach(function(s) { if (s.parentNode) { var t = document.createTextNode(s.textContent); s.parentNode.replaceChild(t, s); } });
+        highlightSpans = []; currentHighlightIndex = -1;
+        document.body.normalize();
+        if (!keyword.trim()) { setResult('请输入搜索关键词', 'warning'); updateNavButtons(); return; }
+        var result = highlightInDocument(document, keyword.trim());
+        highlightSpans = result.spans;
+        if (result.count > 0) {
+            currentHighlightIndex = 0;
+            setResult('找到 ' + result.count + ' 个匹配项', 'success');
+        } else {
+            setResult('未找到匹配内容', 'warning');
+        }
+        updateNavButtons();
+    }
+
+    function scrollToHighlight(index) {
+        if (highlightSpans.length === 0) return;
+        if (index < 0) index = 0;
+        if (index >= highlightSpans.length) index = highlightSpans.length - 1;
+        highlightSpans.forEach(function(s) { s.classList.remove('active-highlight'); });
+        currentHighlightIndex = index;
+        var target = highlightSpans[index];
+        target.classList.add('active-highlight');
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setResult('找到 ' + highlightSpans.length + ' 个匹配项（当前第 ' + (index+1) + ' 个）', 'success');
+        updateNavButtons();
+    }
+
+    function nextHighlight() {
+        if (highlightSpans.length === 0) return;
+        var nextIndex = currentHighlightIndex + 1;
+        if (nextIndex >= highlightSpans.length) nextIndex = 0;
+        scrollToHighlight(nextIndex);
+    }
+    function prevHighlight() {
+        if (highlightSpans.length === 0) return;
+        var prevIndex = currentHighlightIndex - 1;
+        if (prevIndex < 0) prevIndex = highlightSpans.length - 1;
+        scrollToHighlight(prevIndex);
+    }
+
+    function updateNavButtons() {
+        var hasHighlights = highlightSpans.length > 0;
+        btnPrev.disabled = !hasHighlights;
+        btnNext.disabled = !hasHighlights;
+    }
+
+    // iframe 内搜索
+    function searchInIframe(keyword) {
+        iframeHighlightSpans.forEach(function(s) { if (s.parentNode) { var doc = searchIframe.contentDocument || searchIframe.contentWindow.document; var t = doc.createTextNode(s.textContent); s.parentNode.replaceChild(t, s); } });
+        iframeHighlightSpans = []; iframeCurrentHighlightIndex = -1;
+        if (!iframeIsSameOrigin || !keyword.trim()) return -1;
+        try {
+            var doc = searchIframe.contentDocument || searchIframe.contentWindow.document;
+            if (!doc || !doc.body) return -1;
+            injectHighlightCSS(doc);
+            var result = highlightInDocument(doc, keyword.trim());
+            iframeHighlightSpans = result.spans;
+            return result.count;
+        } catch(e) { iframeIsSameOrigin = false; return -1; }
+    }
+
+    // 跳转搜索
+    function jumpAndSearch(keyword, link) {
+        if (!keyword.trim()) { setResult('请输入搜索关键词', 'warning'); keywordInput.focus(); return; }
+        if (!link.trim()) { setResult('请输入目标网页链接', 'warning'); linkInput.focus(); return; }
+        var normalizedURL = normalizeUrl(link);
+        var trimmedKeyword = keyword.trim();
+        showIframePreview(normalizedURL);
+
+        var currentOrigin = window.location.origin;
+        var targetURL;
+        try { targetURL = new URL(normalizedURL); } catch(e) {}
+        var sameOrigin = targetURL && targetURL.origin === currentOrigin;
+
+        if (sameOrigin) {
+            var newWindow = window.open(normalizedURL, '_blank');
+            if (newWindow) {
+                newWindow.addEventListener('load', function() {
+                    try {
+                        var doc = newWindow.document;
+                        setTimeout(function() {
+                            injectHighlightCSS(doc);
+                            highlightInDocument(doc, trimmedKeyword);
+                        }, 300);
+                    } catch(e) {}
+                });
+                setResult('✅ 已在新窗口打开同源页面，自动高亮搜索词', 'success');
+            } else {
+                setResult('⚠️ 弹窗被拦截，请允许本站弹窗', 'warning');
+            }
+        } else {
+            var baseURL = normalizedURL.replace(/#.*$/, '');
+            var jumpURL = baseURL + '#:~:text=' + encodeURIComponent(trimmedKeyword);
+            var newWindow = window.open(jumpURL, '_blank', 'noopener,noreferrer');
+            if (newWindow) {
+                setResult('🔗 已在新窗口打开（浏览器支持文本片段高亮）', 'success');
+            } else {
+                setResult('⚠️ 弹窗被拦截，请允许本站弹窗', 'warning');
+            }
+        }
+    }
+
+    function baiduSiteSearch(keyword, link) {
+        if (!keyword.trim()) { setResult('请输入搜索关键词', 'warning'); return; }
+        var domain = link.trim() ? extractDomain(link) : window.location.hostname;
+        if (!domain || domain === 'localhost' || domain === '127.0.0.1') { setResult('请填写目标网站链接', 'warning'); return; }
+        var url = 'https://www.baidu.com/s?wd=' + encodeURIComponent('site:' + domain + ' ' + keyword.trim());
+        setResult('🔗 正在跳转百度站内搜索...', 'success');
+        setTimeout(function(){ window.open(url, '_blank'); setResult('✅ 已打开百度搜索结果', 'success'); }, 300);
+    }
+
+    // 按钮事件
+    btnPageSearch.addEventListener('click', function(e) { e.stopPropagation(); searchInPage(keywordInput.value); });
+    btnJumpSearch.addEventListener('click', function(e) { e.stopPropagation(); jumpAndSearch(keywordInput.value, linkInput.value); });
+    btnBaiduSearch.addEventListener('click', function(e) { e.stopPropagation(); baiduSiteSearch(keywordInput.value, linkInput.value); });
+    btnPrev.addEventListener('click', function(e) { e.stopPropagation(); prevHighlight(); });
+    btnNext.addEventListener('click', function(e) { e.stopPropagation(); nextHighlight(); });
+    btnClear.addEventListener('click', function(e) {
+        e.stopPropagation();
+        highlightSpans.forEach(function(s) { if (s.parentNode) { var t = document.createTextNode(s.textContent); s.parentNode.replaceChild(t, s); } });
+        highlightSpans = []; currentHighlightIndex = -1;
+        document.body.normalize();
+        try { var iframeDoc = searchIframe.contentDocument || searchIframe.contentWindow.document; if (iframeDoc) { clearHighlightsInDoc(iframeDoc); } } catch(e) {}
+        iframeHighlightSpans = []; iframeCurrentHighlightIndex = -1;
+        keywordInput.value = ''; linkInput.value = '';
+        hideIframePreview(); clearResult();
+        updateNavButtons();
+        keywordInput.focus();
+    });
+
+    keywordInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); if (linkInput.value.trim()) jumpAndSearch(keywordInput.value, linkInput.value); else searchInPage(keywordInput.value); }
+    });
+    linkInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); if (keywordInput.value.trim()) jumpAndSearch(keywordInput.value, linkInput.value); else if (linkInput.value.trim()) { showIframePreview(normalizeUrl(linkInput.value)); setResult('📺 正在预览网页', 'success'); } }
+    });
+
+    searchPanel.addEventListener('click', function(e) { e.stopPropagation(); });
+
+    // 初始化
+    searchPanel.classList.remove('active');
+    toggleBtn.classList.remove('hidden');
+    updateNavButtons();
+    console.log('✅ 搜索工具已修复：现在可高亮全部匹配项，并支持上下切换');
+})();
+</script>
+</body>
+</html>

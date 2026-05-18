@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>澪鸢 · 资源库 - 安全访问</title>
+    <link rel="icon" href="images/favicon.ico">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* ========== 原首页核心样式 (保留背景虚化与滚动条隐藏) ========== */
+        body {
+            background-image: url(images/6.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            position: relative;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        html.light body::before {
+            background-color: rgba(255, 248, 240, 0.28);
+        }
+        html.dark body::before {
+            background-color: rgba(8, 8, 16, 0.82);
+            backdrop-filter: blur(1px);
+        }
+        nav, main, footer, .relative, .container, .lock-global-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 原卡片悬停效果 (保留但本次未使用卡片列表) */
+        .result-card {
+            transition: box-shadow 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(2px);
+        }
+        html.dark .result-card {
+            background-color: rgba(20, 20, 32, 0.75) !important;
+        }
+
+        /* ========== 密码锁美化 + 毛玻璃融合 ========== */
+        :root {
+            --lock-gold: #f0c060;
+            --lock-error: #ff4757;
+            --lock-success: #2ed573;
+        }
+
+        /* 密码锁外层容器：居中 + 毛玻璃效果 */
+        .lock-glass-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            backdrop-filter: blur(14px);
+            background: rgba(20, 25, 45, 0.45);
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.12);
+            transition: all 0.3s ease;
+        }
+        html.dark .lock-glass-container {
+            background: rgba(10, 12, 28, 0.65);
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+
+        /* 内部密码锁卡片样式 (移除原有硬色背景，继承父级半透明) */
+        .lock-container {
+            background: transparent !important;
+            backdrop-filter: none;
+            box-shadow: none !important;
+            padding: 2rem 2rem 2.2rem;
+            border-radius: 2rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        /* 调整标题和文字颜色适配深色/浅色模式 */
+        .lock-title, .lock-subtitle {
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        html.light .lock-title {
+            color: #1e1e2f;
+            text-shadow: none;
+        }
+        html.light .lock-subtitle {
+            color: #2c2c3a;
+        }
+        html.light .lock-container .input-group input {
+            background: rgba(255,255,240,0.85);
+            color: #111;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        html.light .lock-container .input-group input:focus {
+            background: rgba(255,255,255,0.95);
+            border-color: #e94560;
+        }
+        html.light .toggle-password svg {
+            stroke: #2c2c3a;
+        }
+        html.light .error-message {
+            color: #c0392b;
+        }
+        /* 深色模式保持原生舒适 */
+        html.dark .lock-container .input-group input {
+            background: rgba(15, 20, 35, 0.85);
+            color: #f0f0f0;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        /* 锁图标微调 */
+        .lock-icon-wrapper {
+            margin-bottom: 1.2rem;
+        }
+        .lock-icon {
+            background: radial-gradient(circle at 30% 20%, rgba(233,68,96,0.8), rgba(150,30,50,0.9));
+            box-shadow: 0 8px 24px rgba(233,68,96,0.4);
+        }
+        html.dark .lock-icon {
+            background: radial-gradient(circle at 30% 20%, #e94560, #a02040);
+        }
+        .btn-unlock {
+            background: linear-gradient(105deg, #e94560, #c12b48);
+            box-shadow: 0 6px 18px rgba(233,68,96,0.4);
+        }
+        .banned-banner {
+            background: repeating-linear-gradient(45deg, #d63031 0px, #d63031 12px, #fdcb6e 12px, #fdcb6e 24px);
+            border-radius: 20px;
+        }
+        .content-card {
+            background: rgba(20, 25, 45, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        html.light .content-card {
+            background: rgba(245, 240, 250, 0.85);
+            border: 1px solid rgba(0,0,0,0.1);
+            color: #1e1e2a;
+        }
+        .info-box {
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+        }
+        html.light .info-box {
+            background: rgba(230, 225, 245, 0.7);
+        }
+        /* 动画保持流畅 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(24px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .fade-up-animation {
+            animation: fadeInUp 0.5s cubic-bezier(0.2, 0.9, 0.4, 1.1) forwards;
+        }
+        .shake {
+            animation: shakeAnim 0.5s ease-in-out;
+        }
+        @keyframes shakeAnim {
+            0%,100% { transform: translateX(0); }
+            10%,50%,90% { transform: translateX(-6px); }
+            30%,70% { transform: translateX(6px); }
+        }
+        /* 按钮禁用微效 */
+        .btn-unlock:disabled {
+            opacity: 0.65;
+            transform: none;
+            cursor: default;
+        }
+        /* 解锁成功过渡 */
+        .lock-container.unlocked .lock-icon svg {
+            stroke: var(--lock-success);
+        }
+        .gradient-text {
+            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        html.dark .gradient-text {
+            background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+<div class="relative flex h-screen flex-col">
+    <!-- 导航栏：完全保留原风格 -->
+    <nav class="bg-background/80 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm transition-colors duration-300">
+        <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
+            <div class="flex items-center">
+                <a class="flex items-center gap-1" href="#">
+                    <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
+                </a>
+                <ul class="ml-4 hidden gap-4 sm:flex">
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="#">游戏</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="#">动漫</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="#">杂乱</a></li>
+                </ul>
+            </div>
+            <div class="hidden items-center gap-2 sm:flex">
+                <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/">
+                    <svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
+                </a>
+                <button type="button" role="switch" aria-checked="false" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80">
+                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0">
+                        <svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容区: 仅保留密码锁 + 内容展示，完全替换原搜索结果 -->
+    <main class="max-w-7xl container mx-auto px-4 py-8 pt-20 flex items-center justify-center flex-1">
+        <div class="w-full max-w-3xl px-2 md:px-4">
+            <!-- 密码锁主体 (毛玻璃容器) -->
+            <div class="lock-glass-container transition-all duration-300">
+                <!-- 密码锁界面组件 (动态切换锁屏/解锁内容) -->
+                <div id="lockScreen" class="lock-container">
+                    <!-- 正常密码输入面板 -->
+                    <div id="normalLockPanel" class="ui-panel">
+                        <div class="lock-icon-wrapper">
+                            <div class="lock-pulse-ring"></div>
+                            <div class="lock-pulse-ring"></div>
+                            <div class="lock-pulse-ring"></div>
+                            <div class="lock-icon" id="lockIconNormal">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    <circle cx="12" cy="16.5" r="1.2"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h2 class="lock-title text-2xl font-bold mt-2">🔐 安全验证</h2>
+                        <p class="lock-subtitle text-sm opacity-80 mb-5">请输入访问密码以进入资源库</p>
+                        <div class="input-group relative mb-4">
+                            <input type="password" id="passwordInput" placeholder="请输入密码" maxlength="20" autocomplete="off" class="w-full py-3 px-5 rounded-xl text-center tracking-wider bg-white/30 backdrop-blur-sm border border-white/30 focus:outline-none focus:ring-2 focus:ring-pink-400 transition">
+                            <button class="toggle-password absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 dark:text-gray-300" id="togglePasswordBtn" title="显示/隐藏密码">
+                                <svg id="eyeIcon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="error-message text-sm text-red-400 min-h-[28px] transition-all opacity-0" id="errorMessage">密码错误，请重试</div>
+                        <button class="btn-unlock w-full py-3 font-semibold rounded-xl mt-2 transition-all duration-200" id="unlockBtn">解 锁</button>
+                    </div>
+
+                    <!-- IP 锁定禁止面板 -->
+                    <div id="lockedPanel" class="ui-panel hidden">
+                        <div class="lock-icon-wrapper">
+                            <div class="lock-icon" style="background:linear-gradient(135deg, #a51b1b, #6b0f0f); box-shadow:0 0 0 2px #ff4444;">
+                                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="stroke:#ff8888;">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    <line x1="1" y1="1" x2="23" y2="23" stroke="#ff6666" stroke-width="2.5"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h2 class="lock-title text-2xl font-bold" style="color:#ffb4b4;">⛔ 访问被拒绝</h2>
+                        <div class="banned-banner my-5 py-3 rounded-2xl">
+                            <div class="banned-text text-2xl md:text-3xl font-black text-white tracking-wider text-center">禁止进入</div>
+                            <div class="banned-sub text-sm text-center font-bold">YOUR IP HAS BEEN LOCKED</div>
+                        </div>
+                        <p class="text-red-200 text-sm font-semibold text-center mb-2">多次密码错误，当前IP已被锁定</p>
+                        <p class="text-gray-300 text-xs text-center mb-5">请输入解锁码以解除限制</p>
+                        <div class="unlock-code-area">
+                            <div class="input-group relative mb-4">
+                                <input type="password" id="unlockCodeInput" placeholder="解锁密码" maxlength="30" autocomplete="off" class="w-full py-3 px-4 rounded-xl bg-red-950/40 border border-red-400 text-center text-white">
+                            </div>
+                            <div class="error-message text-sm text-red-300 min-h-[24px]" id="unlockErrorMessage"></div>
+                            <button class="btn-unlock w-full py-3 rounded-xl font-bold bg-gradient-to-r from-red-700 to-red-500 hover:from-red-600 hover:to-red-400" id="unlockIpBtn">🔓 解除IP锁定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 受保护内容界面 (解锁后显示) -->
+                <div id="protectedContent" class="hidden w-full">
+                    <div class="content-card p-6 md:p-8 text-center">
+                        <div class="success-icon text-6xl mb-3">✨</div>
+                        <h2 class="text-2xl md:text-3xl font-bold gradient-text mb-2">验证通过</h2>
+                        <p class="text-gray-700 dark:text-gray-200 mb-5">欢迎访问澪鸢 · 内部资源区</p>
+                        <div class="info-box rounded-xl p-5 text-left text-sm md:text-base backdrop-blur-sm mb-4">
+                            <p class="mb-2">🔓 <strong class="text-amber-400">密码验证成功</strong> — 会话有效期内无需重复输入。</p>
+                            <p class="mb-2">📦 受保护内容：Galgame 档案库、个人珍藏动漫列表等。</p>
+                            <p class="flex items-center gap-2 flex-wrap mt-3">
+                                <span class="inline-block bg-pink-500/20 px-3 py-1 rounded-full text-pink-300 text-xs">✨ 特权区域</span>
+                                <span class="inline-block bg-amber-500/20 px-3 py-1 rounded-full text-amber-300 text-xs">🔒 安全加密</span>
+                            </p>
+                            <div class="mt-5 pt-3 border-t border-white/20 text-center">
+                                <a href="gal.html" class="inline-block bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-2 rounded-full text-white font-semibold shadow-lg hover:scale-105 transition-transform">🚪 进入资源专区 →</a>
+                            </div>
+                        </div>
+                        <button id="logoutBtn" class="btn-logout mt-2 text-sm px-5 py-2 rounded-full border border-gray-400 hover:border-pink-400 hover:text-pink-500 transition">🔒 锁定并退出</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 下方优雅装饰线条 -->
+            <div class="text-center text-xs text-white/50 mt-6 select-none">澪鸢 · 安全访问网关 | 错误超过3次将触发IP锁定</div>
+        </div>
+    </main>
+</div>
+
+<script>
+    (function() {
+        // ============ 密码锁核心配置 ============
+        const CORRECT_PASSWORD = 'sucishitc';          // 访问密码
+        const LOCKOUT_THRESHOLD = 3;                   // 错误阈值
+        const UNLOCK_IP_CODE = 'woshi2b';              // 解除锁定码
+
+        // storage 键名
+        const STORAGE_KEY_ATTEMPTS = 'secure_lock_failed_attempts';
+        const STORAGE_KEY_LOCKED = 'secure_lock_ip_locked';
+        const SESSION_KEY = 'page_unlocked_session';
+
+        // DOM 元素
+        const lockScreenDiv = document.getElementById('lockScreen');
+        const protectedContentDiv = document.getElementById('protectedContent');
+        const normalPanel = document.getElementById('normalLockPanel');
+        const lockedPanel = document.getElementById('lockedPanel');
+        const passwordInput = document.getElementById('passwordInput');
+        const unlockBtn = document.getElementById('unlockBtn');
+        const errorMessageSpan = document.getElementById('errorMessage');
+        const togglePasswordBtn = document.getElementById('togglePasswordBtn');
+        const eyeIconSvg = document.getElementById('eyeIcon');
+        const unlockCodeInput = document.getElementById('unlockCodeInput');
+        const unlockIpBtn = document.getElementById('unlockIpBtn');
+        const unlockErrorMessageSpan = document.getElementById('unlockErrorMessage');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        let isPasswordVisible = false;
+
+        // 辅助函数
+        function getFailedAttempts() {
+            const val = localStorage.getItem(STORAGE_KEY_ATTEMPTS);
+            return val ? parseInt(val, 10) : 0;
+        }
+        function setFailedAttempts(num) {
+            localStorage.setItem(STORAGE_KEY_ATTEMPTS, num.toString());
+        }
+        function isIPLocked() {
+            return localStorage.getItem(STORAGE_KEY_LOCKED) === 'true';
+        }
+        function setIPLocked(locked) {
+            if (locked) localStorage.setItem(STORAGE_KEY_LOCKED, 'true');
+            else localStorage.removeItem(STORAGE_KEY_LOCKED);
+        }
+        function resetLockoutState() {
+            setFailedAttempts(0);
+            setIPLocked(false);
+        }
+
+        // UI 切换逻辑
+        function showNormalUI() {
+            if (normalPanel) normalPanel.classList.remove('hidden');
+            if (lockedPanel) lockedPanel.classList.add('hidden');
+            if (lockScreenDiv) lockScreenDiv.classList.remove('unlocked');
+            if (errorMessageSpan) {
+                errorMessageSpan.classList.remove('show', 'opacity-100');
+                errorMessageSpan.classList.add('opacity-0');
+                errorMessageSpan.innerText = '密码错误，请重试';
+            }
+            if (passwordInput) {
+                passwordInput.value = '';
+                passwordInput.disabled = false;
+                passwordInput.focus();
+            }
+            if (unlockBtn) {
+                unlockBtn.disabled = false;
+                unlockBtn.style.opacity = '1';
+                unlockBtn.innerText = '解 锁';
+            }
+        }
+
+        function showLockedUI() {
+            if (normalPanel) normalPanel.classList.add('hidden');
+            if (lockedPanel) lockedPanel.classList.remove('hidden');
+            if (lockScreenDiv) lockScreenDiv.classList.add('locked-state');
+            if (unlockCodeInput) {
+                unlockCodeInput.value = '';
+                unlockCodeInput.focus();
+            }
+            if (unlockErrorMessageSpan) {
+                unlockErrorMessageSpan.innerText = '';
+                unlockErrorMessageSpan.classList.remove('show');
+            }
+        }
+
+        function decideLockUI() {
+            if (isIPLocked()) {
+                showLockedUI();
+            } else {
+                showNormalUI();
+            }
+        }
+
+        function showLockScreen() {
+            if (protectedContentDiv) protectedContentDiv.classList.add('hidden');
+            if (lockScreenDiv) lockScreenDiv.classList.remove('hidden');
+            sessionStorage.removeItem(SESSION_KEY);
+            decideLockUI();
+            if (!isIPLocked() && passwordInput) setTimeout(() => passwordInput.focus(), 100);
+        }
+
+        function showProtectedContent() {
+            if (lockScreenDiv) lockScreenDiv.classList.add('hidden');
+            if (protectedContentDiv) protectedContentDiv.classList.remove('hidden');
+            sessionStorage.setItem(SESSION_KEY, 'true');
+            // 添加微妙的入场动画
+            protectedContentDiv.style.animation = 'fadeInUp 0.45s ease-out';
+        }
+
+        // 错误反馈 + 抖动静效
+        function showErrorOnNormal(msg) {
+            if (errorMessageSpan) {
+                errorMessageSpan.innerText = msg;
+                errorMessageSpan.classList.remove('opacity-0');
+                errorMessageSpan.classList.add('opacity-100', 'show');
+            }
+            if (lockScreenDiv) lockScreenDiv.classList.add('shake');
+            setTimeout(() => {
+                if (lockScreenDiv) lockScreenDiv.classList.remove('shake');
+            }, 500);
+        }
+
+        function shakeElement(el) {
+            if (!el) return;
+            el.classList.add('shake');
+            setTimeout(() => el.classList.remove('shake'), 500);
+        }
+
+        // 正常密码验证
+        function handleNormalUnlock() {
+            if (isIPLocked()) {
+                showLockedUI();
+                return;
+            }
+            const entered = passwordInput.value.trim();
+            if (entered === '') {
+                showErrorOnNormal('请输入密码');
+                shakeElement(lockScreenDiv);
+                return;
+            }
+
+            if (entered === CORRECT_PASSWORD) {
+                setFailedAttempts(0);
+                if (errorMessageSpan) {
+                    errorMessageSpan.classList.remove('show', 'opacity-100');
+                    errorMessageSpan.classList.add('opacity-0');
+                }
+                if (unlockBtn) {
+                    unlockBtn.innerText = '✓ 验证通过';
+                    unlockBtn.disabled = true;
+                    unlockBtn.style.opacity = '0.7';
+                }
+                if (passwordInput) passwordInput.disabled = true;
+                if (lockScreenDiv) lockScreenDiv.classList.add('unlocked');
+                setTimeout(() => {
+                    showProtectedContent();
+                }, 420);
+            } else {
+                let attempts = getFailedAttempts() + 1;
+                setFailedAttempts(attempts);
+                if (passwordInput) passwordInput.value = '';
+                shakeElement(lockScreenDiv);
+                if (attempts >= LOCKOUT_THRESHOLD) {
+                    setIPLocked(true);
+                    showLockedUI();
+                    if (unlockErrorMessageSpan) unlockErrorMessageSpan.innerText = '';
+                } else {
+                    const remaining = LOCKOUT_THRESHOLD - attempts;
+                    showErrorOnNormal(`密码错误，还剩 ${remaining} 次尝试机会`);
+                }
+            }
+        }
+
+        // IP 解锁处理
+        function handleIPUnlock() {
+            const code = unlockCodeInput.value.trim();
+            if (code === '') {
+                if (unlockErrorMessageSpan) {
+                    unlockErrorMessageSpan.innerText = '请输入解锁密码';
+                    unlockErrorMessageSpan.classList.add('text-red-300');
+                }
+                shakeElement(lockScreenDiv);
+                return;
+            }
+            if (code === UNLOCK_IP_CODE) {
+                resetLockoutState();
+                if (unlockErrorMessageSpan) unlockErrorMessageSpan.innerText = '';
+                showNormalUI();
+                // 重置锁屏界面并清除会话
+                if (lockScreenDiv) lockScreenDiv.classList.remove('hidden');
+                if (protectedContentDiv) protectedContentDiv.classList.add('hidden');
+                sessionStorage.removeItem(SESSION_KEY);
+                if (passwordInput) passwordInput.focus();
+            } else {
+                if (unlockErrorMessageSpan) {
+                    unlockErrorMessageSpan.innerText = '解锁密码错误，IP仍被锁定';
+                    unlockErrorMessageSpan.classList.add('text-red-300');
+                }
+                shakeElement(lockScreenDiv);
+                if (unlockCodeInput) unlockCodeInput.value = '';
+                unlockCodeInput?.focus();
+            }
+        }
+
+        // 密码可见切换
+        function togglePasswordVisibility() {
+            if (!passwordInput) return;
+            isPasswordVisible = !isPasswordVisible;
+            if (isPasswordVisible) {
+                passwordInput.type = 'text';
+                if (eyeIconSvg) eyeIconSvg.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
+                    <path d="m14.12 14.12a3 3 0 1 1-4.24-4.24"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                `;
+            } else {
+                passwordInput.type = 'password';
+                if (eyeIconSvg) eyeIconSvg.innerHTML = `
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                `;
+            }
+            passwordInput.focus();
+        }
+
+        // 检查初始化状态 (session & 锁定)
+        function checkInitialState() {
+            if (isIPLocked()) {
+                showLockedUI();
+                lockScreenDiv.classList.remove('hidden');
+                protectedContentDiv.classList.add('hidden');
+                return;
+            }
+            const sessionUnlocked = sessionStorage.getItem(SESSION_KEY);
+            if (sessionUnlocked === 'true') {
+                showProtectedContent();
+            } else {
+                lockScreenDiv.classList.remove('hidden');
+                protectedContentDiv.classList.add('hidden');
+                decideLockUI();
+            }
+        }
+
+        // 绑定事件
+        if (unlockBtn) unlockBtn.addEventListener('click', handleNormalUnlock);
+        if (passwordInput) {
+            passwordInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleNormalUnlock();
+                }
+            });
+        }
+        if (togglePasswordBtn) togglePasswordBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            togglePasswordVisibility();
+        });
+        if (unlockIpBtn) unlockIpBtn.addEventListener('click', handleIPUnlock);
+        if (unlockCodeInput) {
+            unlockCodeInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleIPUnlock();
+                }
+            });
+        }
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                sessionStorage.removeItem(SESSION_KEY);
+                showLockScreen();
+            });
+        }
+        // 阻止自动填充导致样式错位
+        if (passwordInput) passwordInput.setAttribute('autocomplete', 'new-password');
+        if (unlockCodeInput) unlockCodeInput.setAttribute('autocomplete', 'new-password');
+
+        // 初始化
+        checkInitialState();
+
+        // 附加脉冲光环动态样式（之前缺失的部分补全）
+        const styleRing = document.createElement('style');
+        styleRing.textContent = `
+            .lock-pulse-ring {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                border: 2px solid rgba(233, 68, 96, 0.5);
+                animation: pulseRing 2.2s ease-out infinite;
+                pointer-events: none;
+                z-index: 0;
+            }
+            .lock-pulse-ring:nth-child(2) { animation-delay: 0.7s; }
+            .lock-pulse-ring:nth-child(3) { animation-delay: 1.4s; }
+            @keyframes pulseRing {
+                0% { width: 70px; height: 70px; opacity: 0.7; border-width: 2px; }
+                100% { width: 140px; height: 140px; opacity: 0; border-width: 0.8px; }
+            }
+            .ui-panel.hidden { display: none; }
+            #protectedContent.hidden { display: none; }
+            .input-group { position: relative; }
+            .error-message { transition: opacity 0.2s ease; }
+        `;
+        document.head.appendChild(styleRing);
+        console.log('🔐 安全密码锁已集成 | 尝试次数阈值:3 | 解锁码: woshi2b');
+    })();
+</script>
+
+<!-- 原有主题切换脚本 (独立增强) -->
+<script>
+    (function() {
+        function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
+        function applyTheme(theme) {
+            const root = document.documentElement;
+            root.classList.remove('light', 'dark');
+            root.classList.add(theme);
+            root.style.colorScheme = theme;
+            localStorage.setItem('theme', theme);
+            const btns = document.querySelectorAll('button[role="switch"]');
+            btns.forEach(btn => {
+                const isDark = (theme === 'dark');
+                btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
+                btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+                const span = btn.querySelector('span');
+                if (span) {
+                    let svg = span.querySelector('svg');
+                    if (!svg) {
+                        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.setAttribute('width', '16');
+                        svg.setAttribute('viewBox', '0 0 24 24');
+                        span.innerHTML = '';
+                        span.appendChild(svg);
+                    }
+                    if (isDark) {
+                        svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
+                    } else {
+                        svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
+                    }
+                }
+            });
+        }
+        function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
+        function bindEvents() {
+            document.querySelectorAll('button[role="switch"]').forEach(btn => {
+                btn.removeEventListener('click', toggleTheme);
+                btn.addEventListener('click', toggleTheme);
+            });
+        }
+        applyTheme(getStoredTheme());
+        bindEvents();
+        new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
+    })();
+</script>
+</body>
+</html>
