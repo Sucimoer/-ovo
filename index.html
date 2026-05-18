@@ -14,7 +14,6 @@
 <title>澪鸢 ovo</title>
 <link rel="icon" href="images/favicon.ico">
 
-
 <style>
 
 body {
@@ -194,6 +193,118 @@ html.dark ::-webkit-scrollbar-thumb {
 html.dark .bg-linear-to-b {
   background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
 }
+
+/* ========= 新增手机/PC 预览模式样式 ========= */
+/* 预览模式核心: 限制主要内容区域宽度，营造“手机卡片”感 */
+html.phone-preview {
+    overflow-x: hidden;
+}
+html.phone-preview body {
+    overflow-x: hidden;
+}
+/* 固定导航栏——手机预览模式下居中且宽度受限，模拟手机顶部栏 */
+html.phone-preview nav {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: min(94vw, 460px) !important;
+    border-radius: 0 0 24px 24px !important;
+    top: 0 !important;
+    right: auto !important;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+}
+/* 暗色模式下预览导航栏微调 */
+html.dark.phone-preview nav {
+    background-color: rgba(12, 12, 20, 0.96) !important;
+    backdrop-filter: blur(16px);
+    border-left: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255,255,255,0.2);
+}
+html.light.phone-preview nav {
+    background-color: rgba(255, 248, 245, 0.96) !important;
+    border-left: 1px solid rgba(0,0,0,0.1);
+    border-right: 1px solid rgba(0,0,0,0.1);
+}
+
+/* 手机预览模式: 主内容容器宽度同步，居中，圆润卡片效果 */
+html.phone-preview main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+html.phone-preview main .container {
+    max-width: min(94vw, 460px) !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+
+html.phone-preview .max-w-8xl {
+    max-width: min(94vw, 460px) !important;
+}
+
+/* 手机模式下所有全宽元素加上边框柔和效果 */
+html.phone-preview .mx-auto {
+    width: 100%;
+}
+html.phone-preview .w-full.max-w-2xl,
+html.phone-preview .max-w-2xl {
+    max-width: 100% !important;
+}
+/* 搜索框输入自适应 */
+html.phone-preview input[type="search"] {
+    width: 100%;
+    font-size: 0.95rem;
+}
+/* 预览模式底部留空适当 */
+html.phone-preview footer {
+    max-width: min(94vw, 460px);
+    margin: 0 auto;
+}
+/* 手机模式额外添加优雅阴影和圆角，模拟手机屏幕 */
+html.phone-preview main .container {
+    margin-top: 0.5rem;
+    margin-bottom: 2rem;
+}
+html.phone-preview .flex.h-\[calc\(100vh-128px\)\] {
+    min-height: auto;
+    padding-top: 0.5rem;
+    padding-bottom: 2rem;
+}
+/* 调整按钮组换行美观 */
+html.phone-preview .mt-8.flex.gap-3 {
+    flex-wrap: wrap;
+    justify-content: center;
+}
+html.phone-preview .gap-3 a, 
+html.phone-preview .gap-3 button {
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+}
+/* 手机模式标题稍微缩小避免撑开 */
+html.phone-preview .tracking-tight.inline.font-semibold.text-\[2\.3rem\] {
+    font-size: 1.9rem !important;
+}
+html.phone-preview .text-base.lg\:text-lg {
+    font-size: 0.9rem !important;
+}
+/* 解决fixed背景伪类在手机模式下依然正常 */
+html.phone-preview body::before {
+    z-index: 0;
+}
+/* 避免横向滚动条 */
+html.phone-preview .relative {
+    overflow-x: hidden;
+}
+/* 优雅过渡 */
+html.phone-preview nav, 
+html.phone-preview main .container,
+html.phone-preview .max-w-8xl {
+    transition: all 0.3s ease;
+}
 </style>
 
 <script src="./澪鸢_files/ac27970e37dc9af0.js" async=""></script>
@@ -284,9 +395,17 @@ html.dark .bg-linear-to-b {
           </div>
         </div>
       </div>
+      <!-- 按钮组：原留言/云图库 + 新增 手机/PC 切换按钮 -->
       <div class="mt-8 flex gap-3">
         <a href="留言2.html" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full">留言</a>
         <a rel="noopener noreferrer" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full" href="云图库.html">云图库</a>
+        <!-- 新增设备预览切换按钮 -->
+        <button id="devicePreviewBtn" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full cursor-pointer">
+          <span class="inline-flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-smartphone"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+            <span id="previewBtnText">手机预览</span>
+          </span>
+        </button>
       </div>
       <div class="mt-2 flex gap-3"></div>
     </section>
@@ -294,6 +413,7 @@ html.dark .bg-linear-to-b {
   <footer class="flex w-full items-center justify-center py-3"></footer>
 </div>
 
+<!-- 主题切换脚本 (原版增强) 和 新增手机/PC预览切换功能 -->
 <script>
 (function() {
   function getStoredTheme() {
@@ -346,7 +466,7 @@ html.dark .bg-linear-to-b {
     });
   }
 
-  function init() {
+  function initTheme() {
     const initialTheme = getStoredTheme();
     applyTheme(initialTheme);
     bindEvents();
@@ -354,8 +474,37 @@ html.dark .bg-linear-to-b {
     observer.observe(document.body, { childList: true, subtree: true });
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initTheme);
+  else initTheme();
+})();
+
+// ========= 新增：手机/PC 浏览模式切换 =========
+(function() {
+  let previewActive = false;  // false: PC模式（默认）; true: 手机模式
+  const btn = document.getElementById('devicePreviewBtn');
+  const btnTextSpan = document.getElementById('previewBtnText');
+  
+  function setPreviewMode(enableMobile) {
+    const root = document.documentElement;
+    if (enableMobile) {
+      root.classList.add('phone-preview');
+      if (btnTextSpan) btnTextSpan.innerText = 'PC浏览';
+      previewActive = true;
+    } else {
+      root.classList.remove('phone-preview');
+      if (btnTextSpan) btnTextSpan.innerText = '手机预览';
+      previewActive = false;
+    }
+  }
+  
+  function togglePreview() {
+    setPreviewMode(!previewActive);
+  }
+  
+  if (btn) {
+    btn.addEventListener('click', togglePreview);
+  }
+  // 默认PC模式，无需额外动作
 })();
 </script>
 <script src="./澪鸢_files/e378ad44953f052c.js" id="_R_" async=""></script>
