@@ -7,14 +7,23 @@
     <link rel="icon" href="images/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
-	background-image: url(../images/6.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center center;
-	background-attachment: fixed;
-	position: relative;
-	transition: background-color 0.2s ease, color 0.2s ease;
+            background-image: url(../images/%E6%89%8B%E6%9C%BA%E4%B8%BB%E8%83%8C%E6%99%AF.jpeg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        @media (max-width: 768px) {
+            body {
+                background-attachment: scroll;
+                background-size: cover;
+                background-position: center center;
+            }
         }
         body::before {
             content: "";
@@ -38,13 +47,8 @@
             position: relative;
             z-index: 2;
         }
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
         .result-card {
             transition: transform 0.15s ease, box-shadow 0.2s ease;
             background-color: rgba(255, 255, 255, 0.92) !important;
@@ -54,9 +58,7 @@
         html.dark .result-card {
             background-color: rgba(20, 20, 36, 0.88) !important;
         }
-        .result-card:active {
-            transform: scale(0.99);
-        }
+        .result-card:active { transform: scale(0.99); }
         .gradient-text {
             background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
             background-clip: text;
@@ -66,30 +68,14 @@
         html.dark .gradient-text {
             background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
         }
-        /* 移动端自适应 */
         @media (max-width: 768px) {
-            .mobile-auto-height {
-                height: auto !important;
-                overflow-y: visible !important;
-            }
-            .result-link {
-                display: block;
-                padding: 0.75rem 0;
-                font-weight: 500;
-            }
+            .mobile-auto-height { height: auto !important; overflow-y: visible !important; }
+            .result-link { display: block; padding: 0.75rem 0; font-weight: 500; }
         }
-        /* 导航按钮触摸区域 */
-        .nav-touch {
-            min-height: 44px;
-            min-width: 44px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .nav-touch { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
-
 <div class="relative flex min-h-screen flex-col">
     <nav class="bg-background/90 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-lg transition-colors duration-300">
         <div class="mx-auto flex min-h-[56px] max-w-[1280px] items-center justify-between gap-2 px-4 sm:px-6">
@@ -115,67 +101,39 @@
             </div>
         </div>
     </nav>
-
     <main class="container mx-auto w-full px-4 py-8 pt-20 sm:px-6">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-[2fr_auto_1.2fr] md:gap-8">
-            <!-- 左侧卡片列表 -->
             <div class="w-full min-w-0">
                 <div class="relative md:h-[680px] md:overflow-y-auto md:pr-2 mobile-auto-height">
                     <div class="flex flex-col gap-3 pb-2">
-                        <!-- 卡片列表（保留原所有链接） -->
-                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
-                            <a href="https://docs.qq.com/aio/DYXBaZW1KU0pLeHR2?p=VGPdke7LauXwKDFwMQwYiR" target="_blank" class="text-blue-600 font-medium block py-1">寄子游戏</a>
-                        </div>
-                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
-                            <a href="https://www.flysheep6.com/" target="_blank" class="text-blue-600 font-medium block py-1">flysheep</a>
-                        </div>
-                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
-                            <a href="https://www.wygamer.com/" target="_blank" class="text-blue-600 font-medium block py-1">无忧游戏</a>
-                        </div>
-                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
-                            <a href="https://www.kdocs.cn/l/clDwiRl0nmaC" target="_blank" class="text-blue-600 font-medium block py-1">单机游戏合集</a>
-                        </div>
-                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
-                            <a href="https://pan.quark.cn/s/25a2fb3d4433" target="_blank" class="text-blue-600 font-medium block py-1">单机游戏合集2</a>
-                        </div>
-                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
-                            <a href="https://steamui.com/" target="_blank" class="text-blue-600 font-medium block py-1">steam游戏库</a>
-                        </div>
-                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
-                            <a href="https://www.nexusmods.com/games/phasmophobia" target="_blank" class="text-blue-600 font-medium block py-1">Nexusmods</a>
-                        </div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4"><a href="https://docs.qq.com/aio/DYXBaZW1KU0pLeHR2?p=VGPdke7LauXwKDFwMQwYiR" target="_blank" class="text-blue-600 font-medium block py-1">寄子游戏</a></div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4"><a href="https://www.flysheep6.com/" target="_blank" class="text-blue-600 font-medium block py-1">flysheep</a></div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4"><a href="https://www.wygamer.com/" target="_blank" class="text-blue-600 font-medium block py-1">无忧游戏</a></div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4"><a href="https://www.kdocs.cn/l/clDwiRl0nmaC" target="_blank" class="text-blue-600 font-medium block py-1">单机游戏合集</a></div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4"><a href="https://pan.quark.cn/s/25a2fb3d4433" target="_blank" class="text-blue-600 font-medium block py-1">单机游戏合集2</a></div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4"><a href="https://steamui.com/" target="_blank" class="text-blue-600 font-medium block py-1">steam游戏库</a></div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4"><a href="https://www.nexusmods.com/games/phasmophobia" target="_blank" class="text-blue-600 font-medium block py-1">Nexusmods</a></div>
                     </div>
                 </div>
             </div>
-
-            <!-- 分割线（桌面端） -->
             <div aria-orientation="vertical" role="separator" class="hidden md:block bg-gray-300 dark:bg-gray-600 shrink-0 w-px h-full"></div>
-
-            <!-- 右侧品牌区（桌面端可见） -->
             <div class="hidden md:block md:pl-4">
                 <div class="sticky top-28">
-                    <div class="gradient-text text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
-                        澪鸢<br>ovo
-                    </div>
-                    <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm border-l-3 border-pink-400 pl-3">
-                        游戏资源导航<br>
-                        精选单机 · 在线小游戏
-                    </p>
+                    <div class="gradient-text text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">澪鸢<br>ovo</div>
+                    <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm border-l-3 border-pink-400 pl-3">游戏资源导航<br>精选单机 · 在线小游戏</p>
                 </div>
             </div>
         </div>
     </main>
 </div>
-
-<!-- 背景音乐模块（静音自动播放，点击任意位置开启） -->
 <audio id="bgMusic" autoplay muted loop>
     <source src="https://m7.music.126.net/20260519185253/d12003807e2de53e068cd6674f92ffa1/ymusic/0e5b/530c/0f5c/91279b192adf4c8e6328860a2d74993f.mp3?vuutv=TeGG1L9nEpYrIqdzwPQ/R6Q2E+B1sEiKxb6QDglH8s6DR1/6eOlOeVYG2JlThFpnU5Fz0yreWKCEkcUMWFc+egM8EPEuW5ueQzNGcakfa0E=.mp3" type="audio/mpeg">
 </audio>
-
 <script>
-    // 主题切换（与之前保持一致）
     (function() {
-        function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
+        function getCurrentTheme() {
+            return localStorage.getItem('theme') || 'light';
+        }
         function applyTheme(theme) {
             const root = document.documentElement;
             root.classList.remove('light', 'dark');
@@ -185,7 +143,6 @@
             const btns = document.querySelectorAll('button[role="switch"]');
             btns.forEach(btn => {
                 const isDark = (theme === 'dark');
-                btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
                 btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
                 const span = btn.querySelector('span');
                 if (span) {
@@ -205,38 +162,33 @@
                 }
             });
         }
-        function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
+        function toggleTheme() {
+            const current = getCurrentTheme();
+            applyTheme(current === 'light' ? 'dark' : 'light');
+        }
         function bindEvents() {
             document.querySelectorAll('button[role="switch"]').forEach(btn => {
                 btn.removeEventListener('click', toggleTheme);
                 btn.addEventListener('click', toggleTheme);
             });
         }
-        applyTheme(getStoredTheme());
+        applyTheme(getCurrentTheme());
         bindEvents();
         new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
     })();
-
-    // 背景音乐逻辑（静音自动播放，用户首次点击页面任意位置开启声音）
     const audio = document.getElementById('bgMusic');
     if (audio) {
-        // 确保初始静音
         audio.muted = true;
-        // 尝试自动播放（静音版本一般会成功）
-        audio.play().catch(e => console.log('等待用户交互开启音乐'));
-
+        audio.play().catch(e => console.log('等待用户交互'));
         function enableAudio() {
             if (audio && audio.muted) {
                 audio.muted = false;
                 audio.volume = 0.7;
-                audio.play().then(() => {
-                    console.log('背景音乐已开启');
-                    document.removeEventListener('click', enableAudio);
-                    document.removeEventListener('touchstart', enableAudio);
-                }).catch(e => console.warn('播放失败', e));
+                audio.play().catch(e => console.warn('播放失败', e));
+                document.removeEventListener('click', enableAudio);
+                document.removeEventListener('touchstart', enableAudio);
             }
         }
-        // 监听点击和触摸事件，用户首次交互时开启声音
         document.addEventListener('click', enableAudio);
         document.addEventListener('touchstart', enableAudio);
     }

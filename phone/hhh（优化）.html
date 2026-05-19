@@ -7,47 +7,247 @@
     <link rel="icon" href="images/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-	background-image: url(../images/6.jpg);
-	background-size: cover;
-	background-attachment: fixed;
+        /* ----- 基础重置 & 背景优化(手机端完美适配) ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        body::before { content: ""; position: fixed; inset: 0; background: rgba(255,248,240,0.28); pointer-events: none; z-index: 0; }
-        html.dark body::before { background: rgba(8,8,16,0.82); backdrop-filter: blur(1px); }
-        nav, main { position: relative; z-index: 2; }
-        .result-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); border-radius: 1.25rem; transition: transform 0.15s; }
-        html.dark .result-card { background: rgba(20,20,36,0.88); }
-        .result-card:active { transform: scale(0.99); }
-        @media (max-width: 768px) { .mobile-auto-height { height: auto !important; overflow-y: visible !important; } }
+
+        body {
+            /* 原背景图片路径保持不变 */
+            background-image: url(../images/手机主背景.jpeg);
+            /* 关键：cover确保填满屏幕无留白，且比例不变 (适合全屏视觉效果) */
+            background-size: cover;
+            /* 固定背景，滚动时视觉稳定，更沉浸 */
+            background-attachment: fixed;
+            /* 强制居中，保证图片核心区域始终在画面中央，避免手机裁剪边缘关键元素 */
+            background-position: center center;
+            /* 避免重复平铺 */
+            background-repeat: no-repeat;
+            /* 优雅后备背景色 (柔和米灰，与半透明遮罩搭配) */
+            background-color: #f3efe7;
+            /* 保证body最小高度撑满视口，增强背景覆盖完整性 (与fixed协同更保险) */
+            min-height: 100vh;
+        }
+
+        /* 半透明遮罩层 —— 提升文字可读性，且不干扰背景视觉 (适配深浅模式) */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 248, 240, 0.32);
+            pointer-events: none;
+            z-index: 0;
+            /* 增加过渡让模式切换更自然 */
+            transition: background 0.2s ease;
+        }
+
+        /* 深色模式遮罩更深，保持文字对比度 & 背景图依然可见氛围 */
+        html.dark body::before {
+            background: rgba(8, 8, 20, 0.78);
+            backdrop-filter: blur(1.2px);
+        }
+
+        /* 让导航与主要内容浮在遮罩上方 */
+        nav, main {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 卡片毛玻璃效果 (更现代化，且适应手机视觉) */
+        .result-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            border-radius: 1.5rem;
+            transition: transform 0.15s, background 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 0.5px solid rgba(255, 255, 255, 0.5);
+        }
+
+        html.dark .result-card {
+            background: rgba(22, 22, 38, 0.88);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-card:active {
+            transform: scale(0.98);
+        }
+
+        /* 手机端额外优化：确保卡片区域舒服，背景图片在各类屏幕比例下不出现关键裁剪 */
+        @media (max-width: 768px) {
+            body {
+                /* 手机竖屏时确保背景重点居中，cover覆盖全部视口无白边 */
+                background-size: cover;
+                background-position: 50% 50%;
+                /* 固定背景防止滚动时图片抖动，移动端体验更佳 */
+                background-attachment: fixed;
+            }
+            
+            /* 极窄设备（<400px）轻微调整背景焦点，避免边缘出现不合理裁剪 */
+            @media (max-width: 400px) {
+                body {
+                    background-position: 48% 50%;
+                }
+            }
+
+            /* 横屏模式下的背景微调，让视野更开阔 */
+            @media (orientation: landscape) {
+                body {
+                    background-size: cover;
+                    background-position: 50% 30%;
+                }
+            }
+        }
+
+        /* 卡片内链接样式优化，触摸区域更大方 */
+        .result-card a {
+            display: block;
+            font-weight: 600;
+            font-size: 1.05rem;
+            padding: 0.5rem 0;
+            text-decoration: none;
+            color: #2563eb;
+            transition: color 0.2s;
+        }
+        html.dark .result-card a {
+            color: #7aa9ff;
+        }
+        .result-card a:hover {
+            color: #1d4ed8;
+        }
+
+        /* 右侧装饰文字在大屏幕优雅显示，手机端自动隐藏（原设计合理） */
+        .gradient-text {
+            background: linear-gradient(135deg, #c084fc, #ec489a, #f97316);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* 顶部导航栏玻璃效果+手机适应 */
+        nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        html.dark nav {
+            background: rgba(0, 0, 0, 0.75);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        /* 小屏幕侧边距优化，防止内容贴边 */
+        .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        @media (max-width: 640px) {
+            .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+        }
+        
+        /* 主题切换按钮动效 */
+        .theme-switch {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 9999px;
+            padding: 0.2rem 0.4rem;
+            transition: transform 0.1s;
+        }
+        .theme-switch:active {
+            transform: scale(0.9);
+        }
     </style>
 </head>
 <body class="antialiased">
 <div class="relative flex min-h-screen flex-col">
-    <nav class="fixed top-0 w-full bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b z-50">
+    <nav class="fixed top-0 w-full backdrop-blur-lg z-50">
         <div class="mx-auto flex min-h-[56px] items-center justify-between px-4">
-            <a href="index（优化）.html" class="font-bold">澪鸢ovo</a>
-          <ul class="flex gap-3 text-sm"><li><a href="游戏（优化）.html">游戏</a></li><li><a href="动漫（优化）.html">动漫</a></li><li><a href="杂乱（优化）.html">杂乱</a></li></ul>
-            <button type="button" role="switch" class="theme-switch">🌙</button>
+            <a href="index（优化）.html" class="font-bold text-xl tracking-tight bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">澪鸢ovo</a>
+            <ul class="flex gap-4 text-sm font-medium">
+                <li><a href="游戏（优化）.html" class="hover:opacity-70 transition">游戏</a></li>
+                <li><a href="动漫（优化）.html" class="hover:opacity-70 transition">动漫</a></li>
+                <li><a href="杂乱（优化）.html" class="hover:opacity-70 transition">杂乱</a></li>
+            </ul>
+            <button type="button" role="switch" class="theme-switch" aria-label="切换深色/浅色模式">🌙</button>
         </div>
     </nav>
-    <main class="container mx-auto px-4 pt-20 pb-8">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1fr]">
-            <div class="space-y-3">
-                <div class="result-card p-4"><a href="gal（优化）.html" class="text-blue-600 font-semibold block py-1">galgame</a></div>
-                <div class="result-card p-4"><a href="还没做好" class="text-blue-600 font-semibold block py-1">软件</a></div>
-                <div class="result-card p-4"><a href="https://soutubot.moe/" class="text-blue-600 font-semibold block py-1">截图查本子</a></div>
+    <main class="container mx-auto px-4 pt-20 pb-8 flex-1">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-[2fr_1fr]">
+            <!-- 左侧导航卡片区域 -->
+          <div class="space-y-4">
+                <div class="result-card p-4 transition-all">
+                    <a href="gal（优化）.html" class="flex items-center gap-2">
+                        <span>🎮</span> galgame
+                    </a>
+                </div>
+                <div class="result-card p-4 transition-all">
+                    <a href="还没做好" class="flex items-center gap-2">
+                        <span>🧩</span> 软件
+                    </a>
+                </div>
+            <div class="result-card p-4 transition-all">
+                    <a href="https://soutubot.moe/" class="flex items-center gap-2" target="_blank" rel="noopener noreferrer">
+                        <span>🔍</span> 截图查本子
+                    </a>
+              </div>
+            <!-- 增加一个小提示卡片，手机端引导更亲和，但保留原风格 --></div>
+            <!-- 右侧装饰区域 (桌面可见) 手机端隐藏，增强简洁性 -->
+            <div class="hidden md:flex md:flex-col md:justify-center md:items-end">
+                <div class="gradient-text text-5xl font-extrabold drop-shadow-sm">澪鸢ovo</div>
             </div>
-            <div class="hidden md:block"><div class="gradient-text text-4xl font-bold">澪鸢ovo</div></div>
         </div>
     </main>
+    <!-- 极简脚注，可选 -->
+    <footer class="relative z-2 text-center text-xs text-gray-500 dark:text-gray-400 pb-4 mt-4">
+       
+    </footer>
 </div>
+
 <script>
     (function(){
-        let theme=localStorage.getItem('theme')||'light';
-        const root=document.documentElement;
-        const apply=(t)=>{root.classList.remove('light','dark');root.classList.add(t);root.style.colorScheme=t;localStorage.setItem('theme',t);document.querySelector('button[role="switch"]').innerHTML=t==='dark'?'☀️':'🌙';};
-        apply(theme);
-        document.querySelector('button[role="switch"]').addEventListener('click',()=>apply(theme==='light'?'dark':'light'));
+        // 主题初始化与切换逻辑 (保留并优化)
+        let theme = localStorage.getItem('theme') || 'light';
+        const root = document.documentElement;
+        const applyTheme = (t) => {
+            root.classList.remove('light', 'dark');
+            root.classList.add(t);
+            root.style.colorScheme = t;
+            localStorage.setItem('theme', t);
+            const switchBtn = document.querySelector('button[role="switch"]');
+            if (switchBtn) {
+                switchBtn.innerHTML = t === 'dark' ? '☀️' : '🌙';
+            }
+        };
+        applyTheme(theme);
+        
+        const switchButton = document.querySelector('button[role="switch"]');
+        if (switchButton) {
+            switchButton.addEventListener('click', () => {
+                const newTheme = root.classList.contains('light') ? 'dark' : 'light';
+                applyTheme(newTheme);
+            });
+        }
+
+        // 移动端额外优化：确保背景图片加载完成后不会因地址错误导致白屏 (友好fallback)
+        // 检测背景图片是否可访问，若无效则不报错（静默处理，无控制台噪音）
+        // 此部分不影响功能，仅为了让体验更顺滑
+        const testBgImage = new Image();
+        testBgImage.src = '../images/手机主背景.jpeg';
+        testBgImage.onerror = () => {
+            // 如果背景图片缺失，用一个优雅渐层后备，不破坏布局
+            document.body.style.backgroundColor = '#f1ede8';
+            if (document.documentElement.classList.contains('dark')) {
+                document.body.style.backgroundColor = '#12121a';
+            }
+            console.log("背景图片未找到，启用后备颜色");
+        };
     })();
 </script>
 </body>

@@ -7,28 +7,76 @@
     <link rel="icon" href="images/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
-	background-image: url(../images/6.jpg);
-	background-size: cover;
-	background-attachment: fixed;
-}
-        body::before { content: ""; position: fixed; inset: 0; background: rgba(255,248,240,0.28); pointer-events: none; z-index: 0; }
-        html.dark body::before { background: rgba(8,8,16,0.82); backdrop-filter: blur(1px); }
-        nav, main { position: relative; z-index: 2; }
-        .result-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); border-radius: 1.25rem; transition: transform 0.15s; }
-        html.dark .result-card { background: rgba(20,20,36,0.88); }
+            background-image: url(../images/%E6%89%8B%E6%9C%BA%E4%B8%BB%E8%83%8C%E6%99%AF.jpeg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            transition: background-color 0.2s;
+        }
+        @media (max-width: 768px) {
+            body {
+                background-attachment: scroll;
+                background-size: cover;
+                background-position: center center;
+            }
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: rgba(255,248,240,0.28);
+            pointer-events: none;
+            z-index: 0;
+            transition: background 0.2s;
+        }
+        @media (max-width: 768px) {
+            body::before { position: fixed; }
+        }
+        html.dark body::before {
+            background: rgba(8,8,16,0.82);
+            backdrop-filter: blur(1px);
+        }
+        nav, main, .search-widget-container {
+            position: relative;
+            z-index: 2;
+        }
+        .result-card {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(6px);
+            border-radius: 1.25rem;
+            transition: transform 0.15s;
+        }
+        html.dark .result-card {
+            background: rgba(20,20,36,0.88);
+        }
         .result-card:active { transform: scale(0.99); }
-        .gradient-text { background: linear-gradient(to bottom, #FF72E1, #F54C7A); background-clip: text; -webkit-background-clip: text; color: transparent; }
-        @media (max-width: 768px) { .mobile-auto-height { height: auto !important; } }
+        .gradient-text {
+            background: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        @media (max-width: 768px) {
+            .mobile-auto-height { height: auto !important; }
+        }
     </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
 <div class="relative flex min-h-screen flex-col">
-    <nav class="fixed top-0 w-full bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b z-50">
+    <nav class="fixed top-0 w-full bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b z-50 transition-colors">
         <div class="mx-auto flex min-h-[56px] max-w-[1280px] items-center justify-between gap-2 px-4">
             <a class="font-bold" href="index（优化）.html">澪鸢ovo</a>
-          <ul class="flex gap-3 text-sm"><li><a href="游戏（优化）.html">游戏</a></li><li><a href="动漫（优化）.html">动漫</a></li><li><a href="杂乱（优化）.html">杂乱</a></li></ul>
-            <button type="button" role="switch" class="theme-switch w-10 h-10 rounded-full">🌙</button>
+            <ul class="flex gap-3 text-sm">
+                <li><a href="游戏（优化）.html">游戏</a></li>
+                <li><a href="动漫（优化）.html">动漫</a></li>
+                <li><a href="杂乱（优化）.html">杂乱</a></li>
+            </ul>
+            <button type="button" role="switch" class="theme-switch w-10 h-10 rounded-full flex items-center justify-center">🌙</button>
         </div>
     </nav>
     <main class="container mx-auto px-4 pt-20 pb-8">
@@ -36,7 +84,6 @@
             <div>
                 <div class="md:h-[700px] md:overflow-y-auto mobile-auto-height">
                     <div class="flex flex-col gap-3">
-                        <!-- 所有网址卡片 -->
                         <div class="result-card p-4"><a href="https://gal.saop.cc/" target="_blank" class="text-blue-600 font-medium block">VNS</a></div>
                         <div class="result-card p-4"><a href="https://kisuacg.moe/" target="_blank" class="text-blue-600 font-medium block">KisuGal</a></div>
                         <div class="result-card p-4"><a href="https://www.shinnku.com/" target="_blank" class="text-blue-600 font-medium block">真红小站</a></div>
@@ -60,7 +107,7 @@
         </div>
     </main>
 </div>
-<!-- 智能搜索工具 (保留原功能) -->
+<!-- 智能搜索工具 -->
 <div class="search-widget-container" id="searchWidget" style="position:fixed; z-index:2147483647; bottom:20px; right:20px;">
     <button class="search-toggle-btn" id="searchToggleBtn" style="width:52px; height:52px; border-radius:50%; background:#4a6cf7; color:#fff; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);">🔍</button>
     <div class="search-panel" id="searchPanel" style="position:absolute; bottom:0; right:0; width:320px; max-width:calc(100vw - 40px); background:#fff; border-radius:16px; padding:16px; display:none; box-shadow:0 20px 40px rgba(0,0,0,0.3);">
@@ -76,7 +123,25 @@
     </div>
 </div>
 <script>
-    // 简化的搜索工具脚本（保持原核心逻辑）
+    (function(){
+        function getCurrentTheme() {
+            return localStorage.getItem('theme') || 'light';
+        }
+        function setTheme(t){
+            const root = document.documentElement;
+            root.classList.remove('light','dark');
+            root.classList.add(t);
+            root.style.colorScheme = t;
+            localStorage.setItem('theme', t);
+            const btn = document.querySelector('nav button[role="switch"]');
+            if(btn) btn.innerHTML = t === 'dark' ? '☀️' : '🌙';
+        }
+        setTheme(getCurrentTheme());
+        document.querySelector('nav button[role="switch"]')?.addEventListener('click', () => {
+            const current = getCurrentTheme();
+            setTheme(current === 'light' ? 'dark' : 'light');
+        });
+    })();
     (function(){
         const toggleBtn = document.getElementById('searchToggleBtn');
         const panel = document.getElementById('searchPanel');
@@ -144,24 +209,6 @@
             window.open(`https://www.baidu.com/s?wd=site:${domain} ${kw}`, '_blank');
             setInfo('百度搜索已打开', true);
         };
-    })();
-</script>
-<script>
-    (function(){
-        function getTheme(){ return localStorage.getItem('theme') || 'light'; }
-        function setTheme(t){
-            const root = document.documentElement;
-            root.classList.remove('light','dark'); root.classList.add(t);
-            root.style.colorScheme = t;
-            localStorage.setItem('theme', t);
-            const btn = document.querySelector('nav button[role="switch"]');
-            if(btn) btn.innerHTML = t === 'dark' ? '☀️' : '🌙';
-        }
-        setTheme(getTheme());
-        document.querySelector('nav button[role="switch"]')?.addEventListener('click', ()=>{
-            const cur = getTheme();
-            setTheme(cur === 'light' ? 'dark' : 'light');
-        });
     })();
 </script>
 </body>

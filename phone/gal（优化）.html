@@ -7,14 +7,23 @@
     <link rel="icon" href="images/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
-	background-image: url(../images/6.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center center;
-	background-attachment: fixed;
-	position: relative;
-	transition: background-color 0.2s ease, color 0.2s ease;
+            background-image: url(../images/%E6%89%8B%E6%9C%BA%E4%B8%BB%E8%83%8C%E6%99%AF.jpeg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        @media (max-width: 768px) {
+            body {
+                background-attachment: scroll;
+                background-size: cover;
+                background-position: center center;
+            }
         }
         body::before {
             content: "";
@@ -53,7 +62,7 @@
         <div class="mx-auto flex min-h-[56px] max-w-[1280px] items-center justify-between gap-2 px-4 sm:px-6">
             <a class="flex items-center gap-1.5 py-2" href="index（优化）.html"><span class="text-base font-bold">澪鸢ovo</span></a>
             <ul class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-1">
-              <li><a class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium" href="游戏（优化）.html">游戏</a></li>
+                <li><a class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium" href="游戏（优化）.html">游戏</a></li>
                 <li><a class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium" href="动漫（优化）.html">动漫</a></li>
                 <li><a class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium" href="杂乱（优化）.html">杂乱</a></li>
             </ul>
@@ -85,20 +94,27 @@
 </div>
 <script>
 (function(){
-    function getStoredTheme(){return localStorage.getItem('theme')||'light';}
+    function getCurrentTheme() {
+        return localStorage.getItem('theme') || 'light';
+    }
     function applyTheme(theme){
-        const root=document.documentElement;
-        root.classList.remove('light','dark'); root.classList.add(theme);
-        root.style.colorScheme=theme; localStorage.setItem('theme',theme);
-        document.querySelectorAll('button[role="switch"]').forEach(btn=>{
-            const isDark=theme==='dark';
-            btn.setAttribute('aria-checked',isDark?'true':'false');
-            btn.innerHTML=isDark?'☀️':'🌙';
+        const root = document.documentElement;
+        root.classList.remove('light','dark');
+        root.classList.add(theme);
+        root.style.colorScheme = theme;
+        localStorage.setItem('theme', theme);
+        document.querySelectorAll('button[role="switch"]').forEach(btn => {
+            const isDark = theme === 'dark';
+            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+            btn.innerHTML = isDark ? '☀️' : '🌙';
         });
     }
-    function toggleTheme(){applyTheme(getStoredTheme()==='light'?'dark':'light');}
-    applyTheme(getStoredTheme());
-    document.querySelectorAll('button[role="switch"]').forEach(btn=>btn.addEventListener('click',toggleTheme));
+    function toggleTheme() {
+        const current = getCurrentTheme();
+        applyTheme(current === 'light' ? 'dark' : 'light');
+    }
+    applyTheme(getCurrentTheme());
+    document.querySelectorAll('button[role="switch"]').forEach(btn => btn.addEventListener('click', toggleTheme));
 })();
 </script>
 </body>
