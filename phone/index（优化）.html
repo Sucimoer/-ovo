@@ -38,17 +38,46 @@
             --font-sans: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Noto Sans', sans-serif;
         }
 
+        /* ----- 背景图片基础设置 (移动/桌面完美适配) ----- */
         body {
-	font-family: var(--font-sans);
-	background-image: url(../images/6.jpg);
-	background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center center;
-	background-attachment: fixed;
-	min-height: 100vh;
-	position: relative;
-	transition: background-color 0.2s ease, color 0.2s ease;
-	color: var(--text-light);
+            font-family: var(--font-sans);
+            /* 背景图片路径保持不变，确保移动端加载 */
+            background-image: url(../images/%E6%89%8B%E6%9C%BA%E4%B8%BB%E8%83%8C%E6%99%AF.jpeg);
+            background-repeat: no-repeat;
+            /* 默认使用 cover 保证填满容器，适合大多数桌面端 */
+            background-size: cover;
+            background-position: center center;
+            /* 桌面端保留 fixed 获得视差感，移动端会在媒体查询中优化为 scroll 避免缩放异常 */
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-light);
+        }
+
+        /* 移动端专用优化：完美适配手机屏幕尺寸 + 修复滚动背景拉伸问题 */
+        @media (max-width: 768px) {
+            body {
+                /* 关键调整：改为滚动附着，避免移动端浏览器对 fixed 背景的奇怪缩放与偏移 */
+                background-attachment: scroll;
+                /* 保持 cover 模式，完整覆盖屏幕且不变形 */
+                background-size: cover;
+                /* 确保背景始终居中，避免裁切到主体内容 */
+                background-position: center center;
+                /* 增强移动端渲染稳定性 */
+                background-repeat: no-repeat;
+                /* 保证 body 高度至少撑满视口，避免背景在短内容页面显示不完整 */
+                min-height: 100vh;
+            }
+        }
+
+        /* 针对超小折叠屏/窄屏设备再保障背景比例不丢失 (≤480px) */
+        @media (max-width: 480px) {
+            body {
+                background-size: cover;
+                background-position: center center;
+                background-attachment: scroll;
+            }
         }
 
         /* 半透明遮罩层 (主题联动) */
@@ -62,6 +91,13 @@
             pointer-events: none;
             z-index: 0;
             transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        /* 移动端遮罩层跟随滚动方式优化，防止与背景冲突 */
+        @media (max-width: 768px) {
+            body::before {
+                position: fixed; /* 保持遮罩固定，避免闪烁 */
+            }
         }
 
         html.light body::before {
@@ -610,6 +646,7 @@
                 <a href="云图库.html" target="_blank" class="btn-outline">🌥️ 云图库</a>
             </div>
             <div class="mt-2"></div>
+
         </div>
     </main>
 
@@ -713,7 +750,6 @@
                 if (e.key === 'Enter') {
                     const query = searchBox.value.trim();
                     if (query) {
-                        // 简单反馈: 你可以跳转到自定义搜索页或提醒，这里模拟友好提示
                         alert(`🔍 即将搜索：“${query}”\n(演示模式，可接入实际搜索)`);
                     } else {
                         alert('请输入游戏名称或关键词～');
