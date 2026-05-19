@@ -135,6 +135,22 @@
                                    </div>
                                 </div>
                             </div>
+							<div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://www.kdocs.cn/l/clDwiRl0nmaC" target="_blank" class="text-lg text-blue-600 hover:underline">单机游戏合集</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                              </div>
+                            </div>
+							<div class="p-2">
+                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
+                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
+                                        <a href="https://pan.quark.cn/s/25a2fb3d4433" target="_blank" class="text-lg text-blue-600 hover:underline">单机游戏合集2</a>
+                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
+                                 </div>
+                              </div>
+                            </div>
 						  <div class="p-2">
                                <div class="border border-gray-200 rounded-xl shadow-sm result-card">
                                  <div class="flex flex-col space-y-1.5 p-6 pb-0">
@@ -214,6 +230,30 @@
     bindEvents();
     new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
 })();
+</script>
+	<!-- 背景音乐模块：静音自动播放，点击页面任意位置开启声音 -->
+<audio id="bgMusic" autoplay muted loop>
+    <source src="https://m7.music.126.net/20260519185253/d12003807e2de53e068cd6674f92ffa1/ymusic/0e5b/530c/0f5c/91279b192adf4c8e6328860a2d74993f.mp3?vuutv=TeGG1L9nEpYrIqdzwPQ/R6Q2E+B1sEiKxb6QDglH8s6DR1/6eOlOeVYG2JlThFpnU5Fz0yreWKCEkcUMWFc+egM8EPEuW5ueQzNGcakfa0E=.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    const audio = document.getElementById('bgMusic');
+    // 确保静音自动播放
+    audio.muted = true;
+    audio.play().catch(e => console.log('等待用户交互'));
+
+    // 用户点击页面任意位置 → 开启声音
+    function enableAudio() {
+        if (audio && audio.muted) {
+            audio.muted = false;
+            audio.volume = 0.8;
+            audio.play().then(() => {
+                console.log('音乐已开启');
+                document.removeEventListener('click', enableAudio);
+            }).catch(e => console.warn('播放失败', e));
+        }
+    }
+    document.addEventListener('click', enableAudio);
 </script>
 </body>
 </html>

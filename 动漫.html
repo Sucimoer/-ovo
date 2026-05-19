@@ -199,5 +199,29 @@
     new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
+	<!-- 背景音乐模块：静音自动播放，点击页面任意位置开启声音 -->
+<audio id="bgMusic" autoplay muted loop>
+    <source src="https://er-sycdn.kuwo.cn/b99716592dbfe797307adb844ce19f0a/6a0c3bef/resource/30106/trackmedia/M8000044gSh94P2cXE.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    const audio = document.getElementById('bgMusic');
+    // 确保静音自动播放
+    audio.muted = true;
+    audio.play().catch(e => console.log('等待用户交互'));
+
+    // 用户点击页面任意位置 → 开启声音
+    function enableAudio() {
+        if (audio && audio.muted) {
+            audio.muted = false;
+            audio.volume = 0.8;
+            audio.play().then(() => {
+                console.log('音乐已开启');
+                document.removeEventListener('click', enableAudio);
+            }).catch(e => console.warn('播放失败', e));
+        }
+    }
+    document.addEventListener('click', enableAudio);
+</script>
 </body>
 </html>
