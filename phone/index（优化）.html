@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f5f0eb">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0a0c">
+    <title>澪鸢 ovo · 移动端优雅呈现</title>
+    <link rel="icon" href="images/favicon.ico">
+    <style>
+        /* ---------- RESET & 基础变量 ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            /* 亮色主题变量 */
+            --bg-overlay-light: rgba(255, 248, 240, 0.28);
+            --bg-overlay-dark: rgba(8, 8, 16, 0.86);
+            --nav-bg-light: rgba(255, 248, 245, 0.85);
+            --nav-bg-dark: rgba(12, 12, 20, 0.92);
+            --text-light: #1e1b26;
+            --text-dark: #f0eff7;
+            --border-light: rgba(0, 0, 0, 0.08);
+            --border-dark: rgba(255, 255, 255, 0.12);
+            --input-light: #ffffffdd;
+            --input-dark: #1e1e2c;
+            --card-light: rgba(255, 250, 245, 0.9);
+            --card-dark: #242433;
+            --accent-grad-start: #FF72E1;
+            --accent-grad-end: #F54C7A;
+            --btn-hover-light: #f0e6e0;
+            --btn-hover-dark: #3a3a50;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --font-sans: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Noto Sans', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-image: url('images/6.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+            transition: background-color 0.2s ease, color 0.2s ease;
+            color: var(--text-light);
+        }
+
+        /* 半透明遮罩层 (主题联动) */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        html.light body::before {
+            background-color: var(--bg-overlay-light);
+        }
+
+        html.dark body::before {
+            background-color: var(--bg-overlay-dark);
+            backdrop-filter: blur(2px);
+        }
+
+        /* 所有主要内容都浮在遮罩之上 */
+        .relative-content,
+        nav,
+        main,
+        footer,
+        .menu-panel {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ---------- 深色模式全局颜色重写 ---------- */
+        html.dark body {
+            color: var(--text-dark);
+        }
+
+        html.dark .text-default {
+            color: #e5e9f0;
+        }
+
+        html.dark .nav-link,
+        html.dark .logo-text {
+            color: #f0f0f4 !important;
+        }
+
+        html.dark .search-input {
+            background-color: var(--input-dark) !important;
+            border-color: rgba(255, 255, 255, 0.25) !important;
+            color: #f5f3ff !important;
+        }
+
+        html.dark .search-input::placeholder {
+            color: #b0b0c0;
+        }
+
+        html.dark .btn-outline {
+            background-color: #262638;
+            border-color: #4e4a68;
+            color: #f1eefb;
+        }
+
+        html.dark .btn-outline:hover {
+            background-color: #453c5c;
+            border-color: #ffa5bc;
+        }
+
+        html.dark .menu-overlay {
+            background: rgba(0, 0, 0, 0.75);
+        }
+
+        html.dark .mobile-nav-panel {
+            background: #181824f2;
+            backdrop-filter: blur(20px);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+
+        html.dark .mobile-nav-panel a {
+            color: #eef2ff;
+        }
+
+        /* ---------- 布局 & 容器 ---------- */
+        .app-wrapper {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* 导航栏 (响应式) */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.2s, border 0.2s;
+        }
+
+        html.light .navbar {
+            background-color: var(--nav-bg-light);
+            border-bottom-color: rgba(0, 0, 0, 0.08);
+        }
+
+        html.dark .navbar {
+            background-color: var(--nav-bg-dark);
+            border-bottom-color: var(--border-dark);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.25rem;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 左侧区域 */
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--accent-grad-start), var(--accent-grad-end));
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.3px;
+            text-decoration: none;
+        }
+
+        /* 桌面导航菜单 */
+        .desktop-menu {
+            display: none;
+            gap: 1.5rem;
+            margin-left: 1rem;
+        }
+
+        .desktop-menu a {
+            font-size: 0.9rem;
+            text-decoration: none;
+            color: var(--text-light);
+            transition: opacity 0.2s, color 0.2s;
+            font-weight: 500;
+        }
+
+        html.dark .desktop-menu a {
+            color: #e0e4f0;
+        }
+
+        .desktop-menu a:hover {
+            opacity: 0.75;
+            color: #ff8aa8;
+        }
+
+        /* 右侧操作区 (桌面 & 移动混合) */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            transition: background 0.2s;
+            color: currentColor;
+        }
+
+        .icon-btn:hover {
+            background-color: rgba(128, 128, 128, 0.12);
+        }
+
+        /* 移动端菜单按钮 (汉堡) */
+        .mobile-menu-toggle {
+            display: flex;
+        }
+
+        /* 主内容区域 - 移动端优化 */
+        main {
+            flex: 1;
+            padding-top: 80px;
+            padding-bottom: 3rem;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 140px);
+            text-align: center;
+            gap: 1.5rem;
+        }
+
+        .hero-title {
+            font-size: 2.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-sub {
+            font-size: 1.1rem;
+            color: #6c6a7c;
+            max-width: 280px;
+            margin-top: 0.25rem;
+        }
+
+        html.dark .hero-sub {
+            color: #cbcbe0;
+        }
+
+        /* 搜索框 移动优先 */
+        .search-wrapper {
+            width: 100%;
+            max-width: 560px;
+            margin: 0.5rem auto;
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: #9ca3af;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 52px;
+            padding: 0 3rem 0 2.8rem;
+            font-size: 1rem;
+            border-radius: 48px;
+            border: 1px solid rgba(0, 0, 0, 0.16);
+            background-color: var(--input-light);
+            backdrop-filter: blur(4px);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        html.dark .search-input {
+            background-color: var(--input-dark);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #f0f0fc;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #FF72E1;
+            box-shadow: 0 0 0 3px rgba(255, 114, 225, 0.2);
+        }
+
+        .kbd-hint {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.06);
+            border-radius: 6px;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-family: monospace;
+            color: #5a5a70;
+            display: none;
+            backdrop-filter: blur(4px);
+        }
+
+        html.dark .kbd-hint {
+            background: #2a2a3a;
+            color: #c5c5dd;
+            border: 1px solid #5a5a78;
+        }
+
+        @media (min-width: 640px) {
+            .kbd-hint {
+                display: block;
+            }
+        }
+
+        /* 按钮组 */
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            height: 42px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            color: #1f1b2c;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        html.dark .btn-outline {
+            background-color: rgba(30, 30, 44, 0.8);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: #f3f0ff;
+        }
+
+        .btn-outline:hover {
+            transform: translateY(-2px);
+            background-color: rgba(255, 210, 225, 0.7);
+            border-color: #ff99bb;
+        }
+
+        /* 移动端滑出菜单 */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(6px);
+            z-index: 200;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s ease;
+        }
+
+        .menu-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .mobile-nav-panel {
+            position: fixed;
+            top: 0;
+            right: -280px;
+            width: 270px;
+            height: 100vh;
+            background: rgba(255, 248, 245, 0.98);
+            backdrop-filter: blur(24px);
+            box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+            z-index: 201;
+            padding: 5rem 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+            transition: right 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            border-left: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        html.dark .mobile-nav-panel {
+            background: #13131ed9;
+            backdrop-filter: blur(28px);
+            border-left-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav-panel.open {
+            right: 0;
+        }
+
+        .mobile-nav-panel a {
+            font-size: 1.3rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: #1e1b2e;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            transition: 0.2s;
+        }
+
+        html.dark .mobile-nav-panel a {
+            color: #f0eefc;
+            border-bottom-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .mobile-nav-panel a:active {
+            opacity: 0.7;
+            padding-left: 0.4rem;
+        }
+
+        .close-menu-btn {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: transparent;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #4a4a60;
+        }
+
+        html.dark .close-menu-btn {
+            color: #cfcff0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.2rem;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+
+        /* 响应式调整 */
+        @media (min-width: 768px) {
+            .desktop-menu {
+                display: flex;
+            }
+            .mobile-menu-toggle {
+                display: none;
+            }
+            .hero-title {
+                font-size: 3.5rem;
+            }
+            .hero-sub {
+                font-size: 1.2rem;
+                max-width: 400px;
+            }
+            .search-input {
+                height: 56px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 0 1rem;
+            }
+            .hero-title {
+                font-size: 2rem;
+            }
+            .btn-outline {
+                padding: 0.4rem 1.2rem;
+                height: 40px;
+                font-size: 0.85rem;
+            }
+            main {
+                padding-top: 70px;
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+        }
+
+        /* 辅助 */
+        .hidden-scroll {
+            overflow: hidden;
+        }
+
+        /* 渐变文字工具 */
+        .gradient-text {
+            background: linear-gradient(135deg, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+    <!-- 导航栏 移动优化 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="logo">澪鸢ovo</a>
+                <div class="desktop-menu">
+                    <a href="游戏.html">游戏</a>
+                    <a href="动漫.html">动漫</a>
+                    <a href="杂乱.html">杂乱</a>
+                </div>
+            </div>
+            <div class="nav-actions">
+                <a aria-label="Github" class="icon-btn" href="https://github.com/Sucimoer/-ovo" target="_blank" rel="noopener noreferrer">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                        <path clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z" fill="currentColor"/>
+                    </svg>
+                </a>
+                <!-- 主题切换按钮 -->
+                <button class="icon-btn theme-switch-btn" aria-label="切换深色/浅色模式" id="themeToggle">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" id="themeIcon">
+                        <path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/>
+                        <path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/>
+                    </svg>
+                </button>
+                <!-- 移动端汉堡菜单按钮 -->
+                <button class="icon-btn mobile-menu-toggle" id="mobileMenuBtn" aria-label="菜单">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 5h16M4 12h16M4 19h16"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端侧滑菜单及遮罩 -->
+    <div id="menuOverlay" class="menu-overlay"></div>
+    <div id="mobilePanel" class="mobile-nav-panel">
+        <button id="closePanelBtn" class="close-menu-btn" aria-label="关闭菜单">✕</button>
+        <a href="游戏.html">🎮 游戏</a>
+        <a href="动漫.html">📺 动漫</a>
+        <a href="杂乱.html">📦 杂乱</a>
+        <a href="留言2.html" target="_blank">💬 留言板</a>
+        <a href="云图库.html" target="_blank">🖼️ 云图库</a>
+    </div>
+
+    <!-- 主内容区域 - 移动适配完美 -->
+    <main>
+        <div class="hero-section">
+            <div>
+                <h1 class="hero-title">澪鸢</h1>
+                <div class="hero-sub">El Psy Congroo！</div>
+            </div>
+
+            <div class="search-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="M21 21l-4.35-4.35"></path>
+                </svg>
+                <input type="search" class="search-input" placeholder="请搜索游戏名称或关键词" aria-label="搜索框" id="searchInput">
+                <span class="kbd-hint">Enter</span>
+            </div>
+
+            <div class="action-buttons">
+                <a href="留言2.html" target="_blank" class="btn-outline">📝 留言</a>
+                <a href="云图库.html" target="_blank" class="btn-outline">🌥️ 云图库</a>
+            </div>
+            <div class="mt-2"></div>
+        </div>
+    </main>
+
+    <footer>
+        <span>✨ 保持好奇 · 澪鸢小栈 ✨</span>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // ---------- 主题管理 (深色/浅色) 移动端完美切换 ----------
+        const THEME_KEY = 'theme';
+        const root = document.documentElement;
+
+        function getStoredTheme() {
+            const saved = localStorage.getItem(THEME_KEY);
+            if (saved === 'dark' || saved === 'light') return saved;
+            // 跟随系统
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            return prefersDark ? 'dark' : 'light';
+        }
+
+        function applyTheme(theme) {
+            root.classList.remove('light', 'dark');
+            root.classList.add(theme);
+            root.style.colorScheme = theme;
+            localStorage.setItem(THEME_KEY, theme);
+
+            // 更新按钮图标样式
+            const iconSvg = document.getElementById('themeIcon');
+            if (iconSvg) {
+                if (theme === 'dark') {
+                    iconSvg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
+                } else {
+                    iconSvg.innerHTML = '<path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/>';
+                }
+            }
+        }
+
+        function toggleTheme() {
+            const current = root.classList.contains('dark') ? 'dark' : 'light';
+            const next = current === 'light' ? 'dark' : 'light';
+            applyTheme(next);
+        }
+
+        // 绑定主题切换按钮
+        const themeBtn = document.getElementById('themeToggle');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', toggleTheme);
+        }
+
+        // 初始化主题
+        const initialTheme = getStoredTheme();
+        applyTheme(initialTheme);
+
+        // ---------- 移动端菜单交互 (触摸友善，无侧滑冲突) ----------
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const overlay = document.getElementById('menuOverlay');
+        const panel = document.getElementById('mobilePanel');
+        const closePanelBtn = document.getElementById('closePanelBtn');
+
+        function openMenu() {
+            if (!panel || !overlay) return;
+            panel.classList.add('open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            if (!panel || !overlay) return;
+            panel.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        if (mobileMenuBtn && overlay && panel) {
+            mobileMenuBtn.addEventListener('click', openMenu);
+            overlay.addEventListener('click', closeMenu);
+            if (closePanelBtn) closePanelBtn.addEventListener('click', closeMenu);
+            // 点击面板内链接自动关闭菜单并跳转(保留原生href)
+            const panelLinks = panel.querySelectorAll('a');
+            panelLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    // 不阻止默认跳转，只关菜单
+                    closeMenu();
+                });
+            });
+        }
+
+        // 窗口改变时如果菜单打开且变为大屏幕 (≥768) 自动关闭, 但保留体验
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768 && panel && panel.classList.contains('open')) {
+                closeMenu();
+            }
+        });
+
+        // ---------- 搜索框 (移动端键盘支持回车且无报错) ----------
+        const searchBox = document.getElementById('searchInput');
+        if (searchBox) {
+            searchBox.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    const query = searchBox.value.trim();
+                    if (query) {
+                        // 简单反馈: 你可以跳转到自定义搜索页或提醒，这里模拟友好提示
+                        alert(`🔍 即将搜索：“${query}”\n(演示模式，可接入实际搜索)`);
+                    } else {
+                        alert('请输入游戏名称或关键词～');
+                    }
+                }
+            });
+        }
+
+        // 额外小优化: 防止移动端100vh底部被地址栏遮挡问题 (hero min-height合理)
+        function setVH() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        setVH();
+        window.addEventListener('resize', setVH);
+        // 修正hero区域高度更自然 (让内容不贴底)
+        const heroSection = document.querySelector('.hero-section');
+        if (heroSection) {
+            const adjustHeight = () => {
+                const navH = document.querySelector('.navbar')?.offsetHeight || 70;
+                const winH = window.innerHeight;
+                heroSection.style.minHeight = `calc(${winH}px - ${navH + 40}px)`;
+            };
+            adjustHeight();
+            window.addEventListener('resize', adjustHeight);
+        }
+    })();
+</script>
+</body>
+</html>
