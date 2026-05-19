@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>智能设备检测 - 电脑/手机自适应跳转</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9edf2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .card {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(2px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+        }
+
+        .header {
+            background: #1e2a3e;
+            color: white;
+            padding: 1.8rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+        }
+
+        .header p {
+            margin-top: 0.5rem;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .content {
+            padding: 2rem;
+            color: #1f2937;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #eef2ff;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e40af;
+            margin-bottom: 1.5rem;
+        }
+
+        .device-info {
+            background: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 1rem 1.2rem;
+            border-radius: 1rem;
+            margin: 1.5rem 0;
+            font-family: monospace;
+            font-size: 0.9rem;
+            word-break: break-word;
+        }
+
+        .info-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footnote {
+            margin-top: 1.5rem;
+            font-size: 0.8rem;
+            color: #5b6e8c;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+            text-align: center;
+        }
+
+        button {
+            background: none;
+            border: 1px solid #cbd5e1;
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #2c3e66;
+        }
+
+        button:hover {
+            background: #eef2ff;
+            border-color: #3b82f6;
+        }
+
+        @media (max-width: 640px) {
+            .content {
+                padding: 1.5rem;
+            }
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <h1>🌐 智能响应式门户</h1>
+        <p>根据设备类型 · 优雅跳转体验</p>
+    </div>
+    <div class="content">
+        <div class="badge">
+            📱💻 设备感知就绪
+        </div>
+        <p style="line-height: 1.5; margin-bottom: 0.75rem;">
+            本页面可自动检测您当前使用的设备类型。<br>
+            <strong>📱 手机用户</strong> 会收到“是否跳转手机版”的提示；<br>
+            <strong>🖥️ 电脑用户</strong> 直接浏览当前页面，无任何跳转打扰。
+        </p>
+
+        <div class="device-info" id="deviceInfoPanel">
+            <div class="info-title">
+                🔍 当前访问设备信息
+            </div>
+            <div id="uaString" style="font-size: 0.8rem; color: #334155;"></div>
+        </div>
+
+        <div style="background: #fef9e3; border-radius: 1rem; padding: 1rem; margin-top: 0.5rem;">
+            💡 提示：如果您是手机访问且已经选择「取消」停留电脑版，本次会话不会再弹窗（关闭标签页后重置）。<br>
+            <span style="font-size: 0.75rem; color: #b45309;">⚙️ 如需重新触发弹窗，可刷新页面并清除会话存储（或关闭标签页重开）</span>
+        </div>
+        <div class="footnote">
+            🧪 手机版跳转目标可在代码中修改 <code style="background:#eef2ff; padding:0.2rem 0.4rem; border-radius: 8px;">MOBILE_URL</code> 变量
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // --------------------------------------------------------------
+        // 配置区 - 请填写您手机版网页的完整URL (绝对路径或相对路径均可)
+        // 示例: "https://m.yoursite.com"  或 "/mobile/index.html"
+        // 如果使用相对路径，建议填写完整域名路径避免跳转混乱。
+        // 若当前 URL 与目标手机版 URL 一致，自动跳过弹窗（防无限循环）。
+        // --------------------------------------------------------------
+        const MOBILE_URL = "https://m.example.com";   // ⭐ 替换为真实的手机版网页地址 ⭐
+
+        // 可选: 如果不想在用户取消后记忆会话，可将下方变量改为 false (默认 true 体验更好)
+        const REMEMBER_CANCEL_SESSION = true;   // 为 true: 用户点"取消"后本次会话不再弹窗; false: 每次刷新都弹(严格遵循基础需求但体验略差)
+
+        // ---------- 辅助函数：将相对路径/相对URL 转为绝对URL 用于比较 ----------
+        function toAbsoluteUrl(url) {
+            if (!url) return null;
+            // 如果已经是完整的http://或https://开头，直接返回
+            if (/^https?:\/\//i.test(url)) {
+                return url;
+            }
+            // 否则基于当前页面的baseURI构造绝对URL
+            try {
+                const absolute = new URL(url, window.location.href);
+                return absolute.href;
+            } catch(e) {
+                console.warn("URL转换失败", e);
+                return null;
+            }
+        }
+
+        // ---------- 精准设备检测 (手机 / 平板归类为移动端，一般用户期望手机包括平板，可按需) ----------
+        function isMobileDevice() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            // 常用移动设备特征正则 (涵盖手机、iPad、Android手机/平板、Windows Phone等)
+            const mobileRegex = /(?:Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone|Opera Mini|IEMobile|Mobile|Silk|Kindle|KF)/i;
+            // 额外检测 iPad 上 macOS 但具有触屏特征（iPadOS 13+ 会伪装成 Mac，但通过 maxTouchPoints 可以辅助）
+            const hasTouchScreen = (navigator.maxTouchPoints && navigator.maxTouchPoints > 2) || 
+                                   ('ontouchstart' in window) || 
+                                   (navigator.msMaxTouchPoints && navigator.msMaxTouchPoints > 0);
+            
+            // UA 包含移动关键字
+            let isMobileUA = mobileRegex.test(userAgent);
+            
+            // 特殊: 对于 iPad 或 Android 平板，通常 UA 包含 Android 或 iPad，但部分Chrome iPad 包含 Macintosh 且有触屏, 额外处理
+            // 如果UA里面没有Mobile但是有触屏且屏幕宽度小于某个阈值? 但更可靠: iPad 的 UA 包含 "Macintosh" 但实际上有触控能力且大多为移动体验。
+            // 为了准确识别 iPad 为移动端 (用户期望手机/平板访问都弹出)
+            const isIPad = /iPad/i.test(userAgent) || ( /Macintosh/i.test(userAgent) && hasTouchScreen );
+            if (isIPad) {
+                return true;
+            }
+            
+            // 如果UA明确指出移动类型 或 屏幕宽度很小(针对极端场景, 但可能桌面浏览器窄窗口误判，所以仅作为辅助)
+            // 优先使用正则结果，但对于安卓平板（UA 包含 Android 但无Mobile单词，有时是大屏设备，依然视为移动端较好）
+            if (isMobileUA) return true;
+            
+            // 针对部分Android平板未标记Mobile但触屏设备,且宽度一般小于1024? (安全考虑, 仅当触屏&&宽度小于900辅助识别)
+            // 避免台式触摸屏误伤（较少见）
+            if (hasTouchScreen && window.innerWidth <= 900) {
+                // 若屏幕宽度较小且支持触屏，极大可能是平板/手机类移动设备
+                return true;
+            }
+            return false;
+        }
+
+        // 获取当前页面的绝对URL (去除hash部分便于对比, 但严格对比完整url也行)
+        const currentAbsUrl = window.location.href;
+        let targetAbsUrl = null;
+        
+        // 处理手机版目标URL合法性
+        let isValidMobileUrl = false;
+        if (MOBILE_URL && MOBILE_URL.trim() !== "") {
+            targetAbsUrl = toAbsoluteUrl(MOBILE_URL.trim());
+            if (targetAbsUrl) isValidMobileUrl = true;
+            else {
+                console.warn("⚠️ 手机版URL无效或无法转换为绝对地址，请检查 MOBILE_URL 配置: ", MOBILE_URL);
+            }
+        } else {
+            console.warn("⚠️ 未配置手机版跳转地址 (MOBILE_URL 为空)，跳转功能无效");
+        }
+        
+        // 如果当前页面与目标手机版URL完全一致，则避免无限弹窗/跳转
+        let isSameAsMobileTarget = false;
+        if (isValidMobileUrl && targetAbsUrl) {
+            // 去掉末尾斜杠和 hash 的简单比较 (更精确:比较去除 hash 以及 结尾 /)
+            const normalizeUrl = (url) => url.replace(/\/$/, '').split('#')[0];
+            if (normalizeUrl(currentAbsUrl) === normalizeUrl(targetAbsUrl)) {
+                isSameAsMobileTarget = true;
+                console.log("当前页面已经是手机版目标地址，不再执行跳转逻辑");
+            }
+        }
+
+        // 检测是否是电脑端 (非移动设备)
+        const isMobile = isMobileDevice();
+        
+        // 显示设备信息到页面上(调试与展示)
+        const uaSpan = document.getElementById('uaString');
+        if (uaSpan) {
+            const deviceTypeText = isMobile ? "📱 移动设备 (手机/平板)" : "💻 电脑端 (桌面设备)";
+            uaSpan.innerHTML = `<strong>${deviceTypeText}</strong><br>UserAgent: ${navigator.userAgent.substring(0, 200)}${navigator.userAgent.length > 200 ? '...' : ''}`;
+        }
+        
+        // 电脑端: 不进行任何跳转, 也不弹窗 (完全符合需求)
+        if (!isMobile) {
+            console.log("电脑端访问，不做任何跳转及弹窗。");
+            return; // 结束逻辑，电脑用户什么也不发生
+        }
+        
+        // ----------------- 手机/移动设备 逻辑 -----------------
+        // 如果当前页面已经是手机版目标地址，避免提示及跳转
+        if (isSameAsMobileTarget) {
+            console.log("手机访问但当前已是手机版目标页面，不弹窗、不跳转。");
+            return;
+        }
+        
+        // 手机端且未配置有效手机URL，无法跳转，给出友好控制台警告，但不再弹窗干扰用户（因为无意义跳转）
+        if (!isValidMobileUrl) {
+            console.warn("手机端检测到，但手机版URL未正确配置，无法执行跳转。请检查 MOBILE_URL 变量");
+            // 虽然不进行跳转，但可以在页面显示一个备注（但不是弹窗），因为需求要求点是就跳转，URL无效时无法跳转，所以放弃弹窗避免用户困惑
+            const deviceInfoDiv = document.getElementById('deviceInfoPanel');
+            if (deviceInfoDiv) {
+                const warnMsg = document.createElement('div');
+                warnMsg.style.marginTop = '10px';
+                warnMsg.style.padding = '8px';
+                warnMsg.style.background = '#fee2e2';
+                warnMsg.style.borderRadius = '8px';
+                warnMsg.style.color = '#b91c1c';
+                warnMsg.style.fontSize = '0.8rem';
+                warnMsg.innerHTML = '⚠️ 手机版跳转地址尚未配置，请联系网站管理员设置 MOBILE_URL。';
+                deviceInfoDiv.appendChild(warnMsg);
+            }
+            return;
+        }
+        
+        // 记忆功能：若用户之前在本会话中点击过“取消” (停留电脑版)，则不再弹窗询问
+        const SESSION_KEY = 'skip_mobile_redirect_v1';
+        let shouldAsk = true;
+        if (REMEMBER_CANCEL_SESSION) {
+            const skipFlag = sessionStorage.getItem(SESSION_KEY);
+            if (skipFlag === 'true') {
+                shouldAsk = false;
+                console.log("本次会话用户已选择过停留电脑版，不再弹窗。");
+            }
+        }
+        
+        if (!shouldAsk) {
+            return; // 用户之前选择过“否”，直接保持原网页，不做任何操作
+        }
+        
+        // 弹出确认框: 是否进入手机网页浏览
+        // 说明：confirm 会阻塞js执行，并且完全满足“点是跳转，否保持原网页”
+        const userConfirmed = confirm("📱 检测到您正在使用手机访问\n是否跳转至手机版网页获得更好的浏览体验？\n\n点击「确定」进入手机版\n点击「取消」继续浏览当前页面");
+        
+        if (userConfirmed) {
+            // 用户点击“是” -> 跳转到手机版URL
+            // 增加一个小延迟增加友好性（避免某些浏览器弹窗阻塞导致跳转失效），直接跳转更可靠
+            window.location.href = targetAbsUrl;
+        } else {
+            // 用户点击“否” -> 保持原网页浏览
+            // 如果开启了会话记忆，记录本次选择，避免反复弹窗打扰
+            if (REMEMBER_CANCEL_SESSION) {
+                try {
+                    sessionStorage.setItem(SESSION_KEY, 'true');
+                    console.log("用户选择停留电脑版，已记录会话状态，刷新不会再弹窗。");
+                } catch(e) { /* 隐私模式忽略 */ }
+            }
+            // 可额外在页面角落显示一条消息：已为您停留电脑版，可手动刷新改变选择（体验小细节但非必须）
+            const infoDiv = document.getElementById('deviceInfoPanel');
+            if (infoDiv && !document.querySelector('.stay-msg')) {
+                const msgSpan = document.createElement('div');
+                msgSpan.className = 'stay-msg';
+                msgSpan.style.marginTop = '12px';
+                msgSpan.style.padding = '8px 12px';
+                msgSpan.style.background = '#e6f7e6';
+                msgSpan.style.borderRadius = '12px';
+                msgSpan.style.fontSize = '0.8rem';
+                msgSpan.style.color = '#2d6a2d';
+                msgSpan.innerHTML = '✓ 您已选择继续浏览当前电脑版页面（本次会话不再重复询问）';
+                infoDiv.appendChild(msgSpan);
+            }
+        }
+    })();
+</script>
+</body>
+</html>

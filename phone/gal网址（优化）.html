@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Galgame 网址 - 澪鸢</title>
+    <link rel="icon" href="images/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-image: url(images/6.jpg); background-size: cover; background-attachment: fixed; }
+        body::before { content: ""; position: fixed; inset: 0; background: rgba(255,248,240,0.28); pointer-events: none; z-index: 0; }
+        html.dark body::before { background: rgba(8,8,16,0.82); backdrop-filter: blur(1px); }
+        nav, main { position: relative; z-index: 2; }
+        .result-card { background: rgba(255,255,255,0.92); backdrop-filter: blur(6px); border-radius: 1.25rem; transition: transform 0.15s; }
+        html.dark .result-card { background: rgba(20,20,36,0.88); }
+        .result-card:active { transform: scale(0.99); }
+        .gradient-text { background: linear-gradient(to bottom, #FF72E1, #F54C7A); background-clip: text; -webkit-background-clip: text; color: transparent; }
+        @media (max-width: 768px) { .mobile-auto-height { height: auto !important; } }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+<div class="relative flex min-h-screen flex-col">
+    <nav class="fixed top-0 w-full bg-white/80 dark:bg-black/80 backdrop-blur-lg border-b z-50">
+        <div class="mx-auto flex min-h-[56px] max-w-[1280px] items-center justify-between gap-2 px-4">
+            <a class="font-bold" href="index.html">澪鸢ovo</a>
+            <ul class="flex gap-3 text-sm"><li><a href="游戏.html">游戏</a></li><li><a href="动漫.html">动漫</a></li><li><a href="杂乱.html">杂乱</a></li></ul>
+            <button type="button" role="switch" class="theme-switch w-10 h-10 rounded-full">🌙</button>
+        </div>
+    </nav>
+    <main class="container mx-auto px-4 pt-20 pb-8">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-[2fr_auto_1.2fr]">
+            <div>
+                <div class="md:h-[700px] md:overflow-y-auto mobile-auto-height">
+                    <div class="flex flex-col gap-3">
+                        <!-- 所有网址卡片 -->
+                        <div class="result-card p-4"><a href="https://gal.saop.cc/" target="_blank" class="text-blue-600 font-medium block">VNS</a></div>
+                        <div class="result-card p-4"><a href="https://kisuacg.moe/" target="_blank" class="text-blue-600 font-medium block">KisuGal</a></div>
+                        <div class="result-card p-4"><a href="https://www.shinnku.com/" target="_blank" class="text-blue-600 font-medium block">真红小站</a></div>
+                        <div class="result-card p-4"><a href="https://saop.cc/" target="_blank" class="text-blue-600 font-medium block">定位宅</a></div>
+                        <div class="result-card p-4"><a href="https://www.sharotto.com/" target="_blank" class="text-blue-600 font-medium block">Sharotto</a></div>
+                        <div class="result-card p-4"><a href="https://pan.touchgal.net/profile/7NuO" target="_blank" class="text-blue-600 font-medium block">Touchgal</a></div>
+                        <div class="result-card p-4"><a href="https://www.xygalgame.com/" target="_blank" class="text-blue-600 font-medium block">初音的青葱</a></div>
+                        <div class="result-card p-4"><a href="https://game.acgs.one/" target="_blank" class="text-blue-600 font-medium block">绮梦</a></div>
+                        <div class="result-card p-4"><a href="https://18moe.net/up.html" target="_blank" class="text-blue-600 font-medium block">萌次元</a></div>
+                        <div class="result-card p-4"><a href="https://www.ttloli.com/" target="_blank" class="text-blue-600 font-medium block">Mygalgame</a></div>
+                        <div class="result-card p-4"><a href="https://www.sshs.pw/" target="_blank" class="text-blue-600 font-medium block">绅士会所</a></div>
+                        <div class="result-card p-4"><a href="https://bbs2.seikuu.com/" target="_blank" class="text-blue-600 font-medium block">星空论坛</a></div>
+                        <div class="result-card p-4"><a href="https://bbs4.2djgame.net/home/forum.php" target="_blank" class="text-blue-600 font-medium block">2DJgame</a></div>
+                        <div class="result-card p-4"><a href="https://link3.cc/avalonsec" target="_blank" class="text-blue-600 font-medium block">avalon</a></div>
+                        <div class="result-card p-4"><a href="https://inarigal.moe/" target="_blank" class="text-blue-600 font-medium block">稻荷acg</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="hidden md:block w-px bg-gray-300 dark:bg-gray-600"></div>
+            <div class="hidden md:block"><div class="gradient-text text-4xl font-bold sticky top-28">澪鸢ovo</div></div>
+        </div>
+    </main>
+</div>
+<!-- 智能搜索工具 (保留原功能) -->
+<div class="search-widget-container" id="searchWidget" style="position:fixed; z-index:2147483647; bottom:20px; right:20px;">
+    <button class="search-toggle-btn" id="searchToggleBtn" style="width:52px; height:52px; border-radius:50%; background:#4a6cf7; color:#fff; border:none; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);">🔍</button>
+    <div class="search-panel" id="searchPanel" style="position:absolute; bottom:0; right:0; width:320px; max-width:calc(100vw - 40px); background:#fff; border-radius:16px; padding:16px; display:none; box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+        <div style="display:flex; justify-content:space-between; margin-bottom:12px;"><span>🔍 智能搜索</span><button id="searchPanelClose">✕</button></div>
+        <input type="text" id="searchKeyword" placeholder="关键词" style="width:100%; padding:10px; margin-bottom:8px; border:1px solid #ccc; border-radius:8px;">
+        <input type="text" id="searchLink" placeholder="网址 (可选)" style="width:100%; padding:10px; margin-bottom:12px; border:1px solid #ccc; border-radius:8px;">
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button id="btnPageSearch" style="flex:1; background:#4a6cf7; color:#fff; padding:8px; border-radius:8px;">本页搜索</button>
+            <button id="btnJumpSearch" style="flex:1; background:#10b981; color:#fff; padding:8px; border-radius:8px;">跳转+高亮</button>
+            <button id="btnBaiduSearch" style="flex:1; background:#f97316; color:#fff; padding:8px; border-radius:8px;">百度站内</button>
+        </div>
+        <div id="searchResultInfo" style="font-size:12px; margin-top:8px; text-align:center;"></div>
+    </div>
+</div>
+<script>
+    // 简化的搜索工具脚本（保持原核心逻辑）
+    (function(){
+        const toggleBtn = document.getElementById('searchToggleBtn');
+        const panel = document.getElementById('searchPanel');
+        const closeBtn = document.getElementById('searchPanelClose');
+        const keyword = document.getElementById('searchKeyword');
+        const link = document.getElementById('searchLink');
+        const btnPage = document.getElementById('btnPageSearch');
+        const btnJump = document.getElementById('btnJumpSearch');
+        const btnBaidu = document.getElementById('btnBaiduSearch');
+        const info = document.getElementById('searchResultInfo');
+        let open = false;
+        function setInfo(msg,ok){ info.textContent = msg; info.style.color = ok ? '#2e7d32' : '#c62828'; }
+        toggleBtn.onclick = ()=>{ open = !open; panel.style.display = open ? 'block' : 'none'; if(open) keyword.focus(); };
+        closeBtn.onclick = ()=>{ panel.style.display = 'none'; open=false; };
+        function highlightInDoc(doc, kw){
+            if(!doc || !kw) return 0;
+            try{
+                let spans = [];
+                let walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, { acceptNode: n=> n.textContent.toLowerCase().includes(kw.toLowerCase())?NodeFilter.FILTER_ACCEPT:NodeFilter.FILTER_REJECT });
+                let nodes = [];
+                while(walker.nextNode()) nodes.push(walker.currentNode);
+                nodes.forEach(node=>{
+                    let text = node.textContent;
+                    let regex = new RegExp(`(${kw.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+                    let frag = doc.createDocumentFragment();
+                    let last=0, match;
+                    while((match=regex.exec(text))){
+                        if(match.index>last) frag.appendChild(doc.createTextNode(text.slice(last, match.index)));
+                        let span = doc.createElement('span');
+                        span.style.background = '#ffe347';
+                        span.textContent = match[0];
+                        frag.appendChild(span);
+                        spans.push(span);
+                        last = regex.lastIndex;
+                    }
+                    if(last<text.length) frag.appendChild(doc.createTextNode(text.slice(last)));
+                    node.parentNode.replaceChild(frag, node);
+                });
+                if(spans.length) spans[0].scrollIntoView({block:'center'});
+                return spans.length;
+            }catch(e){ return 0; }
+        }
+        btnPage.onclick = ()=>{
+            let kw = keyword.value.trim();
+            if(!kw){ setInfo('输入关键词',false); return; }
+            document.querySelectorAll('.search-highlight').forEach(s=>{ let t=document.createTextNode(s.textContent); s.parentNode.replaceChild(t,s); });
+            let count = highlightInDoc(document, kw);
+            setInfo(`找到 ${count} 处`, count>0);
+        };
+        btnJump.onclick = ()=>{
+            let kw = keyword.value.trim();
+            let url = link.value.trim();
+            if(!kw){ setInfo('输入关键词',false); return; }
+            if(!url){ setInfo('输入网址',false); return; }
+            if(!url.startsWith('http')) url = 'https://'+url;
+            window.open(url+'#:~:text='+encodeURIComponent(kw), '_blank');
+            setInfo('已在新窗口打开', true);
+        };
+        btnBaidu.onclick = ()=>{
+            let kw = keyword.value.trim();
+            let domain = link.value.trim();
+            if(!kw){ setInfo('输入关键词',false); return; }
+            if(!domain){ setInfo('输入网址域名',false); return; }
+            domain = domain.replace(/^https?:\/\//,'').split('/')[0];
+            window.open(`https://www.baidu.com/s?wd=site:${domain} ${kw}`, '_blank');
+            setInfo('百度搜索已打开', true);
+        };
+    })();
+</script>
+<script>
+    (function(){
+        function getTheme(){ return localStorage.getItem('theme') || 'light'; }
+        function setTheme(t){
+            const root = document.documentElement;
+            root.classList.remove('light','dark'); root.classList.add(t);
+            root.style.colorScheme = t;
+            localStorage.setItem('theme', t);
+            const btn = document.querySelector('nav button[role="switch"]');
+            if(btn) btn.innerHTML = t === 'dark' ? '☀️' : '🌙';
+        }
+        setTheme(getTheme());
+        document.querySelector('nav button[role="switch"]')?.addEventListener('click', ()=>{
+            const cur = getTheme();
+            setTheme(cur === 'light' ? 'dark' : 'light');
+        });
+    })();
+</script>
+</body>
+</html>
