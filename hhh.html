@@ -199,5 +199,104 @@
     new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
 })();
 </script>
+	<script>
+(function() {
+    // ========== 配置区 ==========
+    const MOBILE_DIR = "phone";               // 手机版文件夹名称
+    const REMEMBER_CANCEL_SESSION = true;     // 是否记住用户“取消”的选择
+    // ============================
+
+    // 根据当前电脑版文件名生成手机版文件名（xxx.html -> xxx（优化）.html）
+    function getMobileFileName(originalFileName) {
+        if (!originalFileName) return "index（优化）.html";
+        // 去掉 .html 后缀（不区分大小写）
+        let nameWithoutExt = originalFileName.replace(/\.html$/i, "");
+        // 如果没有后缀或不是 .html，原样处理（避免出错）
+        if (nameWithoutExt === originalFileName) {
+            // 可能文件没有扩展名，直接加“（优化）”
+            return nameWithoutExt + "（优化）.html";
+        }
+        return nameWithoutExt + "（优化）.html";
+    }
+
+    // 获取当前页面的文件名（含扩展名）
+    function getCurrentFileName() {
+        let path = window.location.pathname;
+        let lastSlash = path.lastIndexOf('/');
+        let fileName = lastSlash !== -1 ? path.substring(lastSlash + 1) : path;
+        if (!fileName || fileName === "") fileName = "index.html";
+        // 处理可能的 query 参数（去掉 ? 后面的部分）
+        let questionMark = fileName.indexOf('?');
+        if (questionMark !== -1) fileName = fileName.substring(0, questionMark);
+        return fileName;
+    }
+
+    // 构建手机版完整URL
+    function getMobileUrl() {
+        // 如果当前已经在 phone/ 目录内，不再跳转（防止死循环）
+        if (window.location.pathname.includes(`/${MOBILE_DIR}/`)) {
+            return null;
+        }
+
+        let currentFile = getCurrentFileName();
+        let mobileFile = getMobileFileName(currentFile);
+        
+        // 获取当前页面的基础路径（目录路径）
+        let basePath = "";
+        if (window.location.protocol === "file:") {
+            // 本地 file 协议：获取当前文件所在目录
+            let fullPath = window.location.pathname;
+            let lastSlash = fullPath.lastIndexOf('/');
+            basePath = lastSlash !== -1 ? fullPath.substring(0, lastSlash + 1) : "";
+        } else {
+            // http/https 协议：获取当前目录的绝对路径
+            let currentUrl = window.location.href;
+            let lastSlash = currentUrl.lastIndexOf('/');
+            basePath = lastSlash !== -1 ? currentUrl.substring(0, lastSlash + 1) : currentUrl;
+        }
+        
+        // 拼接手机版目录和文件名
+        let mobileUrl = basePath + MOBILE_DIR + "/" + mobileFile;
+        return mobileUrl;
+    }
+
+    // 判断是否为移动设备（手机/平板）
+    function isMobileDevice() {
+        const ua = navigator.userAgent;
+        const mobileRegex = /(?:Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone|Opera Mini|IEMobile|Mobile|Silk|Kindle)/i;
+        const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 2);
+        const isIPad = /iPad/i.test(ua) || (/Macintosh/i.test(ua) && hasTouch);
+        if (isIPad) return true;
+        if (mobileRegex.test(ua)) return true;
+        if (hasTouch && window.innerWidth <= 900) return true;
+        return false;
+    }
+
+    // 非手机端 → 不做任何操作
+    if (!isMobileDevice()) return;
+
+    // 获取目标手机版URL
+    const targetUrl = getMobileUrl();
+    if (!targetUrl) return; // 已经在手机目录内
+
+    // 避免跳转到自身
+    const normalize = (url) => url.replace(/\/$/, '').split('#')[0];
+    if (normalize(window.location.href) === normalize(targetUrl)) return;
+
+    // 会话记忆：用户点过“取消”则不再弹窗
+    const SESSION_KEY = 'skip_mobile_redirect';
+    if (REMEMBER_CANCEL_SESSION && sessionStorage.getItem(SESSION_KEY) === 'true') return;
+
+    // 弹出询问框
+    const userConfirmed = confirm("📱 检测到您使用手机访问，是否跳转至手机优化版页面？\n\n“确定”跳转，“取消”继续浏览当前页面。");
+    if (userConfirmed) {
+        window.location.href = targetUrl;
+    } else {
+        if (REMEMBER_CANCEL_SESSION) {
+            try { sessionStorage.setItem(SESSION_KEY, 'true'); } catch(e) {}
+        }
+    }
+})();
+</script>
 </body>
 </html>

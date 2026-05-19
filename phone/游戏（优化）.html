@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>游戏导航 · 澪鸢</title>
+    <link rel="icon" href="images/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+	background-image: url(../images/6.jpg);
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-position: center center;
+	background-attachment: fixed;
+	position: relative;
+	transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        html.light body::before {
+            background-color: rgba(255, 248, 240, 0.28);
+        }
+        html.dark body::before {
+            background-color: rgba(8, 8, 16, 0.82);
+            backdrop-filter: blur(1px);
+        }
+        nav, main, footer, .relative, .container {
+            position: relative;
+            z-index: 2;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .result-card {
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.92) !important;
+            backdrop-filter: blur(6px);
+            border-radius: 1.25rem;
+        }
+        html.dark .result-card {
+            background-color: rgba(20, 20, 36, 0.88) !important;
+        }
+        .result-card:active {
+            transform: scale(0.99);
+        }
+        .gradient-text {
+            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        html.dark .gradient-text {
+            background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
+        }
+        /* 移动端自适应 */
+        @media (max-width: 768px) {
+            .mobile-auto-height {
+                height: auto !important;
+                overflow-y: visible !important;
+            }
+            .result-link {
+                display: block;
+                padding: 0.75rem 0;
+                font-weight: 500;
+            }
+        }
+        /* 导航按钮触摸区域 */
+        .nav-touch {
+            min-height: 44px;
+            min-width: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+<div class="relative flex min-h-screen flex-col">
+    <nav class="bg-background/90 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-lg transition-colors duration-300">
+        <div class="mx-auto flex min-h-[56px] max-w-[1280px] items-center justify-between gap-2 px-4 sm:px-6">
+            <div class="flex shrink-0 items-center">
+                <a class="flex items-center gap-1.5 py-2" href="index（优化）.html">
+                    <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
+                </a>
+            </div>
+            <ul class="flex flex-wrap items-center justify-center gap-2 sm:gap-4 px-1">
+                <li><a class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all hover:bg-white/30 dark:hover:bg-gray-800/40" href="游戏（优化）.html">游戏</a></li>
+                <li><a class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all hover:bg-white/30 dark:hover:bg-gray-800/40" href="动漫（优化）.html">动漫</a></li>
+                <li><a class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 transition-all hover:bg-white/30 dark:hover:bg-gray-800/40" href="杂乱（优化）.html">杂乱</a></li>
+            </ul>
+            <div class="flex shrink-0 items-center gap-1 sm:gap-2">
+                <a aria-label="Github" class="nav-touch flex h-10 w-10 items-center justify-center rounded-full text-gray-700 dark:text-gray-200 transition-all hover:bg-black/5 dark:hover:bg-white/10" target="_blank" href="https://github.com/Sucimoer/-ovo">
+                    <svg height="22" width="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
+                </a>
+                <button type="button" role="switch" aria-checked="false" class="theme-switch nav-touch flex h-10 w-10 items-center justify-center rounded-full transition-all hover:bg-black/5 dark:hover:bg-white/10">
+                    <span class="flex h-6 w-6 items-center justify-center">
+                        <svg width="18" viewBox="0 0 24 24" fill="currentColor" class="text-gray-800 dark:text-gray-100"><g><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto w-full px-4 py-8 pt-20 sm:px-6">
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-[2fr_auto_1.2fr] md:gap-8">
+            <!-- 左侧卡片列表 -->
+            <div class="w-full min-w-0">
+                <div class="relative md:h-[680px] md:overflow-y-auto md:pr-2 mobile-auto-height">
+                    <div class="flex flex-col gap-3 pb-2">
+                        <!-- 卡片列表（保留原所有链接） -->
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
+                            <a href="https://docs.qq.com/aio/DYXBaZW1KU0pLeHR2?p=VGPdke7LauXwKDFwMQwYiR" target="_blank" class="text-blue-600 font-medium block py-1">寄子游戏</a>
+                        </div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
+                            <a href="https://www.flysheep6.com/" target="_blank" class="text-blue-600 font-medium block py-1">flysheep</a>
+                        </div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
+                            <a href="https://www.wygamer.com/" target="_blank" class="text-blue-600 font-medium block py-1">无忧游戏</a>
+                        </div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
+                            <a href="https://www.kdocs.cn/l/clDwiRl0nmaC" target="_blank" class="text-blue-600 font-medium block py-1">单机游戏合集</a>
+                        </div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
+                            <a href="https://pan.quark.cn/s/25a2fb3d4433" target="_blank" class="text-blue-600 font-medium block py-1">单机游戏合集2</a>
+                        </div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
+                            <a href="https://steamui.com/" target="_blank" class="text-blue-600 font-medium block py-1">steam游戏库</a>
+                        </div>
+                        <div class="result-card border border-gray-200/70 dark:border-gray-700/60 p-4">
+                            <a href="https://www.nexusmods.com/games/phasmophobia" target="_blank" class="text-blue-600 font-medium block py-1">Nexusmods</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分割线（桌面端） -->
+            <div aria-orientation="vertical" role="separator" class="hidden md:block bg-gray-300 dark:bg-gray-600 shrink-0 w-px h-full"></div>
+
+            <!-- 右侧品牌区（桌面端可见） -->
+            <div class="hidden md:block md:pl-4">
+                <div class="sticky top-28">
+                    <div class="gradient-text text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight">
+                        澪鸢<br>ovo
+                    </div>
+                    <p class="mt-4 text-gray-500 dark:text-gray-400 text-sm border-l-3 border-pink-400 pl-3">
+                        游戏资源导航<br>
+                        精选单机 · 在线小游戏
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- 背景音乐模块（静音自动播放，点击任意位置开启） -->
+<audio id="bgMusic" autoplay muted loop>
+    <source src="https://m7.music.126.net/20260519185253/d12003807e2de53e068cd6674f92ffa1/ymusic/0e5b/530c/0f5c/91279b192adf4c8e6328860a2d74993f.mp3?vuutv=TeGG1L9nEpYrIqdzwPQ/R6Q2E+B1sEiKxb6QDglH8s6DR1/6eOlOeVYG2JlThFpnU5Fz0yreWKCEkcUMWFc+egM8EPEuW5ueQzNGcakfa0E=.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    // 主题切换（与之前保持一致）
+    (function() {
+        function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
+        function applyTheme(theme) {
+            const root = document.documentElement;
+            root.classList.remove('light', 'dark');
+            root.classList.add(theme);
+            root.style.colorScheme = theme;
+            localStorage.setItem('theme', theme);
+            const btns = document.querySelectorAll('button[role="switch"]');
+            btns.forEach(btn => {
+                const isDark = (theme === 'dark');
+                btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
+                btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+                const span = btn.querySelector('span');
+                if (span) {
+                    let svg = span.querySelector('svg');
+                    if (!svg) {
+                        svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.setAttribute('width', '16');
+                        svg.setAttribute('viewBox', '0 0 24 24');
+                        span.innerHTML = '';
+                        span.appendChild(svg);
+                    }
+                    if (isDark) {
+                        svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
+                    } else {
+                        svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
+                    }
+                }
+            });
+        }
+        function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
+        function bindEvents() {
+            document.querySelectorAll('button[role="switch"]').forEach(btn => {
+                btn.removeEventListener('click', toggleTheme);
+                btn.addEventListener('click', toggleTheme);
+            });
+        }
+        applyTheme(getStoredTheme());
+        bindEvents();
+        new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
+    })();
+
+    // 背景音乐逻辑（静音自动播放，用户首次点击页面任意位置开启声音）
+    const audio = document.getElementById('bgMusic');
+    if (audio) {
+        // 确保初始静音
+        audio.muted = true;
+        // 尝试自动播放（静音版本一般会成功）
+        audio.play().catch(e => console.log('等待用户交互开启音乐'));
+
+        function enableAudio() {
+            if (audio && audio.muted) {
+                audio.muted = false;
+                audio.volume = 0.7;
+                audio.play().then(() => {
+                    console.log('背景音乐已开启');
+                    document.removeEventListener('click', enableAudio);
+                    document.removeEventListener('touchstart', enableAudio);
+                }).catch(e => console.warn('播放失败', e));
+            }
+        }
+        // 监听点击和触摸事件，用户首次交互时开启声音
+        document.addEventListener('click', enableAudio);
+        document.addEventListener('touchstart', enableAudio);
+    }
+</script>
+</body>
+</html>
