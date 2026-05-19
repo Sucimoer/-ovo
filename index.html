@@ -391,6 +391,40 @@ html.dark .bg-linear-to-b {
         }
     }
     document.addEventListener('click', enableAudio);
+	
 </script>
 </body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>设备智能路由</title>
+    <!-- 
+        功能说明：
+        - 手机/平板等移动端 → 自动跳转到同目录下的「软件 (手机).html」
+        - 电脑端 → 停留在当前页面，不做任何跳转
+        - 全程无弹窗、无控制台输出，无过程展示
+    -->
+    <script>
+        (function() {
+            // ----- 请根据您的实际文件名修改下方相对路径（同一文件夹下）-----
+            const MOBILE_PAGE = 'phone/首页优化.html';   // 手机端跳转目标文件
+            // -----------------------------------------------------------------
+
+            // 精准判断是否为移动设备（手机/平板/iPad/手持设备）
+            function isMobileDevice() {
+                const mobileRegex = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Windows Phone|webOS|Silk|Symbian|PlayStation Portable|Nintendo 3DS|Nintendo Switch/i;
+                return mobileRegex.test(navigator.userAgent);
+            }
+
+            // 移动端立即跳转（无返回历史记录，无视觉延迟）
+            if (isMobileDevice()) {
+                window.location.replace(MOBILE_PAGE);
+            }
+            // 电脑端什么也不做，页面继续加载下方内容
+        })();
+    </script>
+</head>
 </html>
