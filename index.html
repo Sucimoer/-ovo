@@ -82,51 +82,21 @@ html.light .bg-clip-text {
   -webkit-background-clip: text;
 }
 
+/* 条幅（导航栏）玻璃质感样式：更透明，移除磨砂模糊效果 */
 html.light nav {
-  background-color: rgba(255, 248, 245, 0.8) !important;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(0,0,0,0.08);
+  background-color: rgba(255, 248, 245, 0.28) !important;  /* 透明度更高，若隐若现但清晰可见玻璃质感 */
+  backdrop-filter: none !important;      /* 移除磨砂模糊效果，呈现清透玻璃感 */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 html.dark nav {
-  background-color: rgba(12, 12, 20, 0.85) !important;
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255,255,255,0.12);
+  background-color: rgba(12, 12, 20, 0.35) !important;   /* 深色模式更透，保持背景可见 */
+  backdrop-filter: none !important;      /* 移除模糊，纯净玻璃质感 */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-html.dark nav a, 
-html.dark nav p,
-html.dark .hover\:text-foreground\/80 {
-  color: #e5e9f0 !important;
-}
-html.dark nav a:hover {
-  color: #ffb7c5 !important;
-}
-
-html.light input[type="search"] {
-  background-color: #ffffffdd;
-  border-color: rgba(0,0,0,0.16);
-  color: #1e1b26;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-}
-
-html.dark input[type="search"] {
-  background-color: #1e1e2c !important;
-  border-color: rgba(255,255,255,0.2) !important;
-  color: #f5f3ff !important;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-}
-
-html.dark input[type="search"]::placeholder {
-  color: #b0b0c0 !important;
-}
-
-html.dark .absolute svg,
-html.dark .text-muted-foreground svg {
-  color: #b9bbd0 !important;
-}
-html.light .absolute svg {
-  color: #5a5a70;
+html.light .bg-background {
+  background-color: rgba(255, 250, 245, 0.9);
 }
 
 html.dark .border-input,
@@ -144,19 +114,6 @@ html.dark a[class*="rounded-full"]:hover {
   border-color: #ff9ebb !important;
   color: white !important;
   transition: all 0.2s;
-}
-
-html.light .bg-background {
-  background-color: rgba(255, 250, 245, 0.9);
-}
-
-html.dark footer .text-default-600,
-html.dark footer span,
-html.dark footer a {
-  color: #cbcbe0 !important;
-}
-html.light footer .text-default-600 {
-  color: #54546b;
 }
 
 html.dark .gap-3 a {
@@ -287,6 +244,8 @@ html.dark .bg-linear-to-b {
       <div class="mt-8 flex gap-3">
         <a href="留言2.html" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full">留言</a>
         <a rel="noopener noreferrer" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full" href="云图库.html">云图库</a>
+		  <a rel="noopener noreferrer" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full" href="每日特供.html">每日特供</a>
+		  <a rel="noopener noreferrer" target="_blank" class="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-xs hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 rounded-full" href="每日运势.html">每日运势</a>
       </div>
       <div class="mt-2 flex gap-3"></div>
     </section>
@@ -370,7 +329,7 @@ html.dark .bg-linear-to-b {
 	</script>
 	<!-- 背景音乐模块：静音自动播放，点击页面任意位置开启声音 -->
 <audio id="bgMusic" autoplay muted loop>
-    <source src="https://m701.music.126.net/20260519190456/4fbb642b3595da13115082389f321fa7/jdymusic/obj/wo3DlMOGwrbDjj7DisKw/29814267456/63b4/b6e9/8d6c/e8ba198c41a412dd51ba1ef89bf86d58.mp3" type="audio/mpeg">
+    <source src="music/Take Me Hand.mp3" type="audio/mp3">
 </audio>
 
 <script>
@@ -491,5 +450,306 @@ html.dark .bg-linear-to-b {
     }
 })();
 </script>
+	<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景切换组件（优化版）</title>
+    <style>
+        /* 您可以在 body 上设置自己网页的原始背景 */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background-color: #f0f0f0; /* 示例：浅灰色，可替换为您自己的背景 */
+            font-family: sans-serif;
+        }
+
+        /* ========== 背景图层（默认透明，不遮挡原始背景） ========== */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: opacity, background-image;
+            z-index: 0;
+            background-color: transparent; /* 透明，让 body 的背景透过来 */
+            pointer-events: none; /* 让鼠标事件穿透，不影响下方内容 */
+        }
+
+        .bg-layer.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .bg-layer.inactive {
+            opacity: 0;
+            z-index: 0;
+        }
+
+        /* ========== 右下角骰子按钮 ========== */
+        .dice-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 1000;
+            font-size: 28px;
+            line-height: 1;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            padding: 0;
+        }
+
+        .dice-btn::before {
+            content: "🎲";
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+            transition: transform 0.4s ease;
+        }
+
+        .dice-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.55);
+            transform: scale(1.08);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .dice-btn:hover::before {
+            transform: rotate(25deg) scale(1.1);
+        }
+
+        .dice-btn:active {
+            transform: scale(0.92);
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .dice-btn:active::before {
+            transform: rotate(-15deg) scale(0.9);
+        }
+
+        .dice-btn.loading {
+            pointer-events: none;
+            animation: btnShimmer 0.8s ease-in-out infinite;
+        }
+
+        .dice-btn.loading::before {
+            animation: iconSpin 0.6s linear infinite;
+        }
+
+        @keyframes btnShimmer {
+            0%, 100% { border-color: rgba(255, 255, 255, 0.35); }
+            50% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.25), 0 0 40px rgba(255,255,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+        }
+
+        @keyframes iconSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: rippleEffect 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 两个背景图层，初始均为透明，不遮挡原始背景 -->
+    <div class="bg-layer active" id="bgLayerA" aria-hidden="true"></div>
+    <div class="bg-layer inactive" id="bgLayerB" aria-hidden="true"></div>
+
+    <!-- 右下角骰子按钮 -->
+    <button class="dice-btn" id="diceButton" aria-label="随机更换背景图片" title="随机更换背景"></button>
+
+    <script>
+        (function() {
+            // ========== 本地图片配置 ==========
+            // 请根据您 pictures 文件夹下的实际文件名修改此数组
+            const LOCAL_IMAGES = [
+                 "pictures/1.jpg",
+                "pictures/2.jpg", 
+                "pictures/3.jpg",
+                "pictures/4.jpg",
+                "pictures/5.jpg",
+                "pictures/6.jpg",
+				 "pictures/7.jpg",
+				 "pictures/8.jpg",
+				 "pictures/9.jpg",
+				 "pictures/10.jpg",
+				 "pictures/11.jpg",
+				 "pictures/12.jpg",
+				 "pictures/13.jpg",
+				 "pictures/14.jpg",
+				 "pictures/15.jpg",
+				 "pictures/16.jpg",
+                "pictures/17.jpg"
+            ];
+
+            const bgLayerA = document.getElementById('bgLayerA');
+            const bgLayerB = document.getElementById('bgLayerB');
+            const diceBtn = document.getElementById('diceButton');
+
+            let activeLayer = 'A';
+            let isLoading = false;
+
+            // 从本地数组中随机获取一张图片路径
+            function getRandomLocalImage() {
+                if (!LOCAL_IMAGES || LOCAL_IMAGES.length === 0) {
+                    console.warn('本地图片数组为空，请添加图片路径');
+                    return null;
+                }
+                const index = Math.floor(Math.random() * LOCAL_IMAGES.length);
+                return LOCAL_IMAGES[index];
+            }
+
+            // 获取当前非活动图层
+            function getInactiveLayer() {
+                return activeLayer === 'A' ? bgLayerB : bgLayerA;
+            }
+
+            // 切换活动图层（仅当 inactive 图层已设置背景后调用）
+            function switchActiveLayer() {
+                const oldActive = activeLayer === 'A' ? bgLayerA : bgLayerB;
+                const newActive = getInactiveLayer();
+                oldActive.classList.remove('active');
+                oldActive.classList.add('inactive');
+                newActive.classList.remove('inactive');
+                newActive.classList.add('active');
+                activeLayer = activeLayer === 'A' ? 'B' : 'A';
+            }
+
+            // 主要切换逻辑
+            function changeBackground() {
+                if (isLoading) return;
+
+                const imageUrl = getRandomLocalImage();
+                if (!imageUrl) return;
+
+                isLoading = true;
+                diceBtn.classList.add('loading');
+
+                const img = new Image();
+                img.onload = function() {
+                    // 将 inactive 图层设置为新图片
+                    const inactiveLayer = getInactiveLayer();
+                    inactiveLayer.style.backgroundImage = `url('${imageUrl}')`;
+                    
+                    // 切换图层
+                    switchActiveLayer();
+                    
+                    diceBtn.classList.remove('loading');
+                    isLoading = false;
+                };
+
+                img.onerror = function() {
+                    diceBtn.classList.remove('loading');
+                    isLoading = false;
+                    console.error('图片加载失败，请检查路径：', imageUrl);
+                    // 图片加载失败时不切换，保持当前背景不变
+                };
+
+                img.src = imageUrl;
+            }
+
+            // 按钮涟漪效果
+            function createRipple(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const rect = diceBtn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+                ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+                diceBtn.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            }
+
+            // 绑定点击事件
+            diceBtn.addEventListener('click', (e) => {
+                createRipple(e);
+                changeBackground();
+            });
+
+            // 注意：不再调用任何初始化背景的函数，网页将保持 body 原始背景
+        })();
+    </script>
+</body>
+</html>
+
+<!-- ========== 修复：全局主题遮罩始终位于背景图层之上 ========== -->
+<style>
+    /* 解决随机切换图片后深色/浅色遮罩效果消失的问题：
+       提高 body::before (主题遮罩层) 的层级，确保其覆盖所有背景图层，
+       同时保持内容区域（导航、主内容等）在遮罩之上保证可交互性 */
+    body::before {
+        z-index: 12 !important;
+    }
+    
+    /* 将随机背景切换组件的所有图层 z-index 降低，并统一层级，
+       确保它们位于主题遮罩层下方，这样半透明遮罩会叠加在背景图片上 */
+    .bg-layer,
+    .bg-layer.active,
+    .bg-layer.inactive {
+        z-index: 5 !important;
+    }
+    
+    /* 确保页面主要内容区域（导航、主体、页脚等）的层级高于遮罩，
+       保证文字和交互元素清晰可点且不被遮罩影响 */
+    nav,
+    main,
+    footer,
+    .relative,
+    [class*="container"] {
+        z-index: 15;
+    }
+    
+    /* 特别确保导航栏的固定定位层级不受影响，保持高于遮罩 */
+    nav {
+        z-index: 50 !important;
+    }
+    
+    /* 主内容区域增加相对定位以确保 z-index 生效（不破坏原有布局） */
+    main {
+        position: relative;
+        z-index: 15;
+    }
+    
+    /* 右下角骰子按钮保持在最高层以便点击 */
+    .dice-btn {
+        z-index: 1000 !important;
+    }
+</style>
+
 </body>
 </html>

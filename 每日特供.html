@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澪鸢 · 资源库 - 搜索结果</title>
+	<link rel="icon" href="images/favicon.ico">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background-image: url(images/6.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            position: relative;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        html.light body::before {
+            background-color: rgba(255, 248, 240, 0.28);
+        }
+        html.dark body::before {
+            background-color: rgba(8, 8, 16, 0.82);
+            backdrop-filter: blur(1px);
+        }
+        nav, main, footer, .relative, .container {
+            position: relative;
+            z-index: 2;
+        }
+   
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .result-card {
+            transition: box-shadow 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.8) !important; 
+            backdrop-filter: blur(2px);
+        }
+        html.dark .result-card {
+            background-color: rgba(20, 20, 32, 0.75) !important;
+        }
+        .result-card:hover {
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2);
+        }
+  
+        .gradient-text {
+            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        html.dark .gradient-text {
+            background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+<div class="relative flex h-screen flex-col">
+  
+    <nav class="bg-background/80 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm transition-colors duration-300">
+        <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
+            <div class="flex items-center">
+                <a class="flex items-center gap-1" href="index.html">
+                    <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
+                </a>
+                <ul class="ml-4 hidden gap-4 sm:flex">
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="游戏.html">游戏</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="动漫.html">动漫</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="杂乱.html">杂乱</a></li>
+                </ul>
+            </div>
+            <div class="hidden items-center gap-2 sm:flex">
+                <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-ovo">
+                    <svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
+                </a>
+                <button type="button" role="switch" aria-checked="false" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80">
+                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0">
+                        <svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容：搜索结果区域（修复后） -->
+    <main class="max-w-8xl container mx-auto px-6 py-8 pt-20">
+        <div class="flex flex-col gap-4 px-1 pt-4 md:px-10">
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1px_1fr]">
+                <!-- 左侧卡片列表（半透明背景） -->
+                <div class="md:pr-6"></div>
+
+                
+            <div aria-orientation="vertical" role="separator" class="bg-gray-300 dark:bg-gray-600 shrink-0 h-full w-px hidden md:block"></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script>
+(function() {
+    function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
+    function applyTheme(theme) {
+        const root = document.documentElement;
+        root.classList.remove('light', 'dark');
+        root.classList.add(theme);
+        root.style.colorScheme = theme;
+        localStorage.setItem('theme', theme);
+        const btns = document.querySelectorAll('button[role="switch"]');
+        btns.forEach(btn => {
+            const isDark = (theme === 'dark');
+            btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
+            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+            const span = btn.querySelector('span');
+            if (span) {
+                let svg = span.querySelector('svg');
+                if (!svg) {
+                    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('width', '16');
+                    svg.setAttribute('viewBox', '0 0 24 24');
+                    span.innerHTML = '';
+                    span.appendChild(svg);
+                }
+                if (isDark) {
+                    svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
+                } else {
+                    svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
+                }
+            }
+        });
+    }
+    function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
+    function bindEvents() {
+        document.querySelectorAll('button[role="switch"]').forEach(btn => {
+            btn.removeEventListener('click', toggleTheme);
+            btn.addEventListener('click', toggleTheme);
+        });
+    }
+    applyTheme(getStoredTheme());
+    bindEvents();
+    new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机视频背景切换组件</title>
+    <style>
+        /* 您的网页原始背景（可在此自定义） */
+     
+        /* ========== 视频背景图层 ========== */
+        .video-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;       /* 视频填满屏幕并保持比例 */
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;    /* 让鼠标事件穿透到网页内容 */
+            background: transparent;
+        }
+
+        .video-layer.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* ========== 右下角骰子按钮（样式与之前完全一致） ========== */
+        .dice-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 1000;
+            font-size: 28px;
+            line-height: 1;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            padding: 0;
+        }
+
+        .dice-btn::before {
+            content: "🎲";
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+            transition: transform 0.4s ease;
+        }
+
+        .dice-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.55);
+            transform: scale(1.08);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .dice-btn:hover::before {
+            transform: rotate(25deg) scale(1.1);
+        }
+
+        .dice-btn:active {
+            transform: scale(0.92);
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .dice-btn:active::before {
+            transform: rotate(-15deg) scale(0.9);
+        }
+
+        .dice-btn.loading {
+            pointer-events: none;
+            animation: btnShimmer 0.8s ease-in-out infinite;
+        }
+
+        .dice-btn.loading::before {
+            animation: iconSpin 0.6s linear infinite;
+        }
+
+        @keyframes btnShimmer {
+            0%, 100% { border-color: rgba(255, 255, 255, 0.35); }
+            50% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.25), 0 0 40px rgba(255,255,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+        }
+
+        @keyframes iconSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: rippleEffect 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 两个视频图层，用于无缝切换 -->
+    <video class="video-layer active" id="videoA"  loop playsinline preload="auto"></video>
+    <video class="video-layer inactive" id="videoB"  loop playsinline preload="auto"></video>
+
+    <!-- 右下角骰子按钮 -->
+    <button class="dice-btn" id="diceButton" aria-label="随机更换视频背景" title="随机更换视频背景"></button>
+
+<script>
+        (function() {
+            // ========== 本地视频配置 ==========
+            // 请根据您 videos 文件夹下的实际文件名修改此数组
+            // 支持常见格式：.mp4, .webm, .ogg
+            const LOCAL_VIDEOS = [
+                'video/游戏人生.mp4',
+				'video/狂三.mp4',
+               
+                // 添加更多视频路径...
+            ];
+
+            const videoA = document.getElementById('videoA');
+            const videoB = document.getElementById('videoB');
+            const diceBtn = document.getElementById('diceButton');
+
+            let activeVideoElement = videoA;  // 当前显示的视频元素
+            let inactiveVideoElement = videoB; // 预加载的视频元素
+            let isLoading = false;
+            let videoPlaying = false;          // 是否有视频正在播放
+
+            // 随机获取一个视频路径
+            function getRandomVideo() {
+                if (!LOCAL_VIDEOS || LOCAL_VIDEOS.length === 0) {
+                    console.warn('本地视频数组为空，请添加视频路径');
+                    return null;
+                }
+                const index = Math.floor(Math.random() * LOCAL_VIDEOS.length);
+                return LOCAL_VIDEOS[index];
+            }
+
+            // 停止并重置视频元素
+            function resetVideoElement(video) {
+                video.pause();
+                video.removeAttribute('src');
+                video.load(); // 重置视频状态
+            }
+
+            // 切换活动视频（淡入淡出）
+            function switchActiveVideo() {
+                // 旧视频淡出
+                activeVideoElement.classList.remove('active');
+                activeVideoElement.classList.add('inactive');
+                
+                // 新视频淡入
+                inactiveVideoElement.classList.remove('inactive');
+                inactiveVideoElement.classList.add('active');
+                
+                // 暂停旧视频以节省资源
+                activeVideoElement.pause();
+                
+                // 交换引用
+                [activeVideoElement, inactiveVideoElement] = [inactiveVideoElement, activeVideoElement];
+            }
+
+            // 主要切换函数
+            function changeVideoBackground() {
+                if (isLoading) return;
+
+                const videoUrl = getRandomVideo();
+                if (!videoUrl) return;
+
+                isLoading = true;
+                diceBtn.classList.add('loading');
+
+                // 1. 先重置非活动视频（清除旧源）
+                resetVideoElement(inactiveVideoElement);
+                
+                // 2. 设置新视频源
+                inactiveVideoElement.src = videoUrl;
+                
+                // 3. 监听视频准备就绪
+                const onCanPlay = function() {
+                    // 移除监听器，避免重复触发
+                    inactiveVideoElement.removeEventListener('canplaythrough', onCanPlay);
+                    inactiveVideoElement.removeEventListener('error', onError);
+                    
+                    // 尝试播放新视频
+                    const playPromise = inactiveVideoElement.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // 播放成功后切换图层
+                            switchActiveVideo();
+                            videoPlaying = true;
+                            diceBtn.classList.remove('loading');
+                            isLoading = false;
+                        }).catch(err => {
+                            console.warn('视频自动播放被阻止，可能需用户交互：', err);
+                            // 虽然播放失败，但仍可切换（视频会暂停在第一帧）
+                            switchActiveVideo();
+                            videoPlaying = true;
+                            diceBtn.classList.remove('loading');
+                            isLoading = false;
+                        });
+                    } else {
+                        // 不支持 Promise 的旧浏览器，直接切换
+                        switchActiveVideo();
+                        videoPlaying = true;
+                        diceBtn.classList.remove('loading');
+                        isLoading = false;
+                    }
+                };
+
+                // 视频加载错误处理
+                const onError = function() {
+                    inactiveVideoElement.removeEventListener('canplaythrough', onCanPlay);
+                    inactiveVideoElement.removeEventListener('error', onError);
+                    console.error('视频加载失败：', videoUrl);
+                    diceBtn.classList.remove('loading');
+                    isLoading = false;
+                    // 清除错误的源
+                    resetVideoElement(inactiveVideoElement);
+                };
+
+                inactiveVideoElement.addEventListener('canplaythrough', onCanPlay, { once: false });
+                inactiveVideoElement.addEventListener('error', onError, { once: false });
+                
+                // 开始加载
+                inactiveVideoElement.load();
+            }
+
+            // 按钮涟漪效果
+            function createRipple(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const rect = diceBtn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+                ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+                diceBtn.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            }
+
+            // 点击事件
+            diceBtn.addEventListener('click', (e) => {
+                createRipple(e);
+                changeVideoBackground();
+            });
+
+            // 初始状态：两个视频元素均无 src，不显示任何视频，保持 body 原始背景
+            // 确保视频元素默认静音且不播放
+
+            // 防止某些浏览器自动播放旧源
+            videoA.pause();
+            videoB.pause();
+        })();
+    </script>
+</body>
+</html>
+</body>
+</html>

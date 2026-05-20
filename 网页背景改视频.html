@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>随机视频背景切换组件</title>
+    <style>
+        /* 您的网页原始背景（可在此自定义） */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); /* 示例渐变，无视频时显示 */
+            font-family: sans-serif;
+        }
+
+        /* ========== 视频背景图层 ========== */
+        .video-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;       /* 视频填满屏幕并保持比例 */
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: none;    /* 让鼠标事件穿透到网页内容 */
+            background: transparent;
+        }
+
+        .video-layer.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* ========== 右下角骰子按钮（样式与之前完全一致） ========== */
+        .dice-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), 0 2px 8px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 1000;
+            font-size: 28px;
+            line-height: 1;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            padding: 0;
+        }
+
+        .dice-btn::before {
+            content: "🎲";
+            display: block;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+            transition: transform 0.4s ease;
+        }
+
+        .dice-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.55);
+            transform: scale(1.08);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 4px 12px rgba(0, 0, 0, 0.2), 0 0 50px rgba(255, 255, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .dice-btn:hover::before {
+            transform: rotate(25deg) scale(1.1);
+        }
+
+        .dice-btn:active {
+            transform: scale(0.92);
+            transition: all 0.15s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .dice-btn:active::before {
+            transform: rotate(-15deg) scale(0.9);
+        }
+
+        .dice-btn.loading {
+            pointer-events: none;
+            animation: btnShimmer 0.8s ease-in-out infinite;
+        }
+
+        .dice-btn.loading::before {
+            animation: iconSpin 0.6s linear infinite;
+        }
+
+        @keyframes btnShimmer {
+            0%, 100% { border-color: rgba(255, 255, 255, 0.35); }
+            50% { border-color: rgba(255, 255, 255, 0.8); box-shadow: 0 8px 24px rgba(0,0,0,0.25), 0 0 40px rgba(255,255,255,0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+        }
+
+        @keyframes iconSpin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* 按钮涟漪效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(0);
+            animation: rippleEffect 0.7s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to { transform: scale(4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 两个视频图层，用于无缝切换 -->
+    <video class="video-layer active" id="videoA" muted loop playsinline preload="auto"></video>
+    <video class="video-layer inactive" id="videoB" muted loop playsinline preload="auto"></video>
+
+    <!-- 右下角骰子按钮 -->
+    <button class="dice-btn" id="diceButton" aria-label="随机更换视频背景" title="随机更换视频背景"></button>
+
+    <script>
+        (function() {
+            // ========== 本地视频配置 ==========
+            // 请根据您 videos 文件夹下的实际文件名修改此数组
+            // 支持常见格式：.mp4, .webm, .ogg
+            const LOCAL_VIDEOS = [
+                'videos/background1.mp4',
+                'videos/background2.mp4',
+                'videos/background3.webm',
+                'videos/background4.mp4',
+                'videos/background5.mp4',
+                // 添加更多视频路径...
+            ];
+
+            const videoA = document.getElementById('videoA');
+            const videoB = document.getElementById('videoB');
+            const diceBtn = document.getElementById('diceButton');
+
+            let activeVideoElement = videoA;  // 当前显示的视频元素
+            let inactiveVideoElement = videoB; // 预加载的视频元素
+            let isLoading = false;
+            let videoPlaying = false;          // 是否有视频正在播放
+
+            // 随机获取一个视频路径
+            function getRandomVideo() {
+                if (!LOCAL_VIDEOS || LOCAL_VIDEOS.length === 0) {
+                    console.warn('本地视频数组为空，请添加视频路径');
+                    return null;
+                }
+                const index = Math.floor(Math.random() * LOCAL_VIDEOS.length);
+                return LOCAL_VIDEOS[index];
+            }
+
+            // 停止并重置视频元素
+            function resetVideoElement(video) {
+                video.pause();
+                video.removeAttribute('src');
+                video.load(); // 重置视频状态
+            }
+
+            // 切换活动视频（淡入淡出）
+            function switchActiveVideo() {
+                // 旧视频淡出
+                activeVideoElement.classList.remove('active');
+                activeVideoElement.classList.add('inactive');
+                
+                // 新视频淡入
+                inactiveVideoElement.classList.remove('inactive');
+                inactiveVideoElement.classList.add('active');
+                
+                // 暂停旧视频以节省资源
+                activeVideoElement.pause();
+                
+                // 交换引用
+                [activeVideoElement, inactiveVideoElement] = [inactiveVideoElement, activeVideoElement];
+            }
+
+            // 主要切换函数
+            function changeVideoBackground() {
+                if (isLoading) return;
+
+                const videoUrl = getRandomVideo();
+                if (!videoUrl) return;
+
+                isLoading = true;
+                diceBtn.classList.add('loading');
+
+                // 1. 先重置非活动视频（清除旧源）
+                resetVideoElement(inactiveVideoElement);
+                
+                // 2. 设置新视频源
+                inactiveVideoElement.src = videoUrl;
+                
+                // 3. 监听视频准备就绪
+                const onCanPlay = function() {
+                    // 移除监听器，避免重复触发
+                    inactiveVideoElement.removeEventListener('canplaythrough', onCanPlay);
+                    inactiveVideoElement.removeEventListener('error', onError);
+                    
+                    // 尝试播放新视频
+                    const playPromise = inactiveVideoElement.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.then(() => {
+                            // 播放成功后切换图层
+                            switchActiveVideo();
+                            videoPlaying = true;
+                            diceBtn.classList.remove('loading');
+                            isLoading = false;
+                        }).catch(err => {
+                            console.warn('视频自动播放被阻止，可能需用户交互：', err);
+                            // 虽然播放失败，但仍可切换（视频会暂停在第一帧）
+                            switchActiveVideo();
+                            videoPlaying = true;
+                            diceBtn.classList.remove('loading');
+                            isLoading = false;
+                        });
+                    } else {
+                        // 不支持 Promise 的旧浏览器，直接切换
+                        switchActiveVideo();
+                        videoPlaying = true;
+                        diceBtn.classList.remove('loading');
+                        isLoading = false;
+                    }
+                };
+
+                // 视频加载错误处理
+                const onError = function() {
+                    inactiveVideoElement.removeEventListener('canplaythrough', onCanPlay);
+                    inactiveVideoElement.removeEventListener('error', onError);
+                    console.error('视频加载失败：', videoUrl);
+                    diceBtn.classList.remove('loading');
+                    isLoading = false;
+                    // 清除错误的源
+                    resetVideoElement(inactiveVideoElement);
+                };
+
+                inactiveVideoElement.addEventListener('canplaythrough', onCanPlay, { once: false });
+                inactiveVideoElement.addEventListener('error', onError, { once: false });
+                
+                // 开始加载
+                inactiveVideoElement.load();
+            }
+
+            // 按钮涟漪效果
+            function createRipple(e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                const rect = diceBtn.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = `${size}px`;
+                ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
+                ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
+                diceBtn.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            }
+
+            // 点击事件
+            diceBtn.addEventListener('click', (e) => {
+                createRipple(e);
+                changeVideoBackground();
+            });
+
+            // 初始状态：两个视频元素均无 src，不显示任何视频，保持 body 原始背景
+            // 确保视频元素默认静音且不播放
+            videoA.muted = true;
+            videoB.muted = true;
+            // 防止某些浏览器自动播放旧源
+            videoA.pause();
+            videoB.pause();
+        })();
+    </script>
+</body>
+</html>
