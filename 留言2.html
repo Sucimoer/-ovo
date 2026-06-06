@@ -2,8 +2,8 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>留言板</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>留言板 · 澪鸢小栈</title>
     <style>
         :root {
             --bg: #f5f0eb;
@@ -29,8 +29,7 @@
         body {
             font-family: var(--font-cn); background: var(--bg);
             background-image: radial-gradient(ellipse at 20% 20%, rgba(180,160,140,0.12) 0%, transparent 55%),
-            radial-gradient(ellipse at 80% 70%, rgba(160,140,120,0.10) 0%, transparent 55%),
-            radial-gradient(ellipse at 50% 50%, rgba(200,180,155,0.06) 0%, transparent 70%);
+                              radial-gradient(ellipse at 80% 70%, rgba(160,140,120,0.10) 0%, transparent 55%);
             min-height:100vh; display:flex; justify-content:center; align-items:flex-start; padding:24px 16px 60px; color:var(--text);
         }
         .container { width:100%; max-width:720px; display:flex; flex-direction:column; gap:22px; }
@@ -51,25 +50,25 @@
         .name-input-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
         .name-input-row label { font-weight:600; font-size:0.9rem; color:#5c4a3a; min-width:42px; }
         .name-input-row input { flex:1; min-width:180px; padding:11px 16px; border:2px solid var(--border); border-radius:8px; font-size:0.95rem; background:var(--input-bg); }
-        .avatar-preview-mini { width:44px; height:44px; border-radius:50%; background-size:cover; background-position:center; border:3px solid transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:#fff; }
+        .avatar-preview-mini { width:44px; height:44px; border-radius:50%; background-size:cover; background-position:center; border:3px solid transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1.3rem; color:#fff; background-color:#c4956a; }
         .avatar-preview-mini:hover { border-color:var(--accent); }
         .message-input-area { display:flex; flex-direction:column; gap:12px; }
         .input-toolbar { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:4px; }
-        .tool-btn { background:#f0ede7; border:none; border-radius:20px; padding:6px 14px; font-size:0.8rem; cursor:pointer; display:flex; align-items:center; gap:4px; transition:all var(--transition); }
+        .tool-btn { background:#f0ede7; border:none; border-radius:20px; padding:6px 14px; font-size:0.8rem; cursor:pointer; display:inline-flex; align-items:center; gap:4px; transition:all var(--transition); }
         .tool-btn:hover { background:#e4dfd6; }
         .tool-btn.recording { background:#fce8e8; color:#d44; }
         .tool-btn.danger { background:#fee9e9; color:#b33a3a; }
-        textarea { width:100%; min-height:100px; padding:14px 16px; border:2px solid var(--border); border-radius:10px; font-size:0.95rem; background:var(--input-bg); resize:vertical; }
+        textarea { width:100%; min-height:100px; padding:14px 16px; border:2px solid var(--border); border-radius:10px; font-size:0.95rem; background:var(--input-bg); resize:vertical; font-family:inherit; }
         .submit-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-        .btn-submit { padding:11px 28px; background:var(--accent); color:#fff; border:none; border-radius:30px; font-weight:600; cursor:pointer; }
+        .btn-submit { padding:11px 28px; background:var(--accent); color:#fff; border:none; border-radius:30px; font-weight:600; cursor:pointer; transition:0.2s; }
         .btn-submit:disabled { background:#c9c0b5; cursor:not-allowed; }
         .message-list-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:10px; }
         .messages-container { display:flex; flex-direction:column; gap:12px; max-height:55vh; overflow-y:auto; padding-right:4px; }
         .message-item { display:flex; gap:13px; padding:16px 18px; background:#fdfcf9; border-radius:10px; border:1px solid #f0ece5; position:relative; animation:slideIn 0.35s; }
         @keyframes slideIn { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
-        .msg-avatar { width:48px; height:48px; border-radius:50%; background-size:cover; background-position:center; cursor:pointer; flex-shrink:0; }
+        .msg-avatar { width:48px; height:48px; border-radius:50%; background-size:cover; background-position:center; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:1.5rem; color:#fff; }
         .msg-content-wrapper { flex:1; min-width:0; }
-        .msg-meta { display:flex; align-items:center; gap:10px; margin-bottom:4px; }
+        .msg-meta { display:flex; align-items:center; gap:10px; margin-bottom:4px; flex-wrap:wrap; }
         .msg-name { font-weight:700; font-size:0.9rem; }
         .msg-time { font-size:0.75rem; color:#b5aba0; }
         .msg-text { font-size:0.93rem; line-height:1.6; word-break:break-word; white-space:pre-wrap; }
@@ -80,7 +79,7 @@
         .reply-section.open { display:block; }
         .reply-list { display:flex; flex-direction:column; gap:8px; margin-bottom:10px; }
         .reply-item { display:flex; gap:8px; padding:10px 12px; background:var(--reply-bg); border-radius:8px; position:relative; }
-        .reply-avatar { width:32px; height:32px; border-radius:50%; background-size:cover; }
+        .reply-avatar { width:32px; height:32px; border-radius:50%; background-size:cover; display:flex; align-items:center; justify-content:center; font-size:1rem; color:#fff; flex-shrink:0; }
         .mention-dropdown { position:absolute; background:#fff; border:1px solid #d5cfc6; border-radius:8px; box-shadow:0 8px 24px rgba(0,0,0,0.12); z-index:1000; display:none; max-height:180px; overflow-y:auto; }
         .mention-dropdown.show { display:block; }
         .modal-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); display:flex; justify-content:center; align-items:center; z-index:9999; }
@@ -94,11 +93,12 @@
         .tab-btn.active { background:var(--accent); color:#fff; }
         table { width:100%; border-collapse:collapse; margin-top:12px; }
         th, td { padding:8px 12px; border-bottom:1px solid var(--border); text-align:left; }
-        .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-120px); background:#3d3929; color:#fff; padding:12px 24px; border-radius:30px; z-index:9999; transition:0.4s; pointer-events:none; }
+        .toast { position:fixed; top:24px; left:50%; transform:translateX(-50%) translateY(-120px); background:#3d3929; color:#fff; padding:12px 24px; border-radius:30px; z-index:9999; transition:0.4s; pointer-events:none; font-size:0.9rem; white-space:nowrap; }
         .toast.show { transform:translateX(-50%) translateY(0); }
         .btn-member-view.active { background:#c8e6c9; color:#2e7d32; font-weight:700; }
-        .btn-delete { position:absolute; top:12px; right:12px; width:28px; height:28px; border-radius:50%; border:none; background:transparent; cursor:pointer; opacity:0; }
+        .btn-delete { position:absolute; top:12px; right:12px; width:28px; height:28px; border-radius:50%; border:none; background:transparent; cursor:pointer; opacity:0; transition:0.2s; font-size:0.8rem; }
         .message-item:hover .btn-delete { opacity:1; }
+        @media (max-width:600px){ .card{ padding:16px; } .name-input-row{ flex-direction:column; align-items:stretch; } }
     </style>
 </head>
 <body>
@@ -116,7 +116,7 @@
             <div class="name-input-row">
                 <label>昵称</label>
                 <input type="text" id="userNameInput" placeholder="输入你的名字..." maxlength="18">
-                <div class="avatar-preview-mini" id="avatarPreviewMini" title="点击更换头像"></div>
+                <div class="avatar-preview-mini" id="avatarPreviewMini" title="点击更换头像">😊</div>
             </div>
             <div id="adminExitRow" style="display:none;"><button class="tool-btn danger" id="btnExitAdmin">🚪 退出管理员</button></div>
             <div id="memberExitRow" style="display:none;"><button class="tool-btn" id="btnExitMember">🚪 退出会员</button></div>
@@ -152,16 +152,15 @@
                     <button class="tool-btn" id="btnBatchMode">☑️ 批量</button>
                     <button class="tool-btn danger" id="btnBatchDelete" style="display:none;">🗑️ 删除所选</button>
                     <button class="tool-btn" id="btnUserList">📋 用户列表</button>
-                    <button class="tool-btn" id="btnClearAll">清空全部</button>
+                    <button class="tool-btn danger" id="btnClearAll">清空全部</button>
                 </div>
-                <button class="tool-btn" id="btnClearAllNormal">清空全部</button>
+                <button class="tool-btn danger" id="btnClearAllNormal">清空全部</button>
             </div>
         </div>
         <div class="messages-container" id="messagesContainer"></div>
     </div>
 </div>
 
-<!-- 头像修改弹窗 -->
 <div id="avatarModal" class="modal-overlay" style="display:none;">
     <div class="modal-content">
         <span class="modal-close" id="closeAvatarModal">✖</span>
@@ -177,436 +176,709 @@
         <div id="tabCustom" class="tab-content" style="display:none;">
             <div class="upload-area">
                 <input type="file" id="modalFileInput" accept="image/*">
-                <p style="font-size:0.8rem; color:var(--text-secondary);">支持 JPG/PNG，不超过2MB</p>
+                <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:8px;">支持 JPG/PNG，不超过2MB</p>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    (() => {
-        const presetAvatars = [
-            { emoji: '😊', bg: '#FF6B6B' }, { emoji: '😎', bg: '#4ECDC4' }, { emoji: '🐱', bg: '#6BCB77' },
-            { emoji: '🦊', bg: '#E8895B' }, { emoji: '🐶', bg: '#FF85A2' }, { emoji: '🐰', bg: '#45B7D1' },
-            { emoji: '🐼', bg: '#5D6D7E' }, { emoji: '🌟', bg: '#F0A04B' }, { emoji: '🌸', bg: '#E8A0BF' }, { emoji: '🍀', bg: '#7DCEA0' }
-        ];
-        const autoColors = ['#E07B6C','#5BA0B9','#7BA87E','#9B7EB8','#D4859E','#4E9CB5','#D4956B','#6B9EAC','#C47B7B','#7B9E8E'];
+(function(){
+    // ---------- 预设数据 ----------
+    const presetAvatars = [
+        { emoji: '😊', bg: '#FF6B6B' }, { emoji: '😎', bg: '#4ECDC4' }, { emoji: '🐱', bg: '#6BCB77' },
+        { emoji: '🦊', bg: '#E8895B' }, { emoji: '🐶', bg: '#FF85A2' }, { emoji: '🐰', bg: '#45B7D1' },
+        { emoji: '🐼', bg: '#5D6D7E' }, { emoji: '🌟', bg: '#F0A04B' }, { emoji: '🌸', bg: '#E8A0BF' }, { emoji: '🍀', bg: '#7DCEA0' }
+    ];
+    const autoColors = ['#E07B6C','#5BA0B9','#7BA87E','#9B7EB8','#D4859E','#4E9CB5','#D4956B','#6B9EAC','#C47B7B','#7B9E8E'];
 
-        const SIM_IP_KEY = 'sim_ip_v7';
-        function getSimIp() {
-            let ip = localStorage.getItem(SIM_IP_KEY);
-            if (!ip) { ip = 'ip_' + Math.random().toString(36).substr(2,10); localStorage.setItem(SIM_IP_KEY, ip); }
-            return ip;
+    // ---------- 身份存储 ----------
+    const SIM_IP_KEY = 'sim_ip_v8';
+    const MEMBER_LIST_KEY = 'mb_member_list_v8';
+    const GUEST_LIST_KEY = 'mb_guest_list_v8';
+    const MEMBER_COUNTER_KEY = 'mb_member_counter_v8';
+    const GUEST_COUNTER_KEY = 'mb_guest_counter_v8';
+    const USER_ID_KEY = 'mb_user_id_v8';
+    const SETTINGS_KEY = 'mb_settings_v8';
+    const MESSAGES_KEY = 'mb_messages_v8';
+
+    function getSimIp() {
+        let ip = localStorage.getItem(SIM_IP_KEY);
+        if (!ip) { ip = 'ip_' + Math.random().toString(36).substr(2,10); localStorage.setItem(SIM_IP_KEY, ip); }
+        return ip;
+    }
+    const simIp = getSimIp();
+    let memberList = JSON.parse(localStorage.getItem(MEMBER_LIST_KEY) || '[]');
+    let guestList = JSON.parse(localStorage.getItem(GUEST_LIST_KEY) || '[]');
+    let memberCounter = parseInt(localStorage.getItem(MEMBER_COUNTER_KEY) || '0');
+    let guestCounter = parseInt(localStorage.getItem(GUEST_COUNTER_KEY) || '1');
+
+    function saveIdData() {
+        localStorage.setItem(MEMBER_LIST_KEY, JSON.stringify(memberList));
+        localStorage.setItem(GUEST_LIST_KEY, JSON.stringify(guestList));
+        localStorage.setItem(MEMBER_COUNTER_KEY, memberCounter);
+        localStorage.setItem(GUEST_COUNTER_KEY, guestCounter);
+    }
+
+    let currentMemberId = null;
+    let currentGuestId = null;
+    const userId = (() => {
+        let id = localStorage.getItem(USER_ID_KEY);
+        if (!id) { id = 'u_' + Math.random().toString(36).substr(2,12); localStorage.setItem(USER_ID_KEY, id); }
+        return id;
+    })();
+
+    let userSettings = {
+        name: '匿名用户',
+        avatarType: 'auto',
+        avatarIndex: null,
+        customAvatarData: null,
+        isAdmin: false,
+        isMember: false
+    };
+
+    function loadSettings() {
+        let s = localStorage.getItem(SETTINGS_KEY);
+        if (s) {
+            try {
+                let p = JSON.parse(s);
+                Object.assign(userSettings, p);
+            } catch(e) {}
         }
-        const simIp = getSimIp();
-        const MEMBER_LIST_KEY = 'mb_member_list_v7';
-        const GUEST_LIST_KEY = 'mb_guest_list_v7';
-        const MEMBER_COUNTER_KEY = 'mb_member_counter_v7';
-        const GUEST_COUNTER_KEY = 'mb_guest_counter_v7';
+    }
+    function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings)); }
 
-        let memberList = JSON.parse(localStorage.getItem(MEMBER_LIST_KEY) || '[]');
-        let guestList = JSON.parse(localStorage.getItem(GUEST_LIST_KEY) || '[]');
-        let memberCounter = parseInt(localStorage.getItem(MEMBER_COUNTER_KEY) || '0');
-        let guestCounter = parseInt(localStorage.getItem(GUEST_COUNTER_KEY) || '1');
-
-        function saveIdData() {
-            localStorage.setItem(MEMBER_LIST_KEY, JSON.stringify(memberList));
-            localStorage.setItem(GUEST_LIST_KEY, JSON.stringify(guestList));
-            localStorage.setItem(MEMBER_COUNTER_KEY, memberCounter);
-            localStorage.setItem(GUEST_COUNTER_KEY, guestCounter);
+    // 初始化身份
+    function initIdentity() {
+        let guest = guestList.find(g => g.ip === simIp);
+        if (guest) currentGuestId = guest.id;
+        else {
+            currentGuestId = 'g' + guestCounter;
+            guestList.push({ id: currentGuestId, ip: simIp, name: userSettings.name, avatar: null });
+            guestCounter++;
+            saveIdData();
         }
-
-        let currentMemberId = null;
-        let currentGuestId = null;
-        const USER_ID_KEY = 'mb_user_id_v7';
-        const userId = (() => {
-            let id = localStorage.getItem(USER_ID_KEY);
-            if (!id) { id = 'u_' + Math.random().toString(36).substr(2,12); localStorage.setItem(USER_ID_KEY, id); }
-            return id;
-        })();
-
-        function initIdentity() {
-            let guest = guestList.find(g => g.ip === simIp);
-            if (guest) {
-                currentGuestId = guest.id;
-            } else {
-                currentGuestId = 'a0b' + guestCounter;
-                guestList.push({ id: currentGuestId, ip: simIp, name: '匿名用户', avatar: null });
-                guestCounter++;
+        if (userSettings.isAdmin) {
+            let admin = memberList.find(m => m.id === 0 && m.ip === simIp);
+            if (admin) currentMemberId = 0;
+            else {
+                memberList.push({ id: 0, ip: simIp, name: userSettings.name });
+                currentMemberId = 0;
                 saveIdData();
             }
+        } else if (userSettings.isMember) {
+            let regular = memberList.find(m => m.id !== 0 && m.ip === simIp);
+            if (regular) currentMemberId = regular.id;
+            else currentMemberId = null;
+        } else {
+            currentMemberId = null;
+        }
+    }
 
-            // 确定当前会员身份（按优先级）
-            const membersOfIp = memberList.filter(m => m.ip === simIp);
-            if (userSettings.isAdmin) {
-                const admin = membersOfIp.find(m => m.id === 0);
-                if (admin) currentMemberId = 0;
-                else {
-                    memberList.push({ id: 0, ip: simIp, name: userSettings.name });
-                    currentMemberId = 0;
-                    saveIdData();
-                }
-            } else if (userSettings.isMember) {
-                // 优先选择非0的会员（普通会员）
-                const regular = membersOfIp.find(m => m.id !== 0);
-                if (regular) currentMemberId = regular.id;
-                else currentMemberId = null;
-            } else {
-                currentMemberId = null;
+    // ---------- 消息存储 ----------
+    let messages = JSON.parse(localStorage.getItem(MESSAGES_KEY) || '[]').filter(m => m && m.id);
+    function saveMessages() { localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages)); }
+
+    // ---------- 辅助函数 ----------
+    function showToast(msg, dur=2000) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('show');
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => toast.classList.remove('show'), dur);
+    }
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if(m === '&') return '&amp;';
+            if(m === '<') return '&lt;';
+            if(m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+    function formatTime(ts) {
+        const diff = Date.now() - ts;
+        if (diff < 60000) return '刚刚';
+        if (diff < 3600000) return Math.floor(diff/60000)+'分钟前';
+        if (diff < 86400000) return Math.floor(diff/3600000)+'小时前';
+        const d = new Date(ts);
+        return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`;
+    }
+
+    function getAvatarInfo() {
+        if (userSettings.avatarType === 'preset' && userSettings.avatarIndex >= 0 && presetAvatars[userSettings.avatarIndex])
+            return { char: presetAvatars[userSettings.avatarIndex].emoji, bg: presetAvatars[userSettings.avatarIndex].bg, type:'preset', data:null };
+        if (userSettings.avatarType === 'custom' && userSettings.customAvatarData)
+            return { char:'', bg:'', type:'custom', data:userSettings.customAvatarData };
+        const fc = (userSettings.name || '匿').charAt(0);
+        return { char:fc, bg:autoColors[fc.charCodeAt(0)%autoColors.length], type:'auto', data:null };
+    }
+    function updateAvatarPreview() {
+        const preview = document.getElementById('avatarPreviewMini');
+        const info = getAvatarInfo();
+        if (info.type === 'custom') {
+            preview.style.backgroundImage = `url(${info.data})`;
+            preview.style.backgroundColor = 'transparent';
+            preview.textContent = '';
+        } else {
+            preview.style.backgroundImage = '';
+            preview.style.backgroundColor = info.bg;
+            preview.textContent = info.char;
+        }
+    }
+
+    // 注册会员
+    function registerMember(forceId = null) {
+        if (forceId === 0) {
+            let existing = memberList.find(m => m.ip === simIp && m.id === 0);
+            if (existing) { currentMemberId = 0; return true; }
+            memberList.push({ id: 0, ip: simIp, name: userSettings.name });
+            currentMemberId = 0;
+            saveIdData();
+            return true;
+        } else {
+            let existingRegular = memberList.find(m => m.ip === simIp && m.id !== 0);
+            if (existingRegular) { showToast('该设备已注册普通会员 ID:'+existingRegular.id); return false; }
+            let newId = memberCounter;
+            while (memberList.find(m => m.id === newId)) { memberCounter++; newId = memberCounter; }
+            memberList.push({ id: newId, ip: simIp, name: userSettings.name });
+            currentMemberId = newId;
+            if (newId >= memberCounter) memberCounter = newId + 1;
+            saveIdData();
+            return true;
+        }
+    }
+
+    // 激活逻辑
+    function tryActivateAdmin(content) {
+        if (document.getElementById('userNameInput').value.trim() === '苏辞沫儿ovo' && content.trim() === '澪鸢天下第一') {
+            if (registerMember(0)) {
+                userSettings.isAdmin = true;
+                userSettings.isMember = true;
+                saveSettings();
+                updateUI();
+                document.getElementById('messageTextarea').value = '';
+                document.getElementById('btnSubmit').disabled = true;
+                showToast('🔐 管理员模式 (ID:0)');
+                return true;
             }
         }
+        return false;
+    }
+    function tryActivateMember(content) {
+        if (!userSettings.isMember && document.getElementById('userNameInput').value.trim() === '会员' && content.trim() === ',,ᗜ - ᗜ,,') {
+            if (registerMember(null)) {
+                userSettings.isMember = true;
+                saveSettings();
+                updateUI();
+                document.getElementById('messageTextarea').value = '';
+                document.getElementById('btnSubmit').disabled = true;
+                showToast('🌟 会员模式 (ID:'+currentMemberId+')');
+                return true;
+            }
+        }
+        return false;
+    }
 
-        let userSettings = {
-            name: '匿名用户',
-            avatarType: 'auto',
-            avatarIndex: null,
-            customAvatarData: null,
-            isAdmin: false,
-            isMember: false
+    // 更新UI控件
+    function updateUI() {
+        const adminBadge = document.getElementById('adminBadge');
+        const memberBadge = document.getElementById('memberBadge');
+        const adminSubtitle = document.getElementById('adminSubtitle');
+        const adminActions = document.getElementById('adminActions');
+        const adminExitRow = document.getElementById('adminExitRow');
+        const memberExitRow = document.getElementById('memberExitRow');
+        const memberViewActions = document.getElementById('memberViewActions');
+        const memberToolbar = document.getElementById('memberToolbar');
+        const settingsDot = document.getElementById('settingsDot');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        adminBadge.style.display = userSettings.isAdmin ? 'inline-block' : 'none';
+        memberBadge.style.display = userSettings.isMember ? 'inline-block' : 'none';
+        adminSubtitle.textContent = userSettings.isAdmin ? '管理员模式' : (userSettings.isMember ? '会员模式' : '留下你想说的话吧 ~');
+        adminActions.style.display = userSettings.isAdmin ? 'flex' : 'none';
+        adminExitRow.style.display = userSettings.isAdmin ? 'block' : 'none';
+        memberExitRow.style.display = userSettings.isMember ? 'block' : 'none';
+        memberViewActions.style.display = userSettings.isMember ? 'inline-flex' : 'none';
+        memberToolbar.style.display = userSettings.isMember ? 'flex' : 'none';
+        settingsDot.className = 'dot' + (userSettings.isAdmin?' admin-dot':'') + (userSettings.isMember&&!userSettings.isAdmin?' member-dot':'');
+        let idText = '';
+        if (currentMemberId !== null) idText += `会员ID:${currentMemberId}`;
+        if (currentGuestId) idText += (idText?' | ':'') + `游客ID:${currentGuestId}`;
+        userIdDisplay.textContent = idText;
+        updateAvatarPreview();
+        document.getElementById('badgeName').textContent = userSettings.name;
+    }
+
+    // ---------- 核心消息操作 ----------
+    function generateId() { return Date.now() + '-' + Math.random().toString(36).substr(2,6); }
+
+    function addMessage(content) {
+        const avatarInfo = getAvatarInfo();
+        const newMsg = {
+            id: generateId(),
+            name: userSettings.name,
+            avatarType: userSettings.avatarType,
+            avatarIndex: userSettings.avatarIndex,
+            customAvatarData: userSettings.customAvatarData,
+            content: content,
+            time: Date.now(),
+            userId: userId,
+            memberId: currentMemberId,
+            guestId: currentGuestId,
+            isMember: !!currentMemberId,
+            replies: []
         };
-        const SETTINGS_KEY = 'mb_settings_v7';
-        function loadSettings() {
-            let s = localStorage.getItem(SETTINGS_KEY);
-            if (s) {
-                try {
-                    let p = JSON.parse(s);
-                    if (p.name) userSettings.name = p.name;
-                    if (p.avatarType) userSettings.avatarType = p.avatarType;
-                    if (p.avatarIndex !== undefined) userSettings.avatarIndex = p.avatarIndex;
-                    if (p.customAvatarData) userSettings.customAvatarData = p.customAvatarData;
-                    userSettings.isAdmin = !!p.isAdmin;
-                    userSettings.isMember = !!p.isMember;
-                } catch(e) {}
-            }
-            // 补全管理员数据
-            if (userSettings.isAdmin) {
-                if (!memberList.find(m => m.ip === simIp && m.id === 0)) {
-                    memberList.push({ id: 0, ip: simIp, name: userSettings.name });
-                    saveIdData();
-                }
-            }
-        }
-        function saveSettings() { localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings)); }
+        messages.unshift(newMsg);
+        saveMessages();
+    }
 
-        let messages = JSON.parse(localStorage.getItem('mb_messages_v7') || '[]').filter(m => m && m.id);
-        function saveMessages() { localStorage.setItem('mb_messages_v7', JSON.stringify(messages)); }
-
-        let currentMemberView = 'all';
-        let batchMode = false;
-
-        const $ = id => document.getElementById(id);
-        const dom = {
-            toast: $('toast'),
-            mentionDropdown: $('mentionDropdown'),
-            adminSubtitle: $('adminSubtitle'),
-            settingsDot: $('settingsDot'),
-            adminBadge: $('adminBadge'),
-            memberBadge: $('memberBadge'),
-            userIdDisplay: $('userIdDisplay'),
-            userNameInput: $('userNameInput'),
-            avatarPreviewMini: $('avatarPreviewMini'),
-            adminExitRow: $('adminExitRow'),
-            memberExitRow: $('memberExitRow'),
-            btnExitAdmin: $('btnExitAdmin'),
-            btnExitMember: $('btnExitMember'),
-            messageTextarea: $('messageTextarea'),
-            btnSubmit: $('btnSubmit'),
-            badgeName: $('badgeName'),
-            messageCount: $('messageCount'),
-            memberViewActions: $('memberViewActions'),
-            adminActions: $('adminActions'),
-            btnBatchMode: $('btnBatchMode'),
-            btnBatchDelete: $('btnBatchDelete'),
-            btnUserList: $('btnUserList'),
-            btnClearAll: $('btnClearAll'),
-            btnClearAllNormal: $('btnClearAllNormal'),
-            messagesContainer: $('messagesContainer'),
-            memberToolbar: $('memberToolbar'),
-            fileInput: $('fileInput'),
-            btnUploadImg: $('btnUploadImg'),
-            btnUploadVideo: $('btnUploadVideo'),
-            btnUploadFile: $('btnUploadFile'),
-            btnRecordAudio: $('btnRecordAudio'),
+    function addReply(msgId, content) {
+        const msg = messages.find(m => m.id === msgId);
+        if (!msg) return;
+        const reply = {
+            id: generateId(),
+            name: userSettings.name,
+            avatarType: userSettings.avatarType,
+            avatarIndex: userSettings.avatarIndex,
+            customAvatarData: userSettings.customAvatarData,
+            content: content,
+            time: Date.now(),
+            userId: userId,
+            memberId: currentMemberId,
+            guestId: currentGuestId
         };
+        msg.replies = msg.replies || [];
+        msg.replies.push(reply);
+        saveMessages();
+    }
 
-        function showToast(msg, dur=2000) {
-            dom.toast.textContent = msg;
-            dom.toast.classList.add('show');
-            clearTimeout(dom.toast._t);
-            dom.toast._t = setTimeout(() => dom.toast.classList.remove('show'), dur);
-        }
-        function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-        function escapeAttr(s) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-        function formatTime(ts) {
-            const diff = Date.now() - ts;
-            if (diff < 60000) return '刚刚';
-            if (diff < 3600000) return Math.floor(diff/60000)+'分钟前';
-            if (diff < 86400000) return Math.floor(diff/3600000)+'小时前';
-            const d = new Date(ts);
-            return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'})}`;
-        }
+    function canDelete(entry, isReply=false, parentMsg=null) {
+        if (userSettings.isAdmin) return true;
+        if (entry.memberId && entry.memberId === currentMemberId) return true;
+        if (!isReply && entry.guestId === currentGuestId) return true;
+        if (isReply && parentMsg && parentMsg.guestId === currentGuestId) return true;
+        return false;
+    }
 
-        function getAvatarInfo() {
-            if (userSettings.avatarType === 'preset' && userSettings.avatarIndex >= 0 && presetAvatars[userSettings.avatarIndex])
-                return { char: presetAvatars[userSettings.avatarIndex].emoji, bg: presetAvatars[userSettings.avatarIndex].bg, type:'preset', data:null };
-            if (userSettings.avatarType === 'custom' && userSettings.customAvatarData)
-                return { char:'', bg:'', type:'custom', data:userSettings.customAvatarData };
-            const fc = (userSettings.name || '匿').charAt(0);
-            return { char:fc, bg:autoColors[fc.charCodeAt(0)%autoColors.length], type:'auto', data:null };
+    function deleteMessageById(id) {
+        const idx = messages.findIndex(m => m.id === id);
+        if (idx !== -1 && canDelete(messages[idx], false)) {
+            messages.splice(idx, 1);
+            saveMessages();
+            return true;
         }
+        return false;
+    }
 
-        function updateAvatarPreview() {
-            const info = getAvatarInfo();
-            dom.avatarPreviewMini.style.backgroundImage = info.type === 'custom' ? `url(${info.data})` : '';
-            dom.avatarPreviewMini.style.backgroundColor = info.type !== 'custom' ? info.bg : 'transparent';
-            dom.avatarPreviewMini.textContent = info.type !== 'custom' ? info.char : '';
+    function deleteReply(msgId, replyId) {
+        const msg = messages.find(m => m.id === msgId);
+        if (msg && msg.replies) {
+            const idx = msg.replies.findIndex(r => r.id === replyId);
+            if (idx !== -1 && canDelete(msg.replies[idx], true, msg)) {
+                msg.replies.splice(idx, 1);
+                saveMessages();
+                return true;
+            }
         }
+        return false;
+    }
 
-        // 头像修改弹窗
-        function openAvatarModal() {
-            const presetGrid = document.getElementById('presetGrid');
-            presetGrid.innerHTML = '';
-            presetAvatars.forEach((p, i) => {
-                const div = document.createElement('div');
-                div.className = 'avatar-grid-item';
-                div.textContent = p.emoji;
-                div.style.backgroundColor = p.bg;
-                if (userSettings.avatarType === 'preset' && userSettings.avatarIndex === i) div.classList.add('selected');
-                div.onclick = () => {
-                    userSettings.avatarType = 'preset';
-                    userSettings.avatarIndex = i;
-                    userSettings.customAvatarData = null;
-                    saveSettings();
-                    updateAvatarPreview();
-                    document.getElementById('avatarModal').style.display = 'none';
-                    showToast('头像已更新');
-                };
-                presetGrid.appendChild(div);
+    // ---------- 内容解析 ----------
+    let mediaRecorder, audioChunks = [];
+    function insertAtCursor(textarea, text) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(end);
+        textarea.selectionStart = textarea.selectionEnd = start + text.length;
+        textarea.dispatchEvent(new Event('input'));
+    }
+    function handleFileUpload(file, type) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            let tag = '';
+            if (type === 'image') tag = `<img src="${e.target.result}" alt="图片" style="max-width:100%">`;
+            else if (type === 'video') tag = `<video src="${e.target.result}" controls style="max-width:100%"></video>`;
+            else tag = `<a href="${e.target.result}" download="${file.name}">📎 ${escapeHtml(file.name)}</a>`;
+            insertAtCursor(document.getElementById('messageTextarea'), tag);
+        };
+        if (type === 'image' || type === 'video') reader.readAsDataURL(file);
+        else {
+            const fakeUrl = URL.createObjectURL(file);
+            const tag = `<a href="${fakeUrl}" download="${file.name}">📎 ${escapeHtml(file.name)}</a>`;
+            insertAtCursor(document.getElementById('messageTextarea'), tag);
+            URL.revokeObjectURL(fakeUrl);
+        }
+    }
+    async function startRecording() {
+        const btn = document.getElementById('btnRecordAudio');
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+            mediaRecorder.stop();
+            btn.classList.remove('recording');
+            btn.innerHTML = '🎤 录音';
+            return;
+        }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(audioChunks, { type: 'audio/webm' });
+                const url = URL.createObjectURL(blob);
+                const audioTag = `<audio controls src="${url}"></audio>`;
+                insertAtCursor(document.getElementById('messageTextarea'), audioTag);
+                URL.revokeObjectURL(url);
+                stream.getTracks().forEach(track => track.stop());
+            };
+            mediaRecorder.start();
+            btn.classList.add('recording');
+            btn.innerHTML = '⏹️ 停止';
+        } catch(e) { showToast('无法录音，请检查麦克风权限'); }
+    }
+
+    // @提及下拉
+    let mentionTimeout = null;
+    function collectUsernames() {
+        let users = new Set();
+        messages.forEach(m => { if(m.name) users.add(m.name); if(m.replies) m.replies.forEach(r => { if(r.name) users.add(r.name); }); });
+        return Array.from(users);
+    }
+    function showMentionDropdown(textarea, query) {
+        const dropdown = document.getElementById('mentionDropdown');
+        if (!query || query.length === 0) { dropdown.classList.remove('show'); return; }
+        const users = collectUsernames().filter(u => u.toLowerCase().includes(query.toLowerCase()));
+        if (users.length === 0) { dropdown.classList.remove('show'); return; }
+        const rect = textarea.getBoundingClientRect();
+        dropdown.innerHTML = users.map(u => `<div style="padding:8px 12px; cursor:pointer;" data-name="${escapeHtml(u)}">@${escapeHtml(u)}</div>`).join('');
+        dropdown.style.top = rect.bottom + window.scrollY + 'px';
+        dropdown.style.left = rect.left + window.scrollX + 'px';
+        dropdown.classList.add('show');
+        dropdown.querySelectorAll('[data-name]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const name = el.getAttribute('data-name');
+                const before = textarea.value.substring(0, textarea.selectionStart);
+                const atIndex = before.lastIndexOf('@');
+                if (atIndex !== -1) {
+                    const newValue = before.substring(0, atIndex) + '@' + name + ' ' + textarea.value.substring(textarea.selectionStart);
+                    textarea.value = newValue;
+                    textarea.dispatchEvent(new Event('input'));
+                }
+                dropdown.classList.remove('show');
             });
-            document.getElementById('selectAutoAvatar').onclick = () => {
-                userSettings.avatarType = 'auto';
-                userSettings.avatarIndex = null;
+        });
+    }
+    function hideMentionDropdown() { document.getElementById('mentionDropdown').classList.remove('show'); }
+
+    // ---------- 可见性过滤 ----------
+    function isPrivilegedUser() {
+        return userSettings.isAdmin || userSettings.isMember;
+    }
+
+    function getMessagesBasedOnRole() {
+        // 会员/管理员可看全部，游客只可见游客消息 (memberId 为空)
+        if (isPrivilegedUser()) {
+            return messages.slice();
+        } else {
+            return messages.filter(m => !m.memberId);
+        }
+    }
+
+    let currentMemberView = 'all';
+    let batchMode = false;
+    let selectedMsgIds = new Set();
+
+    function filterMessages(msgs) {
+        if (!isPrivilegedUser()) return msgs;
+        if (currentMemberView === 'member') return msgs.filter(m => m.memberId);
+        if (currentMemberView === 'guest') return msgs.filter(m => !m.memberId);
+        return msgs;
+    }
+
+    function parseContent(text) {
+        let html = escapeHtml(text);
+        html = html.replace(/@(\S+)/g, '<span style="color:#c4956a; background:#f5ede4; padding:0 4px; border-radius:12px;">@$1</span>');
+        html = html.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:#4a6cf7;">$1</a>');
+        return html;
+    }
+
+    function renderReplies(msgId, container) {
+        const msg = messages.find(m => m.id === msgId);
+        if (!msg || !msg.replies || msg.replies.length === 0) { container.innerHTML = '<div style="font-size:0.75rem; color:#aaa;">暂无回复</div>'; return; }
+        const privileged = isPrivilegedUser();
+        let filteredReplies = privileged ? msg.replies.slice() : msg.replies.filter(r => !r.memberId);
+        if (filteredReplies.length === 0) { container.innerHTML = '<div style="font-size:0.75rem; color:#aaa;">暂无回复</div>'; return; }
+        let html = '';
+        filteredReplies.forEach(r => {
+            const canDel = canDelete(r, true, msg);
+            const avatarInfo = { char: r.name.charAt(0), bg: '#b0a088' };
+            html += `<div class="reply-item" data-reply-id="${r.id}">
+                        <div class="reply-avatar" style="background-color:${avatarInfo.bg};">${escapeHtml(r.name.charAt(0))}</div>
+                        <div style="flex:1"><strong>${escapeHtml(r.name)}</strong> <span style="font-size:0.7rem; color:#aaa;">${formatTime(r.time)}</span><br>${parseContent(r.content)}</div>
+                        ${canDel ? `<button class="tool-btn" style="font-size:0.7rem; padding:2px 8px;" data-del-reply="${r.id}">删除</button>` : ''}
+                    </div>`;
+        });
+        container.innerHTML = html;
+        container.querySelectorAll('[data-del-reply]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const rid = btn.getAttribute('data-del-reply');
+                if (deleteReply(msgId, rid)) renderMessages();
+                else showToast('无法删除');
+            });
+        });
+    }
+
+    function renderMessages() {
+        const container = document.getElementById('messagesContainer');
+        let roleBased = getMessagesBasedOnRole();
+        let filtered = filterMessages(roleBased);
+        document.getElementById('messageCount').innerText = `共 ${filtered.length} 条`;
+        if (filtered.length === 0) { container.innerHTML = '<div style="text-align:center; padding:30px; color:#aaa;">✨ 暂无留言，写一条吧～</div>'; return; }
+        let html = '';
+        filtered.forEach(msg => {
+            const canDel = canDelete(msg, false);
+            const avatarInfo = getAvatarInfoFromMsg(msg);
+            const memberBadgeHtml = msg.memberId ? (msg.memberId === 0 ? '<span class="badge admin-badge" style="margin-left:6px;">管理员</span>' : '<span class="badge member-badge" style="margin-left:6px;">会员</span>') : '';
+            html += `<div class="message-item" data-msg-id="${msg.id}" style="${batchMode ? 'padding-right:40px;' : ''}">
+                        ${batchMode ? `<input type="checkbox" class="batch-checkbox" data-id="${msg.id}" style="position:absolute; left:12px; top:16px; transform:scale(1.2);">` : ''}
+                        <div class="msg-avatar" style="background-color:${avatarInfo.bg}; background-image:${avatarInfo.type==='custom'?`url(${avatarInfo.data})`:'none'}; background-size:cover;">${avatarInfo.type!=='custom'?avatarInfo.char:''}</div>
+                        <div class="msg-content-wrapper">
+                            <div class="msg-meta"><span class="msg-name">${escapeHtml(msg.name)}</span>${memberBadgeHtml}<span class="msg-time">${formatTime(msg.time)}</span></div>
+                            <div class="msg-text">${parseContent(msg.content)}</div>
+                            <button class="reply-toggle-btn" data-reply-toggle="${msg.id}">💬 回复</button>
+                            <div class="reply-section" id="reply-section-${msg.id}">
+                                <div class="reply-list" id="reply-list-${msg.id}"></div>
+                                <div style="display:flex; gap:6px; margin-top:6px;"><input type="text" placeholder="回复内容..." id="reply-input-${msg.id}" style="flex:1; padding:6px 10px; border-radius:20px; border:1px solid #ddd;"><button class="tool-btn" data-submit-reply="${msg.id}">回复</button></div>
+                            </div>
+                        </div>
+                        ${canDel ? `<button class="btn-delete" data-del="${msg.id}">🗑️</button>` : ''}
+                    </div>`;
+        });
+        container.innerHTML = html;
+        filtered.forEach(msg => {
+            const listDiv = document.getElementById(`reply-list-${msg.id}`);
+            if (listDiv) renderReplies(msg.id, listDiv);
+            const toggleBtn = document.querySelector(`[data-reply-toggle="${msg.id}"]`);
+            if (toggleBtn) toggleBtn.addEventListener('click', () => document.getElementById(`reply-section-${msg.id}`).classList.toggle('open'));
+            const submitBtn = document.querySelector(`[data-submit-reply="${msg.id}"]`);
+            if (submitBtn) submitBtn.addEventListener('click', () => {
+                const input = document.getElementById(`reply-input-${msg.id}`);
+                if (input.value.trim()) { addReply(msg.id, input.value.trim()); input.value = ''; renderMessages(); showToast('回复成功'); }
+                else showToast('内容不能为空');
+            });
+            const delBtn = document.querySelector(`[data-del="${msg.id}"]`);
+            if (delBtn) delBtn.addEventListener('click', () => { if(confirm('删除留言？')){ deleteMessageById(msg.id); renderMessages(); showToast('已删除'); } });
+        });
+        if (batchMode) {
+            document.querySelectorAll('.batch-checkbox').forEach(cb => {
+                cb.checked = selectedMsgIds.has(cb.getAttribute('data-id'));
+                cb.addEventListener('change', function() {
+                    const id = this.getAttribute('data-id');
+                    if (this.checked) selectedMsgIds.add(id);
+                    else selectedMsgIds.delete(id);
+                    document.getElementById('btnBatchDelete').style.display = selectedMsgIds.size ? 'inline-flex' : 'none';
+                });
+            });
+        }
+    }
+
+    function getAvatarInfoFromMsg(msg) {
+        if (msg.avatarType === 'preset' && msg.avatarIndex>=0 && presetAvatars[msg.avatarIndex])
+            return { char: presetAvatars[msg.avatarIndex].emoji, bg: presetAvatars[msg.avatarIndex].bg, type:'preset', data:null };
+        if (msg.avatarType === 'custom' && msg.customAvatarData)
+            return { char:'', bg:'', type:'custom', data:msg.customAvatarData };
+        const fc = (msg.name || '匿').charAt(0);
+        return { char:fc, bg:autoColors[fc.charCodeAt(0)%autoColors.length], type:'auto', data:null };
+    }
+
+    function batchDeleteSelected() {
+        if (selectedMsgIds.size === 0) return;
+        if (!confirm(`确定删除 ${selectedMsgIds.size} 条留言吗？`)) return;
+        messages = messages.filter(m => !selectedMsgIds.has(m.id));
+        saveMessages();
+        selectedMsgIds.clear();
+        batchMode = false;
+        document.getElementById('btnBatchDelete').style.display = 'none';
+        document.getElementById('btnBatchMode').innerHTML = '☑️ 批量';
+        renderMessages();
+        showToast('已批量删除');
+    }
+
+    function clearAllMessages() {
+        if (!userSettings.isAdmin) {
+            showToast('无权限清空全部留言');
+            return;
+        }
+        if (!confirm('确认清空全部留言？不可恢复')) return;
+        messages = [];
+        saveMessages();
+        renderMessages();
+        showToast('已清空所有留言');
+    }
+
+    function showUserList() {
+        let userMap = new Map();
+        messages.forEach(m => { userMap.set(m.userId, { name: m.name, memberId: m.memberId, guestId: m.guestId }); });
+        let html = '<table><th>用户</th><th>身份</th></tr>';
+        userMap.forEach((v,k) => { html += `<tr><td>${escapeHtml(v.name)}</td><td>${v.memberId ? (v.memberId===0?'管理员':'会员') : '游客'}</td></tr>`; });
+        html += '</table>';
+        const modal = document.createElement('div'); modal.className = 'modal-overlay'; modal.innerHTML = `<div class="modal-content"><span class="modal-close" onclick="this.parentElement.parentElement.remove()">✖</span><h3>用户列表</h3>${html}</div>`;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (e) => { if(e.target === modal) modal.remove(); });
+    }
+
+    function openAvatarModal() {
+        const modal = document.getElementById('avatarModal');
+        const presetGrid = document.getElementById('presetGrid');
+        presetGrid.innerHTML = '';
+        presetAvatars.forEach((p, i) => {
+            const div = document.createElement('div');
+            div.className = 'avatar-grid-item';
+            div.textContent = p.emoji;
+            div.style.backgroundColor = p.bg;
+            if (userSettings.avatarType === 'preset' && userSettings.avatarIndex === i) div.classList.add('selected');
+            div.onclick = () => {
+                userSettings.avatarType = 'preset';
+                userSettings.avatarIndex = i;
                 userSettings.customAvatarData = null;
                 saveSettings();
                 updateAvatarPreview();
-                document.getElementById('avatarModal').style.display = 'none';
-                showToast('已切换为自动头像');
+                modal.style.display = 'none';
+                showToast('头像已更新');
             };
-            document.getElementById('modalFileInput').onchange = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    userSettings.avatarType = 'custom';
-                    userSettings.customAvatarData = ev.target.result;
-                    saveSettings();
-                    updateAvatarPreview();
-                    document.getElementById('avatarModal').style.display = 'none';
-                    showToast('自定义头像已上传');
-                };
-                reader.readAsDataURL(file);
-                e.target.value = '';
-            };
-            document.getElementById('avatarModal').style.display = 'flex';
-        }
-        dom.avatarPreviewMini.addEventListener('click', openAvatarModal);
-        document.getElementById('closeAvatarModal').onclick = () => document.getElementById('avatarModal').style.display = 'none';
-        document.getElementById('avatarModal').addEventListener('click', (e) => { if (e.target === document.getElementById('avatarModal')) document.getElementById('avatarModal').style.display = 'none'; });
-        document.querySelectorAll('#avatarModal .tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                document.querySelectorAll('#avatarModal .tab-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                const tab = this.dataset.tab;
-                document.getElementById('tabPreset').style.display = tab === 'preset' ? 'block' : 'none';
-                document.getElementById('tabCustom').style.display = tab === 'custom' ? 'block' : 'none';
-            });
+            presetGrid.appendChild(div);
         });
-
-        function updateUI() {
-            dom.adminBadge.style.display = userSettings.isAdmin ? 'inline-block' : 'none';
-            dom.memberBadge.style.display = userSettings.isMember ? 'inline-block' : 'none';
-            dom.adminSubtitle.textContent = userSettings.isAdmin ? '管理员模式' : (userSettings.isMember ? '会员模式' : '留下你想说的话吧 ~');
-            dom.adminActions.style.display = userSettings.isAdmin ? 'flex' : 'none';
-            dom.adminExitRow.style.display = userSettings.isAdmin ? 'block' : 'none';
-            dom.memberExitRow.style.display = userSettings.isMember ? 'block' : 'none';
-            dom.memberViewActions.style.display = userSettings.isMember ? 'inline-flex' : 'none';
-            dom.memberToolbar.style.display = userSettings.isMember ? 'flex' : 'none';
-            dom.settingsDot.className = 'dot' + (userSettings.isAdmin?' admin-dot':'') + (userSettings.isMember&&!userSettings.isAdmin?' member-dot':'');
-            let idText = '';
-            if (currentMemberId !== null) idText += `会员ID:${currentMemberId}`;
-            if (currentGuestId) idText += (idText?' | ':'') + `游客ID:${currentGuestId}`;
-            dom.userIdDisplay.textContent = idText;
+        document.getElementById('selectAutoAvatar').onclick = () => {
+            userSettings.avatarType = 'auto';
+            userSettings.avatarIndex = null;
+            userSettings.customAvatarData = null;
+            saveSettings();
             updateAvatarPreview();
-            dom.badgeName.textContent = userSettings.name;
-        }
+            modal.style.display = 'none';
+            showToast('已切换为自动头像');
+        };
+        document.getElementById('modalFileInput').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                userSettings.avatarType = 'custom';
+                userSettings.customAvatarData = ev.target.result;
+                saveSettings();
+                updateAvatarPreview();
+                modal.style.display = 'none';
+                showToast('自定义头像已上传');
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        };
+        modal.style.display = 'flex';
+    }
 
-        dom.userNameInput.addEventListener('input', function() {
+    // ---------- 事件绑定 ----------
+    function bindEvents() {
+        const userNameInput = document.getElementById('userNameInput');
+        const textarea = document.getElementById('messageTextarea');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const avatarPreview = document.getElementById('avatarPreviewMini');
+        const btnExitAdmin = document.getElementById('btnExitAdmin');
+        const btnExitMember = document.getElementById('btnExitMember');
+        const btnBatchMode = document.getElementById('btnBatchMode');
+        const btnBatchDelete = document.getElementById('btnBatchDelete');
+        const btnUserList = document.getElementById('btnUserList');
+        const btnClearAll = document.getElementById('btnClearAll');
+        const btnClearAllNormal = document.getElementById('btnClearAllNormal');
+        const memberViewActions = document.getElementById('memberViewActions');
+        const btnUploadImg = document.getElementById('btnUploadImg');
+        const btnUploadVideo = document.getElementById('btnUploadVideo');
+        const btnUploadFile = document.getElementById('btnUploadFile');
+        const btnRecordAudio = document.getElementById('btnRecordAudio');
+        const fileInput = document.getElementById('fileInput');
+
+        userNameInput.value = userSettings.name;
+        userNameInput.addEventListener('input', function() {
             userSettings.name = this.value.trim() || '匿名用户';
             saveSettings();
             updateAvatarPreview();
-            dom.badgeName.textContent = userSettings.name;
+            document.getElementById('badgeName').textContent = userSettings.name;
             const member = memberList.find(m => m.ip === simIp && m.id === currentMemberId);
             if (member) member.name = userSettings.name;
             const guest = guestList.find(g => g.id === currentGuestId);
             if (guest) guest.name = userSettings.name;
             saveIdData();
         });
-        dom.userNameInput.addEventListener('blur', function() {
-            if (!this.value.trim()) { this.value = '匿名用户'; userSettings.name = '匿名用户'; saveSettings(); }
-        });
-
-        // ★★★ 关键修复：注册会员逻辑 ★★★
-        function registerMember(forceId = null) {
-            if (forceId === 0) {
-                // 管理员激活：无条件允许，即使同IP已存在其他会员
-                const existingAdmin = memberList.find(m => m.ip === simIp && m.id === 0);
-                if (existingAdmin) {
-                    currentMemberId = 0;
-                    return true;
-                }
-                memberList.push({ id: 0, ip: simIp, name: userSettings.name });
-                currentMemberId = 0;
-                saveIdData();
-                return true;
-            } else {
-                // 普通会员：只检查是否已有普通会员（id !== 0），管理员ID=0不占用普通名额
-                const existingRegular = memberList.find(m => m.ip === simIp && m.id !== 0);
-                if (existingRegular) {
-                    showToast('该设备已注册普通会员 ID:'+existingRegular.id);
-                    return false;
-                }
-                let newId = memberCounter;
-                while (memberList.find(m => m.id === newId)) { memberCounter++; newId = memberCounter; }
-                memberList.push({ id: newId, ip: simIp, name: userSettings.name });
-                currentMemberId = newId;
-                if (newId >= memberCounter) memberCounter = newId + 1;
-                saveIdData();
-                return true;
-            }
-
-        }
-
-        function tryActivateAdmin(content) {
-            if (dom.userNameInput.value.trim() === '苏辞沫儿ovo' && content.trim() === '澪鸢天下第一') {
-                if (registerMember(0)) {
-                    userSettings.isAdmin = true;
-                    userSettings.isMember = true;
-                    saveSettings();
-                    updateUI();
-                    dom.messageTextarea.value = '';
-                    dom.btnSubmit.disabled = true;
-                    showToast('🔐 管理员模式 (ID:0)');
-                    return true;
-                }
-                return false;
-            }
-            return false;
-        }
-
-        function tryActivateMember(content) {
-            if (!userSettings.isMember && dom.userNameInput.value.trim() === '会员' && content.trim() === ',,ᗜ - ᗜ,,') {
-                if (registerMember(null)) {
-                    userSettings.isMember = true;
-                    saveSettings();
-                    updateUI();
-                    dom.messageTextarea.value = '';
-                    dom.btnSubmit.disabled = true;
-                    showToast('🌟 会员模式 (ID:'+currentMemberId+')');
-                    return true;
-                }
-                return false;
-            }
-            return false;
-        }
-
-        dom.btnExitAdmin.onclick = () => {
-            userSettings.isAdmin = false;
-            userSettings.isMember = false;  // 退出管理员后同时取消会员身份，需要时可以重新激活
-            saveSettings();
-            updateUI();
-            renderMessages();
-            showToast('已退出管理员');
-        };
-        dom.btnExitMember.onclick = () => {
-            userSettings.isMember = false;
-            saveSettings();
-            updateUI();
-            renderMessages();
-            showToast('已退出会员');
-        };
-
-        // -------- 消息操作（未修改）--------
-        function addMessage(content) { /* 同前 */ }
-        function addReply(msgId, content) { /* 同前 */ }
-        function canDelete(entry) { /* 同前 */ }
-        function deleteMessageById(id) { /* 同前 */ }
-        function deleteReply(msgId, replyId) { /* 同前 */ }
-        // -------- 文件上传、录音、渲染等保持原样 --------
-        // （为节约篇幅这里省略，实际上就是之前完整版的所有函数）
-        // 注意：需要将 renderMessages, renderReplies, handleSubmit 等完整复制过来
-        // 下面我简要列出剩余部分的结构，你可以直接将原完整代码中对应函数粘贴进来
-
-        // 文件上传
-        function handleFileUpload(file, type) { /* 同前 */ }
-        function insertAtCursor(ta, text) { /* 同前 */ }
-        dom.btnUploadImg.onclick = () => { /* 同前 */ }
-        dom.btnUploadVideo.onclick = () => { /* 同前 */ }
-        dom.btnUploadFile.onclick = () => { /* 同前 */ }
-
-        // 录音
-        let mediaRecorder, audioChunks = [];
-        dom.btnRecordAudio.onclick = async () => { /* 同前 */ }
-
-        function handleSubmit() {
-            const content = dom.messageTextarea.value;
+        avatarPreview.addEventListener('click', openAvatarModal);
+        btnExitAdmin.onclick = () => { userSettings.isAdmin = false; userSettings.isMember = false; saveSettings(); updateUI(); renderMessages(); showToast('已退出管理员'); };
+        btnExitMember.onclick = () => { userSettings.isMember = false; saveSettings(); updateUI(); renderMessages(); showToast('已退出会员'); };
+        btnSubmit.onclick = () => {
+            const content = textarea.value;
             if (tryActivateAdmin(content)) return;
             if (tryActivateMember(content)) return;
-            if (!content.trim()) { showToast('😅 请输入内容'); return; }
+            if (!content.trim()) { showToast('请输入内容'); return; }
             addMessage(content);
-            dom.messageTextarea.value = '';
-            dom.btnSubmit.disabled = true;
+            textarea.value = '';
+            btnSubmit.disabled = true;
             renderMessages();
-            dom.messagesContainer.scrollTop = 0;
-            showToast('🎉 发布成功');
-        }
-        dom.btnSubmit.onclick = handleSubmit;
-        dom.messageTextarea.onkeydown = (e) => { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { e.preventDefault(); handleSubmit(); } };
-        dom.messageTextarea.oninput = () => { dom.btnSubmit.disabled = !dom.messageTextarea.value.trim(); };
-
-        // @提及
-        function collectUsernames() { /* 同前 */ }
-        function showMentionDropdown(ta, query) { /* 同前 */ }
-        function hideMentionDropdown() { /* 同前 */ }
-        // 绑定...
-
-        function setupAvatarLongPress(el, username) { /* 同前 */ }
-
-        function parseContent(text) { /* 同前 */ }
-
-        function filterMessages(msgs) { /* 同前 */ }
-
-        function renderMessages() { /* 同前 */ }
-        function renderReplies(msgId, section) { /* 同前 */ }
-        function handleSingleDelete(id) { /* 同前 */ }
-
-        dom.btnBatchMode.onclick = () => { /* 同前 */ }
-        dom.btnBatchDelete.onclick = () => { /* 同前 */ }
-        dom.btnClearAll.onclick = () => { /* 同前 */ }
-        dom.btnClearAllNormal.onclick = () => { /* 同前 */ }
-
-        dom.memberViewActions.addEventListener('click', (e) => { /* 同前 */ });
-
-        dom.btnUserList.onclick = () => { /* 同前 */ };
-
-        function init() {
-            loadSettings();
-            initIdentity();
-            updateUI();
-            dom.userNameInput.value = userSettings.name;
+            document.getElementById('messagesContainer').scrollTop = 0;
+            showToast('发布成功');
+        };
+        textarea.oninput = () => { btnSubmit.disabled = !textarea.value.trim(); };
+        textarea.onkeydown = (e) => { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { e.preventDefault(); btnSubmit.click(); } };
+        textarea.addEventListener('input', function() {
+            const val = this.value;
+            const lastAt = val.lastIndexOf('@', this.selectionStart);
+            if (lastAt !== -1 && this.selectionStart - lastAt <= 20) {
+                const query = val.substring(lastAt+1, this.selectionStart);
+                if (query.length > 0) showMentionDropdown(this, query);
+                else hideMentionDropdown();
+            } else hideMentionDropdown();
+        });
+        document.addEventListener('click', (e) => { if(!e.target.closest('.mention-dropdown') && !e.target.closest('#messageTextarea')) hideMentionDropdown(); });
+        btnBatchMode.onclick = () => {
+            batchMode = !batchMode;
+            selectedMsgIds.clear();
+            btnBatchMode.innerHTML = batchMode ? '✅ 取消批量' : '☑️ 批量';
+            btnBatchDelete.style.display = 'none';
             renderMessages();
-        }
-        init();
-    })();
+        };
+        btnBatchDelete.onclick = batchDeleteSelected;
+        btnUserList.onclick = showUserList;
+        btnClearAll.onclick = () => { if(confirm('管理员确认清空全部留言？')) clearAllMessages(); };
+        btnClearAllNormal.onclick = () => { clearAllMessages(); };
+        memberViewActions.addEventListener('click', (e) => {
+            const btn = e.target.closest('.btn-member-view');
+            if (!btn) return;
+            document.querySelectorAll('.btn-member-view').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentMemberView = btn.getAttribute('data-view');
+            renderMessages();
+        });
+        btnUploadImg.onclick = () => { fileInput.accept = 'image/*'; fileInput.multiple = false; fileInput.onchange = (e) => { if(e.target.files[0]) handleFileUpload(e.target.files[0], 'image'); fileInput.value=''; }; fileInput.click(); };
+        btnUploadVideo.onclick = () => { fileInput.accept = 'video/*'; fileInput.multiple = false; fileInput.onchange = (e) => { if(e.target.files[0]) handleFileUpload(e.target.files[0], 'video'); fileInput.value=''; }; fileInput.click(); };
+        btnUploadFile.onclick = () => { fileInput.accept = '.pdf,.doc,.docx,.txt'; fileInput.multiple = true; fileInput.onchange = (e) => { Array.from(e.target.files).forEach(f => handleFileUpload(f, 'file')); fileInput.value=''; }; fileInput.click(); };
+        btnRecordAudio.onclick = startRecording;
+    }
+
+    document.getElementById('closeAvatarModal').onclick = () => document.getElementById('avatarModal').style.display = 'none';
+    document.getElementById('avatarModal').addEventListener('click', (e) => { if (e.target === document.getElementById('avatarModal')) e.target.style.display = 'none'; });
+    document.querySelectorAll('#avatarModal .tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('#avatarModal .tab-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+            const tab = this.dataset.tab;
+            document.getElementById('tabPreset').style.display = tab === 'preset' ? 'block' : 'none';
+            document.getElementById('tabCustom').style.display = tab === 'custom' ? 'block' : 'none';
+        });
+    });
+
+    loadSettings();
+    initIdentity();
+    updateUI();
+    bindEvents();
+    renderMessages();
+})();
 </script>
 </body>
 </html>
