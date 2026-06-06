@@ -1,229 +1,55 @@
 <!DOCTYPE html>
-<html lang="zh-CN" class="light" style="color-scheme: light;">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>澪鸢 · 资源库 - 搜索结果</title>
-	<link rel="icon" href="images/favicon.ico">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>✨ 每日运势 ✨ </title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', '华文楷书', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', system-ui, sans-serif;
+            padding: 20px;
+            position: relative;
             background-image: url(images/6.jpg);
             background-repeat: no-repeat;
             background-size: cover;
-            background-position: center center;
             background-attachment: fixed;
-            position: relative;
-            transition: background-color 0.2s ease, color 0.2s ease;
         }
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-        html.light body::before {
-            background-color: rgba(255, 248, 240, 0.28);
-        }
-        html.dark body::before {
-            background-color: rgba(8, 8, 16, 0.82);
-            backdrop-filter: blur(1px);
-        }
-        nav, main, footer, .relative, .container {
-            position: relative;
-            z-index: 2;
-        }
-   
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .result-card {
-            transition: box-shadow 0.2s ease;
-            background-color: rgba(255, 255, 255, 0.8) !important; 
-            backdrop-filter: blur(2px);
-        }
-        html.dark .result-card {
-            background-color: rgba(20, 20, 32, 0.75) !important;
-        }
-        .result-card:hover {
-            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2);
-        }
-  
-        .gradient-text {
-            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-        }
-        html.dark .gradient-text {
-            background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
-        }
-    </style>
-</head>
-<body class="bg-gray-50 font-sans antialiased">
-
-<div class="relative flex h-screen flex-col">
-  
-  <nav class="bg-background/80 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm transition-colors duration-300">
-        <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
-            <div class="flex items-center">
-                <a class="flex items-center gap-1" href="index.html">
-                    <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
-                </a>
-                <ul class="ml-4 hidden gap-4 sm:flex">
-                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="游戏.html">游戏</a></li>
-                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="动漫.html">动漫</a></li>
-                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="杂乱.html">杂乱</a></li>
-                </ul>
-            </div>
-            <div class="hidden items-center gap-2 sm:flex">
-                <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-ovo">
-                    <svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
-                </a>
-                <button type="button" role="switch" aria-checked="false" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80">
-                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0">
-                        <svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg>
-                    </span>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 主要内容：搜索结果区域（修复后） -->
-</div>
-
-
-<script>
-(function() {
-    function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
-    function applyTheme(theme) {
-        const root = document.documentElement;
-        root.classList.remove('light', 'dark');
-        root.classList.add(theme);
-        root.style.colorScheme = theme;
-        localStorage.setItem('theme', theme);
-        const btns = document.querySelectorAll('button[role="switch"]');
-        btns.forEach(btn => {
-            const isDark = (theme === 'dark');
-            btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
-            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
-            const span = btn.querySelector('span');
-            if (span) {
-                let svg = span.querySelector('svg');
-                if (!svg) {
-                    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    svg.setAttribute('width', '16');
-                    svg.setAttribute('viewBox', '0 0 24 24');
-                    span.innerHTML = '';
-                    span.appendChild(svg);
-                }
-                if (isDark) {
-                    svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
-                } else {
-                    svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
-                }
-            }
-        });
-    }
-    function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
-    function bindEvents() {
-        document.querySelectorAll('button[role="switch"]').forEach(btn => {
-            btn.removeEventListener('click', toggleTheme);
-            btn.addEventListener('click', toggleTheme);
-        });
-    }
-    applyTheme(getStoredTheme());
-    bindEvents();
-    new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
-})();
-</script>
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>✨ 灵签·动漫人物运势卡牌 ✨ 真实图鉴版</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none; /* 避免拖动文字影响体验，无伤大雅 */
-        }
-
-        body {
-	min-height: 100vh;
-	background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-family: 'Segoe UI', '华文楷书', 'Microsoft YaHei', 'PingFang SC', 'Noto Sans CJK SC', system-ui, -apple-system, 'Helvetica Neue', sans-serif;
-	padding: 20px;
-	position: relative;
-	background-image: url(images/6.jpg);
-			background-repeat: no-repeat;
-	background-size: cover;
-	background-position: center center;
-	background-attachment: fixed;
-	position: relative;
-	transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        /* 古风纹理背景 (祥云暗纹) */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-image: radial-gradient(circle at 10% 20%, rgba(255,215,150,0.08) 2%, transparent 2.5%),
                               radial-gradient(circle at 85% 70%, rgba(210,180,140,0.08) 1.8%, transparent 2%);
             background-size: 48px 48px, 36px 36px;
             pointer-events: none;
             z-index: 0;
         }
-
-        /* 主卡片容器 */
         .card {
             max-width: 600px;
             width: 100%;
             background: rgba(255, 248, 235, 0.94);
             backdrop-filter: blur(2px);
             border-radius: 72px 48px 80px 48px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 215, 150, 0.5) inset, 0 0 0 4px #f9e0a8 inset;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,215,150,0.5) inset, 0 0 0 4px #f9e0a8 inset;
             overflow: hidden;
             transition: transform 0.3s ease;
             position: relative;
             z-index: 2;
         }
-
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.4);
-        }
-
-        /* 顶部装饰 */
+        .card:hover { transform: translateY(-6px); box-shadow: 0 30px 50px rgba(0,0,0,0.4); }
         .card-header {
             background: linear-gradient(135deg, #e4b363 0%, #c9862c 100%);
-            padding: 16px 20px 12px 20px;
+            padding: 16px 20px 12px;
             text-align: center;
             color: #2c1c0c;
             border-bottom: 3px solid #ffdfa5;
         }
-
         .card-header h1 {
             font-size: 2rem;
             letter-spacing: 6px;
@@ -233,13 +59,10 @@
             background: #ffe3aa70;
             padding: 0 18px;
             border-radius: 60px;
-            backdrop-filter: blur(2px);
         }
-
         .date-today {
             font-size: 0.85rem;
             margin-top: 8px;
-            font-family: monospace;
             background: #fdf8ed;
             display: inline-block;
             padding: 4px 12px;
@@ -247,57 +70,30 @@
             font-weight: bold;
             color: #ab6f2f;
         }
-
-        /* 人物区域 */
-        .character-section {
-            padding: 28px 20px 16px 20px;
-            text-align: center;
-        }
-
+        .character-section { padding: 28px 20px 16px; text-align: center; }
         .avatar-frame {
-            width: 140px;
-            height: 140px;
+            width: 140px; height: 140px;
             margin: 0 auto 16px;
             background: #fceedb;
             border-radius: 50%;
-            box-shadow: 0 10px 18px rgba(0, 0, 0, 0.2), 0 0 0 5px #ffdd99, 0 0 0 8px #cc9f5f;
+            box-shadow: 0 10px 18px rgba(0,0,0,0.2), 0 0 0 5px #ffdd99, 0 0 0 8px #cc9f5f;
             overflow: hidden;
-            transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #efe0ca;
         }
-
-        .avatar-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            background: #eeddbb;
-        }
-
-        /* 图片加载失败时的占位符样式 */
-        .avatar-img.error-load {
-            object-fit: contain;
-            padding: 16px;
-            background: #e6d5b8;
-        }
-
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; background: #eeddbb; }
+        .avatar-img.error-load { object-fit: contain; padding: 16px; background: #e6d5b8; }
         .character-name {
             font-size: 1.9rem;
             font-weight: 800;
-
             background: linear-gradient(135deg, #ad6b35, #e8b15c);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            letter-spacing: 2px;
             margin-bottom: 4px;
         }
-
-        /* 运势星级+等级 */
         .fortune-badge {
             background: #2d2418cc;
             backdrop-filter: blur(8px);
@@ -310,22 +106,8 @@
             width: fit-content;
             border: 1px solid #ffd58c;
         }
-
-        .fortune-level {
-            font-size: 1.7rem;
-            font-weight: bold;
-            color: #ffdd99;
-            text-shadow: 0 1px 2px black;
-            letter-spacing: 4px;
-        }
-
-        .star-rating {
-            font-size: 1.5rem;
-            letter-spacing: 5px;
-            color: #ffb347;
-        }
-
-        /* 签文主句 */
+        .fortune-level { font-size: 1.7rem; font-weight: bold; color: #ffdd99; letter-spacing: 4px; }
+        .star-rating { font-size: 1.5rem; letter-spacing: 5px; color: #ffb347; }
         .poem-sign {
             background: #f9efda;
             margin: 16px 20px;
@@ -338,62 +120,33 @@
             border-left: 5px solid #dcb572;
             border-right: 5px solid #dcb572;
             font-family: '华文楷书', 'KaiTi', cursive;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
-
-        /* 运势详细描述 + 名言 */
         .fortune-detail {
             background: rgba(245, 230, 200, 0.7);
             margin: 12px 20px;
-            padding: 18px 18px;
+            padding: 18px;
             border-radius: 36px;
             font-size: 0.98rem;
             line-height: 1.45;
             color: #3e2a1a;
             text-align: center;
         }
-
         .quote-box {
             background: #fff4e6;
-            margin: 10px 20px 20px 20px;
+            margin: 10px 20px 20px;
             padding: 18px 16px;
             border-radius: 30px;
             border-bottom: 3px solid #e2ba7a;
             font-style: italic;
-            font-weight: 500;
             position: relative;
         }
-
-        .quote-icon {
-            font-size: 2rem;
-            color: #c99442;
-            opacity: 0.4;
-            position: absolute;
-            top: -6px;
-            left: 12px;
-        }
-
-        .quote-text {
-            font-size: 1rem;
-            padding: 0 20px;
-            color: #52381c;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .quote-author {
-            text-align: right;
-            margin-top: 12px;
-            font-size: 0.8rem;
-            color: #b2722a;
-            font-weight: bold;
-        }
-
-        /* 按钮 */
+        .quote-icon { font-size: 2rem; color: #c99442; opacity: 0.4; position: absolute; top: -6px; left: 12px; }
+        .quote-text { font-size: 1rem; padding: 0 20px; color: #52381c; text-align: center; }
+        .quote-author { text-align: right; margin-top: 12px; font-size: 0.8rem; color: #b2722a; font-weight: bold; }
         .btn-random {
             display: block;
             width: 80%;
-            margin: 16px auto 30px auto;
+            margin: 16px auto 30px;
             background: linear-gradient(95deg, #e2b064, #cf9342);
             border: none;
             padding: 14px 0;
@@ -407,52 +160,23 @@
             font-family: inherit;
             letter-spacing: 2px;
         }
-
-        .btn-random:active {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 #8b5e2c;
-        }
-
+        .btn-random:active { transform: translateY(3px); box-shadow: 0 2px 0 #8b5e2c; }
         .footer-note {
             font-size: 0.7rem;
             text-align: center;
-            padding: 14px 20px 20px 20px;
+            padding: 14px 20px 20px;
             color: #9b7a54;
             border-top: 1px dashed #ebd5b0;
             background: #fdf6ecb3;
         }
-
-        .footer-note a {
-            text-decoration: none;
-            color: #a5723e;
-        }
-
-        /* 响应式 */
         @media (max-width: 500px) {
-            .card {
-                border-radius: 48px 32px 56px 32px;
-            }
-            .character-name {
-                font-size: 1.5rem;
-            }
-            .fortune-level {
-                font-size: 1.3rem;
-            }
-            .star-rating {
-                font-size: 1.2rem;
-                letter-spacing: 3px;
-            }
-            .poem-sign {
-                font-size: 0.9rem;
-            }
-            .btn-random {
-                width: 90%;
-                font-size: 1.1rem;
-            }
+            .card { border-radius: 48px 32px 56px 32px; }
+            .character-name { font-size: 1.5rem; }
+            .fortune-level { font-size: 1.3rem; }
+            .star-rating { font-size: 1.2rem; letter-spacing: 3px; }
+            .poem-sign { font-size: 0.9rem; }
+            .btn-random { width: 90%; font-size: 1.1rem; }
         }
-    body,td,th {
-	font-family: "Segoe UI", "华文楷书", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", system-ui, -apple-system, "Helvetica Neue", sans-serif;
-}
     </style>
 </head>
 <body>
@@ -461,7 +185,6 @@
         <h1>✨ 今日灵签 ✨</h1>
         <div class="date-today" id="dateDisplay"></div>
     </div>
-
     <div class="character-section">
         <div class="avatar-frame">
             <img class="avatar-img" id="characterImg" alt="动漫人物画像" src="">
@@ -472,198 +195,40 @@
             <span class="star-rating" id="starRating">★★★★★☆☆</span>
         </div>
     </div>
-
-    <div class="poem-sign" id="signPoem">
-        万宝云集，天降幸运，立志奋发，可成大功
-    </div>
-
-    <div class="fortune-detail" id="fortuneDetail">
-        安稳余庆福禄开，盛大幸福天赐来，内含哀兆应谨慎，注意品行福乐享。
-    </div>
-
+    <div class="poem-sign" id="signPoem">万宝云集，天降幸运，立志奋发，可成大功</div>
+    <div class="fortune-detail" id="fortuneDetail">安稳余庆福禄开，盛大幸福天赐来，内含哀兆应谨慎，注意品行福乐享。</div>
     <div class="quote-box">
         <div class="quote-icon">“</div>
-        <div class="quote-text" id="quoteText">
-            人如果没有梦想，和咸鱼有什么分别？
-        </div>
+        <div class="quote-text" id="quoteText">人如果没有梦想，和咸鱼有什么分别？</div>
         <div class="quote-author" id="quoteAuthor">—— 星之箴言</div>
     </div>
-
     <button class="btn-random" id="randomBtn">🎲 缘起·再抽一签 🎴</button>
     <div class="footer-note">
         🌸 图片源自网络公开动漫素材 | 仅供娱乐 · 心诚则灵 🌸<br>
         ✨ 每日一签 · 汲取动漫人物语录正能量 ✨
-  </div>
+    </div>
 </div>
 
 <script>
-    // ======================= 角色数据库（真实图片 + 真实台词 + 专属运势）=======================
-    // 所有图片均为网络上真实动漫人物图片（稳定可访问链接，选自各动漫wiki及公共资源）
-    // 扩大角色库至 16 位人气角色，涵盖不同运势等级，让抽卡体验更丰富
     const characters = [
-        {
-            id: "naruto",
-            name: "漩涡鸣人",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL2Mtc3NsLmR1aXRhbmcuY29tL3VwbG9hZHMvaXRlbS8yMDE3MDcvMjkvMjAxNzA3MjkwMTM2NDFfeUJUS0MudGh1bWIuMTAwMF8wLmpwZWc=&sign=yx:X6Ts2cZH-b04avY59KY6T2TU2kI=&tv=0_0",
-            quote: "有话直说，说到做到，这就是我的忍道！",
-            fortuneLevel: "中吉",
-            starCount: 4,
-            fortuneDetail: "不屈的意志将为你打开局面，今天适合主动出击，友情会成为你最大的助力。",
-            signPoem: "⭐ 木叶飞舞之处，火亦生生不息 ⭐ 万宝云集，天降幸运，立志奋发，可成大功"
-        },
-        {
-            id: "luffy",
-            name: "蒙奇·D·路飞",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9waWMucm1iLmJkc3RhdGljLmNvbS8wZWMwYzRjYjkzYzhiZTg5NDJkMDY3OGQ3ZTZjOWQ0Ny5qcGVn&sign=yx:QDnGfqgnecr1W-nI8NYtGx8AfUE=&tv=0_0",
-            quote: "我是要成为海贼王的男人！伙伴就是力量！",
-            fortuneLevel: "大吉",
-            starCount: 5,
-            fortuneDetail: "大海上最自由的人拥有最强的运势！今天无论做什么都畅行无阻，财宝与笑声相伴。",
-            signPoem: "🏴‍☠️ 百川归海，梦想起航，福星高照，自由无疆 🏴‍☠️"
-        },
-        {
-            id: "gintoki",
-            name: "坂田银时",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL2Rpbmd5dWUud3MuMTI2Lm5ldC8yMDIyLzA0MDkvYTMyOWJiZDFqMDByYTF4b3gwMDIxYzAwMHhjMDBpcm0uanBn&sign=yx:GNxUjSPVEqqcL8vLl0hHjCuQrI8=&tv=0_0",
-            quote: "我已经决定了，要吃自己喜欢的东西，过自己喜欢的人生。",
-            fortuneLevel: "小吉",
-            starCount: 3,
-            fortuneDetail: "悠闲中带点甜，今天会有意想不到的小确幸，但小心不要弄丢草莓牛奶。",
-            signPoem: "🍡 雨过天晴，糖分降临，随性而行，小吉相伴 🍡"
-        },
-        {
-            id: "levi",
-            name: "利威尔·阿克曼",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9kaW5neXVlLndzLjEyNi5uZXQvNXRWN3RKYlZzSU9IWlR5T2ZNR2ExcXZDTTR1NjZDYWdrbzE2NkhpelQ2MU8wMTUwNjY1NDg4Mzc3MGNvbXByZXNzZmxhZy5qcGc=&sign=yx:QPiFs854f1BIksEZk_HCUoZhP2Y=&tv=0_0",
-            quote: "选择权在自己手中，献出心脏之前先看清方向。",
-            fortuneLevel: "末吉",
-            starCount: 2,
-            fortuneDetail: "沉稳谨慎是今日关键，困境中冷静观察会获得破局良机，注意身体健康。",
-            signPoem: "⚔️ 逆境修身，谨言慎行，柳暗花明，终得安宁 ⚔️"
-        },
-        {
-            id: "goku",
-            name: "孙悟空",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9waWMuYmFpa2Uuc29zby5jb20vdWdjL2JhaWtlcGljMi8wLzIwMjMwMzAyMTQxODM1LTEwOTM5NjE5OF9qcGVnXzUyMV8zNTRfMTc1NjM3LmpwZy8wXzkw&sign=yx:r9DAn6S_4Z5ypgxKEyGcJszcfW4=&tv=0_0",
-            quote: "我还有很多需要超越的对手！不断变强就是我的快乐！",
-            fortuneLevel: "中吉",
-            starCount: 4,
-            fortuneDetail: "热血与斗志引动好运，突破极限就在今日，挑战带来成长契机。",
-            signPoem: "🐉 龙腾九天，力量觉醒，高歌猛进，势不可挡 🐉"
-        },
-        {
-            id: "saitama",
-            name: "琦玉",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly81YjA5ODhlNTk1MjI1LmNkbi5zb2h1Y3MuY29tL2ltYWdlcy8yMDE5MDcwOC9kMmRjNDcxY2I1OWI0ODI3OWQ2NGM3ZTUzNzgwNmQzYi5qcGVn&sign=yx:AtLCLtWthd1r7tkIHWRSXlGelmE=&tv=0_0",
-            quote: "我只是一个兴趣使然的英雄。",
-            fortuneLevel: "中吉",
-            starCount: 4,
-            fortuneDetail: "以平常心面对一切，所有困难都像一拳击碎般简单。好运自然降临。",
-            signPoem: "👊 一拳制胜，万难消除，福德自至，万事顺遂 👊"
-        },
-        {
-            id: "saber",
-            name: "阿尔托莉雅·潘德拉贡",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9ia2ltZy5jZG4uYmNlYm9zLmNvbS9waWMvYjgwMTRhOTBmNjAzNzM4ZGM4N2NhMGRhYmYxYmIwNTFmODE5ZWMxMA==&sign=yx:QUgIKGcPc9J-va_T0dQTedVshTA=&tv=400_400",
-            quote: "身为王，为了守护人民，我的剑绝不动摇。",
-            fortuneLevel: "大吉",
-            starCount: 5,
-            fortuneDetail: "正义与荣耀守护着你，今日决策果断将带来长远福报。大吉之兆。",
-            signPoem: "🗡️ 圣辉庇佑，王运昌隆，信念所至，金石为开 🗡️"
-        },
-        {
-            id: "totoro",
-            name: "龙猫",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3NzMi5tZWlwaWFuLm1lL3VzZXJzLzU1MDc0ODU0L2RjODZjYWQyYTFkNTRjODhhMzUyYTA4OGNiMmU4MjljLmpwZz9tZWlwaWFuLXJhdy9idWNrZXQvaXZ3ZW4va2V5L2RYTmxjbk12TlRVd056UTROVFF2WkdNNE5tTmhaREpoTVdRMU5HTTRPR0V6TlRKaE1EZzRZMkl5WlRneU9XTXVhbkJuL3NpZ24vNmFmMTk2OWVhZTBkNGFmOGJmZDNlOGU4NmFmNzlhODIuanBn&sign=yx:NTpkcPw5apqox9OnwY0vEEDPa_I=&tv=400_400",
-            quote: "我们一起大笑看看，可怕的东西就会跑光光。",
-            fortuneLevel: "大吉",
-            starCount: 5,
-            fortuneDetail: "温柔和童心带来奇妙好运，今天容易遇见小小的奇迹，心情美妙无比。",
-            signPoem: "🌿 森林祝福，童真护体，百厄不侵，福运绵长 🌿"
-        },
-        {
-            id: "tanjiro",
-            name: "灶门炭治郎",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL2kwLmhkc2xiLmNvbS9iZnMvYXJ0aWNsZS84YmQ3OThmOWQ3OThjYWUyMDM3YmIxNzE3OTI5YThhODQwYzRlNjMyLmpwZ0AxMTkydy53ZWJw&sign=yx:u1Ig6EpeG7LeXPFsm_6g7iqU7ZE=&tv=0_0",
-            quote: "无论多么痛苦，都要活下去，带着希望前进。",
-            fortuneLevel: "中吉",
-            starCount: 4,
-            fortuneDetail: "温柔与坚强并行，今日会有意想不到的贵人相助，水之呼吸般流畅。",
-            signPoem: "🌊 心火不灭，水刃开运，悲愿化福，步步生莲 🌊"
-        },
-        {
-            id: "gojo",
-            name: "五条悟",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9jLXNzbC5kdHN0YXRpYy5jb20vdXBsb2Fkcy9ibG9nLzIwMjAxMS8yNC8yMDIwMTEyNDE4MzM1NF85MGM0NC50aHVtYi4xMDAwXzAuanBn&sign=yx:WRifb96ktYD4IRLXSiOuBQKN9xE=&tv=0_0",
-            quote: "没事，因为我是最强的。",
-            fortuneLevel: "大吉",
-            starCount: 5,
-            fortuneDetail: "无边界之运势，无论学业事业都如有神助，但要记得谦逊使人进步。",
-            signPoem: "👁️ 无量空处，幸运满盈，无往不利，自在随心 👁️"
-        },
-        {
-            id: "eren",
-            name: "艾伦·耶格尔",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL3VnYy5xcGljLmNuL2JhaWtlcGljLzM4ODQ2L2N1dC0yMDE0MDUwNzEyNTA1NS0xOTY5NDIwNTM2LmpwZy8w&sign=yx:OMIv-jdrLskFdAqTOx7LAzrJn7Q=&tv=0_0",
-            quote: "战斗！如果想要获得自由，就必须战斗！",
-            fortuneLevel: "小吉",
-            starCount: 3,
-            fortuneDetail: "强烈的信念会推动你突破障碍，但小心过于激进带来疲惫，张弛有度。",
-            signPoem: "🔥 自由之翼，突破牢笼，置之死地而后生 🔥"
-        },
-        {
-            id: "lelouch",
-            name: "鲁路修·兰佩路基",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovLzViMDk4OGU1OTUyMjUuY2RuLnNvaHVjcy5jb20vaW1hZ2VzLzIwMTkwOTAzLzIyYTE1ZTk1MDU4MDQyYmU5YmIwZWM4NmY1OGEyMzI3LmpwZWc=&sign=yx:3fNlMDuP5KUwT0oowoeZF6WVU54=&tv=400_400",
-            quote: "只有抱有被射杀的觉悟，才有资格开枪。",
-            fortuneLevel: "中吉",
-            starCount: 4,
-            fortuneDetail: "智谋闪耀之日，适合策划与谈判，谋定而后动必有所成。",
-            signPoem: "♟️ 谋略破局，天命所归，棋步之间，运势流转 ♟️"
-        },
-        {
-            id: "natsu",
-            name: "纳兹·多拉格尼尔",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly93eDMuc2luYWltZy5jbi9sYXJnZS8wMDY0elI5b2d5MWhzcnBzOHQ0djlqMzFtODB4dTFreC5qcGc=&sign=yx:leJqj1333eK3JJyrE5S7WbBKDB4=&tv=400_400",
-            quote: "我燃烧起来了！为了伙伴，我绝不会输！",
-            fortuneLevel: "中吉",
-            starCount: 4,
-            fortuneDetail: "火焰般的热情会吸引好运，今天适合团队合作，朋友会带来惊喜。",
-            signPoem: "🔥 火龙咆哮，厄运尽消，羁绊为盾，洪福齐天 🔥"
-        },
-        {
-            id: "conan",
-            name: "江户川柯南",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9ia2ltZy5jZG4uYmNlYm9zLmNvbS9waWMvYjIxYmIwNTFmODE5ODYxODM2N2FjNDI2OWZhNzM5NzM4YmQ0YjMxYzQ4NzQ=&sign=yx:RwJiZ_Z1vwUGwOPcNyl7j9awvVQ=&tv=400_400",
-            quote: "真相永远只有一个！",
-            fortuneLevel: "末吉",
-            starCount: 2,
-            fortuneDetail: "细节决定成败，今日可能会发现隐藏的秘密。小心口舌是非，但智慧可化解。",
-            signPoem: "🔍 慧眼如炬，迷雾驱散，破而后立，晚运上升 🔍"
-        },
-        {
-            id: "doraemon",
-            name: "哆啦A梦",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9nZC1oYmltZy5odWFiYW4uY29tLzJmMzI4MWY5Y2JjYWJkZThjODJhNDdkOGJkOWVkMTIyZWVhYTM5YWUxYTdiNjItSE1pRTczX2Z3NjU4&sign=yx:RzbZopnbLk_ifrc_niq-GIjNdHQ=&tv=400_400",
-            quote: "放心，有我在呢！用秘密道具帮你实现愿望。",
-            fortuneLevel: "大吉",
-            starCount: 5,
-            fortuneDetail: "任何困难都会有神奇助手，今日宜行善，幸运会从意想不到的地方降临。",
-            signPoem: "🍩 四次元口袋，幸福满载，童梦成真，福泽深厚 🍩"
-        },
-        {
-            id: "yato",
-            name: "夜斗",
-            imageUrl: "https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9jLXNzbC5kdHN0YXRpYy5jb20vdXBsb2Fkcy9pdGVtLzIwMTYwMS8wNC8yMDE2MDEwNDE2MTEyN184R2NtVi50aHVtYi4xMDAwXzAucG5n&sign=yx:OfaD0zoxoFRJr3Be9rRe7hX81nY=&tv=400_400",
-            quote: "只要五日元，你的愿望我通通实现！",
-            fortuneLevel: "小吉",
-            starCount: 3,
-            fortuneDetail: "今日结缘运旺，可能会遇到帮你渡过难关的人。小小善举会带来连锁好运。",
-            signPoem: "⚡ 祸津神转福，因缘际会，五元结缘，否极泰来 ⚡"
-        }
+        { id:"naruto", name:"漩涡鸣人", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL2Mtc3NsLmR1aXRhbmcuY29tL3VwbG9hZHMvaXRlbS8yMDE3MDcvMjkvMjAxNzA3MjkwMTM2NDFfeUJUS0MudGh1bWIuMTAwMF8wLmpwZWc=&sign=yx:X6Ts2cZH-b04avY59KY6T2TU2kI=&tv=0_0", quote:"有话直说，说到做到，这就是我的忍道！", fortuneLevel:"中吉", starCount:4, fortuneDetail:"不屈的意志将为你打开局面，今天适合主动出击，友情会成为你最大的助力。", signPoem:"⭐ 木叶飞舞之处，火亦生生不息 ⭐ 万宝云集，天降幸运，立志奋发，可成大功" },
+        { id:"luffy", name:"蒙奇·D·路飞", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9waWMucm1iLmJkc3RhdGljLmNvbS8wZWMwYzRjYjkzYzhiZTg5NDJkMDY3OGQ3ZTZjOWQ0Ny5qcGVn&sign=yx:QDnGfqgnecr1W-nI8NYtGx8AfUE=&tv=0_0", quote:"我是要成为海贼王的男人！伙伴就是力量！", fortuneLevel:"大吉", starCount:5, fortuneDetail:"大海上最自由的人拥有最强的运势！今天无论做什么都畅行无阻，财宝与笑声相伴。", signPoem:"🏴‍☠️ 百川归海，梦想起航，福星高照，自由无疆 🏴‍☠️" },
+        { id:"gintoki", name:"坂田银时", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL2Rpbmd5dWUud3MuMTI2Lm5ldC8yMDIyLzA0MDkvYTMyOWJiZDFqMDByYTF4b3gwMDIxYzAwMHhjMDBpcm0uanBn&sign=yx:GNxUjSPVEqqcL8vLl0hHjCuQrI8=&tv=0_0", quote:"我已经决定了，要吃自己喜欢的东西，过自己喜欢的人生。", fortuneLevel:"小吉", starCount:3, fortuneDetail:"悠闲中带点甜，今天会有意想不到的小确幸，但小心不要弄丢草莓牛奶。", signPoem:"🍡 雨过天晴，糖分降临，随性而行，小吉相伴 🍡" },
+        { id:"levi", name:"利威尔·阿克曼", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9kaW5neXVlLndzLjEyNi5uZXQvNXRWN3RKYlZzSU9IWlR5T2ZNR2ExcXZDTTR1NjZDYWdrbzE2NkhpelQ2MU8wMTUwNjY1NDg4Mzc3MGNvbXByZXNzZmxhZy5qcGc=&sign=yx:QPiFs854f1BIksEZk_HCUoZhP2Y=&tv=0_0", quote:"选择权在自己手中，献出心脏之前先看清方向。", fortuneLevel:"末吉", starCount:2, fortuneDetail:"沉稳谨慎是今日关键，困境中冷静观察会获得破局良机，注意身体健康。", signPoem:"⚔️ 逆境修身，谨言慎行，柳暗花明，终得安宁 ⚔️" },
+        { id:"goku", name:"孙悟空", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9waWMuYmFpa2Uuc29zby5jb20vdWdjL2JhaWtlcGljMi8wLzIwMjMwMzAyMTQxODM1LTEwOTM5NjE5OF9qcGVnXzUyMV8zNTRfMTc1NjM3LmpwZy8wXzkw&sign=yx:r9DAn6S_4Z5ypgxKEyGcJszcfW4=&tv=0_0", quote:"我还有很多需要超越的对手！不断变强就是我的快乐！", fortuneLevel:"中吉", starCount:4, fortuneDetail:"热血与斗志引动好运，突破极限就在今日，挑战带来成长契机。", signPoem:"🐉 龙腾九天，力量觉醒，高歌猛进，势不可挡 🐉" },
+        { id:"saitama", name:"琦玉", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly81YjA5ODhlNTk1MjI1LmNkbi5zb2h1Y3MuY29tL2ltYWdlcy8yMDE5MDcwOC9kMmRjNDcxY2I1OWI0ODI3OWQ2NGM3ZTUzNzgwNmQzYi5qcGVn&sign=yx:AtLCLtWthd1r7tkIHWRSXlGelmE=&tv=0_0", quote:"我只是一个兴趣使然的英雄。", fortuneLevel:"中吉", starCount:4, fortuneDetail:"以平常心面对一切，所有困难都像一拳击碎般简单。好运自然降临。", signPoem:"👊 一拳制胜，万难消除，福德自至，万事顺遂 👊" },
+        { id:"saber", name:"阿尔托莉雅·潘德拉贡", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9ia2ltZy5jZG4uYmNlYm9zLmNvbS9waWMvYjgwMTRhOTBmNjAzNzM4ZGM4N2NhMGRhYmYxYmIwNTFmODE5ZWMxMA==&sign=yx:QUgIKGcPc9J-va_T0dQTedVshTA=&tv=400_400", quote:"身为王，为了守护人民，我的剑绝不动摇。", fortuneLevel:"大吉", starCount:5, fortuneDetail:"正义与荣耀守护着你，今日决策果断将带来长远福报。大吉之兆。", signPoem:"🗡️ 圣辉庇佑，王运昌隆，信念所至，金石为开 🗡️" },
+        { id:"totoro", name:"龙猫", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovL3NzMi5tZWlwaWFuLm1lL3VzZXJzLzU1MDc0ODU0L2RjODZjYWQyYTFkNTRjODhhMzUyYTA4OGNiMmU4MjljLmpwZz9tZWlwaWFuLXJhdy9idWNrZXQvaXZ3ZW4va2V5L2RYTmxjbk12TlRVd056UTROVFF2WkdNNE5tTmhaREpoTVdRMU5HTTRPR0V6TlRKaE1EZzRZMkl5WlRneU9XTXVhbkJuL3NpZ24vNmFmMTk2OWVhZTBkNGFmOGJmZDNlOGU4NmFmNzlhODIuanBn&sign=yx:NTpkcPw5apqox9OnwY0vEEDPa_I=&tv=400_400", quote:"我们一起大笑看看，可怕的东西就会跑光光。", fortuneLevel:"大吉", starCount:5, fortuneDetail:"温柔和童心带来奇妙好运，今天容易遇见小小的奇迹，心情美妙无比。", signPoem:"🌿 森林祝福，童真护体，百厄不侵，福运绵长 🌿" },
+        { id:"tanjiro", name:"灶门炭治郎", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL2kwLmhkc2xiLmNvbS9iZnMvYXJ0aWNsZS84YmQ3OThmOWQ3OThjYWUyMDM3YmIxNzE3OTI5YThhODQwYzRlNjMyLmpwZ0AxMTkydy53ZWJw&sign=yx:u1Ig6EpeG7LeXPFsm_6g7iqU7ZE=&tv=0_0", quote:"无论多么痛苦，都要活下去，带着希望前进。", fortuneLevel:"中吉", starCount:4, fortuneDetail:"温柔与坚强并行，今日会有意想不到的贵人相助，水之呼吸般流畅。", signPoem:"🌊 心火不灭，水刃开运，悲愿化福，步步生莲 🌊" },
+        { id:"gojo", name:"五条悟", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cHM6Ly9jLXNzbC5kdHN0YXRpYy5jb20vdXBsb2Fkcy9ibG9nLzIwMjAxMS8yNC8yMDIwMTEyNDE4MzM1NF85MGM0NC50aHVtYi4xMDAwXzAuanBn&sign=yx:WRifb96ktYD4IRLXSiOuBQKN9xE=&tv=0_0", quote:"没事，因为我是最强的。", fortuneLevel:"大吉", starCount:5, fortuneDetail:"无边界之运势，无论学业事业都如有神助，但要记得谦逊使人进步。", signPoem:"👁️ 无量空处，幸运满盈，无往不利，自在随心 👁️" },
+        { id:"eren", name:"艾伦·耶格尔", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=ori&key=aHR0cDovL3VnYy5xcGljLmNuL2JhaWtlcGljLzM4ODQ2L2N1dC0yMDE0MDUwNzEyNTA1NS0xOTY5NDIwNTM2LmpwZy8w&sign=yx:OMIv-jdrLskFdAqTOx7LAzrJn7Q=&tv=0_0", quote:"战斗！如果想要获得自由，就必须战斗！", fortuneLevel:"小吉", starCount:3, fortuneDetail:"强烈的信念会推动你突破障碍，但小心过于激进带来疲惫，张弛有度。", signPoem:"🔥 自由之翼，突破牢笼，置之死地而后生 🔥" },
+        { id:"lelouch", name:"鲁路修·兰佩路基", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cDovLzViMDk4OGU1OTUyMjUuY2RuLnNvaHVjcy5jb20vaW1hZ2VzLzIwMTkwOTAzLzIyYTE1ZTk1MDU4MDQyYmU5YmIwZWM4NmY1OGEyMzI3LmpwZWc=&sign=yx:3fNlMDuP5KUwT0oowoeZF6WVU54=&tv=400_400", quote:"只有抱有被射杀的觉悟，才有资格开枪。", fortuneLevel:"中吉", starCount:4, fortuneDetail:"智谋闪耀之日，适合策划与谈判，谋定而后动必有所成。", signPoem:"♟️ 谋略破局，天命所归，棋步之间，运势流转 ♟️" },
+        { id:"natsu", name:"纳兹·多拉格尼尔", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly93eDMuc2luYWltZy5jbi9sYXJnZS8wMDY0elI5b2d5MWhzcnBzOHQ0djlqMzFtODB4dTFreC5qcGc=&sign=yx:leJqj1333eK3JJyrE5S7WbBKDB4=&tv=400_400", quote:"我燃烧起来了！为了伙伴，我绝不会输！", fortuneLevel:"中吉", starCount:4, fortuneDetail:"火焰般的热情会吸引好运，今天适合团队合作，朋友会带来惊喜。", signPoem:"🔥 火龙咆哮，厄运尽消，羁绊为盾，洪福齐天 🔥" },
+        { id:"conan", name:"江户川柯南", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9ia2ltZy5jZG4uYmNlYm9zLmNvbS9waWMvYjIxYmIwNTFmODE5ODYxODM2N2FjNDI2OWZhNzM5NzM4YmQ0YjMxYzQ4NzQ=&sign=yx:RwJiZ_Z1vwUGwOPcNyl7j9awvVQ=&tv=400_400", quote:"真相永远只有一个！", fortuneLevel:"末吉", starCount:2, fortuneDetail:"细节决定成败，今日可能会发现隐藏的秘密。小心口舌是非，但智慧可化解。", signPoem:"🔍 慧眼如炬，迷雾驱散，破而后立，晚运上升 🔍" },
+        { id:"doraemon", name:"哆啦A梦", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9nZC1oYmltZy5odWFiYW4uY29tLzJmMzI4MWY5Y2JjYWJkZThjODJhNDdkOGJkOWVkMTIyZWVhYTM5YWUxYTdiNjItSE1pRTczX2Z3NjU4&sign=yx:RzbZopnbLk_ifrc_niq-GIjNdHQ=&tv=400_400", quote:"放心，有我在呢！用秘密道具帮你实现愿望。", fortuneLevel:"大吉", starCount:5, fortuneDetail:"任何困难都会有神奇助手，今日宜行善，幸运会从意想不到的地方降临。", signPoem:"🍩 四次元口袋，幸福满载，童梦成真，福泽深厚 🍩" },
+        { id:"yato", name:"夜斗", imageUrl:"https://kkimgs.yisou.com/ims?kt=url&at=smstruct&key=aHR0cHM6Ly9jLXNzbC5kdHN0YXRpYy5jb20vdXBsb2Fkcy9pdGVtLzIwMTYwMS8wNC8yMDE2MDEwNDE2MTEyN184R2NtVi50aHVtYi4xMDAwXzAucG5n&sign=yx:OfaD0zoxoFRJr3Be9rRe7hX81nY=&tv=400_400", quote:"只要五日元，你的愿望我通通实现！", fortuneLevel:"小吉", starCount:3, fortuneDetail:"今日结缘运旺，可能会遇到帮你渡过难关的人。小小善举会带来连锁好运。", signPoem:"⚡ 祸津神转福，因缘际会，五元结缘，否极泰来 ⚡" }
     ];
 
-    // 显示当前日期
     function displayCurrentDate() {
         const now = new Date();
         const year = now.getFullYear();
@@ -674,153 +239,94 @@
         document.getElementById('dateDisplay').innerText = `${year}.${month}.${day} ${weekday} · 宜祈福`;
     }
 
-    // 根据星级生成星星字符串 (starCount: 0-5)
     function renderStars(starCount) {
-        const fullStar = '★';
-        const emptyStar = '☆';
         let stars = '';
-        for (let i = 0; i < 5; i++) {
-            stars += (i < starCount) ? fullStar : emptyStar;
-        }
+        for (let i = 0; i < 5; i++) stars += (i < starCount) ? '★' : '☆';
         return stars;
     }
 
-    // 图片加载失败时，替换为本地的角色emoji占位符（保证不空白，体验良好）
     function handleImageError(imgElement, characterName) {
-        if (!imgElement) return;
-        // 避免无限循环: 仅当还没有替换为占位时触发
-        if (!imgElement.dataset.fallback) {
-            imgElement.dataset.fallback = "true";
-            // 制作一个可爱占位字符画data:image
-            const canvas = document.createElement("canvas");
-            canvas.width = 140;
-            canvas.height = 140;
-            const ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#e4c9a7";
-            ctx.fillRect(0, 0, 140, 140);
-            ctx.fillStyle = "#b37244";
-            ctx.font = "bold 70px 'Segoe UI Emoji'";
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
-            // 用角色第一个字或emoji
-            let emoji = "✨";
-            if (characterName.includes("鸣人")) emoji = "🍥";
-            else if (characterName.includes("路飞")) emoji = "👒";
-            else if (characterName.includes("银时")) emoji = "🍡";
-            else if (characterName.includes("利威尔")) emoji = "⚔️";
-            else if (characterName.includes("悟空")) emoji = "🐉";
-            else if (characterName.includes("琦玉")) emoji = "👊";
-            else if (characterName.includes("阿尔托莉雅")) emoji = "🗡️";
-            else if (characterName.includes("龙猫")) emoji = "🍃";
-            else if (characterName.includes("炭治郎")) emoji = "🌊";
-            else if (characterName.includes("五条悟")) emoji = "👁️";
-            else if (characterName.includes("艾伦")) emoji = "⚙️";
-            else if (characterName.includes("鲁路修")) emoji = "♟️";
-            else if (characterName.includes("纳兹")) emoji = "🔥";
-            else if (characterName.includes("柯南")) emoji = "🔍";
-            else if (characterName.includes("哆啦A梦")) emoji = "🍩";
-            else if (characterName.includes("夜斗")) emoji = "⚡";
-            else emoji = "🌟";
-            ctx.fillText(emoji, 70, 70);
-            canvas.toBlob(blob => {
-                const url = URL.createObjectURL(blob);
-                imgElement.src = url;
-                imgElement.classList.add("error-load");
-                // 释放blob url 延迟
-                setTimeout(() => URL.revokeObjectURL(url), 100);
-            });
-        }
+        if (!imgElement || imgElement.dataset.fallback) return;
+        imgElement.dataset.fallback = "true";
+        const canvas = document.createElement("canvas");
+        canvas.width = 140; canvas.height = 140;
+        const ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#e4c9a7";
+        ctx.fillRect(0, 0, 140, 140);
+        ctx.fillStyle = "#b37244";
+        ctx.font = "bold 70px 'Segoe UI Emoji'";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        let emoji = "✨";
+        if (characterName.includes("鸣人")) emoji = "🍥";
+        else if (characterName.includes("路飞")) emoji = "👒";
+        else if (characterName.includes("银时")) emoji = "🍡";
+        else if (characterName.includes("利威尔")) emoji = "⚔️";
+        else if (characterName.includes("悟空")) emoji = "🐉";
+        else if (characterName.includes("琦玉")) emoji = "👊";
+        else if (characterName.includes("阿尔托莉雅")) emoji = "🗡️";
+        else if (characterName.includes("龙猫")) emoji = "🍃";
+        else if (characterName.includes("炭治郎")) emoji = "🌊";
+        else if (characterName.includes("五条悟")) emoji = "👁️";
+        else if (characterName.includes("艾伦")) emoji = "⚙️";
+        else if (characterName.includes("鲁路修")) emoji = "♟️";
+        else if (characterName.includes("纳兹")) emoji = "🔥";
+        else if (characterName.includes("柯南")) emoji = "🔍";
+        else if (characterName.includes("哆啦A梦")) emoji = "🍩";
+        else if (characterName.includes("夜斗")) emoji = "⚡";
+        else emoji = "🌟";
+        ctx.fillText(emoji, 70, 70);
+        canvas.toBlob(blob => {
+            const url = URL.createObjectURL(blob);
+            imgElement.src = url;
+            imgElement.classList.add("error-load");
+            setTimeout(() => URL.revokeObjectURL(url), 100);
+        });
     }
 
-    // 更新卡片所有内容（包括真实图片，运势，语录）
     function updateUIByCharacter(character) {
         if (!character) return;
-
-        // 1. 头像真实图片（网络图片）
         const imgElement = document.getElementById('characterImg');
-        // 重置fallback标记和class
         delete imgElement.dataset.fallback;
         imgElement.classList.remove("error-load");
         imgElement.src = character.imageUrl;
-        // 添加错误处理
-        imgElement.onerror = () => {
-            handleImageError(imgElement, character.name);
-        };
-        // 预置alt
+        imgElement.onerror = () => handleImageError(imgElement, character.name);
         imgElement.alt = `${character.name} 动漫形象`;
-
-        // 2. 角色名
         document.getElementById('charName').innerText = character.name;
-
-        // 3. 运势等级 & 星级
         document.getElementById('fortuneLevel').innerText = character.fortuneLevel;
-        const starHtml = renderStars(character.starCount);
-        document.getElementById('starRating').innerHTML = starHtml;
-
-        // 4. 主签诗句
+        document.getElementById('starRating').innerHTML = renderStars(character.starCount);
         document.getElementById('signPoem').innerHTML = `「 ${character.signPoem} 」`;
-
-        // 5. 运势详细描述 (融合原示例的一些经典风格 + 专属运势)
         let extraFortuneNote = "";
         switch(character.fortuneLevel) {
-            case "大吉":
-                extraFortuneNote = "名誉良好，信用亦佳，步步高升，诸事顺心。";
-                break;
-            case "中吉":
-                extraFortuneNote = "安稳余庆福禄开，天赐福缘，注意品行福乐享。";
-                break;
-            case "小吉":
-                extraFortuneNote = "小有波折终能化解，甜果必来，保持乐观。";
-                break;
-            case "末吉":
-                extraFortuneNote = "内含哀兆应谨慎，但坚守本心，亦可转危为安。";
-                break;
-            default:
-                extraFortuneNote = "心诚则灵，善意累积福德。";
+            case "大吉": extraFortuneNote = "名誉良好，信用亦佳，步步高升，诸事顺心。"; break;
+            case "中吉": extraFortuneNote = "安稳余庆福禄开，天赐福缘，注意品行福乐享。"; break;
+            case "小吉": extraFortuneNote = "小有波折终能化解，甜果必来，保持乐观。"; break;
+            case "末吉": extraFortuneNote = "内含哀兆应谨慎，但坚守本心，亦可转危为安。"; break;
+            default: extraFortuneNote = "心诚则灵，善意累积福德。";
         }
-        const finalDetail = `${character.fortuneDetail}  ${extraFortuneNote}`;
-        document.getElementById('fortuneDetail').innerHTML = finalDetail;
-
-        // 6. 动漫人物名言
+        document.getElementById('fortuneDetail').innerHTML = `${character.fortuneDetail}  ${extraFortuneNote}`;
         document.getElementById('quoteText').innerHTML = `“${character.quote}”`;
         document.getElementById('quoteAuthor').innerHTML = `—— ${character.name}`;
     }
 
-    // 随机获取角色
-    function getRandomCharacter() {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        return characters[randomIndex];
-    }
+    function getRandomCharacter() { return characters[Math.floor(Math.random() * characters.length)]; }
 
-    // 刷新运势（随机推荐新人物、真实图片、运势、语录）
     let currentCharacter = null;
     function refreshRandomFortune() {
-        const newChar = getRandomCharacter();
-        currentCharacter = newChar;
+        currentCharacter = getRandomCharacter();
         updateUIByCharacter(currentCharacter);
-        // 抽签微动效
         const card = document.querySelector('.card');
         card.style.transform = 'scale(0.98)';
-        setTimeout(() => {
-            card.style.transform = '';
-        }, 150);
+        setTimeout(() => card.style.transform = '', 150);
     }
 
-    // 初始化页面
     function init() {
         displayCurrentDate();
-        const initChar = getRandomCharacter();
-        currentCharacter = initChar;
+        currentCharacter = getRandomCharacter();
         updateUIByCharacter(currentCharacter);
-        // 绑定随机按钮事件
-        const randomBtn = document.getElementById('randomBtn');
-        randomBtn.addEventListener('click', refreshRandomFortune);
+        document.getElementById('randomBtn').addEventListener('click', refreshRandomFortune);
     }
-
-    // 启动所有
     init();
 </script>
-</body>
-</html>
 </body>
 </html>
