@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌾 像素田园 - 网页版农场模拟</title>
+    <style>
+        :root {
+            --bg: #1a1a2e;
+            --panel: #2d2d44;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+	background: var(--bg);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+	font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+	overflow-y: auto;
+	padding: 10px;
+	flex-direction: column;
+	user-select: none;
+	-webkit-user-select: none;
+	-webkit-tap-highlight-color: transparent;
+	background-image: url(images/6.jpg);
+			background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            position: relative;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .game-wrapper {
+            position: relative;
+            background: #1e1e35;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 3px #3a3a55, 0 0 0 8px #1a1a2e;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            cursor: crosshair;
+        }
+
+        .info-bar {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 14px;
+            padding: 0 10px;
+        }
+        .info-item {
+            background: #2d2d44;
+            color: #e0d8c8;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: 1px solid #4a4a65;
+            white-space: nowrap;
+        }
+        .info-item .icon {
+            margin-right: 4px;
+        }
+        .info-item .val {
+            color: #ffd700;
+            font-weight: 700;
+        }
+
+        .mobile-controls {
+            display: none;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .ctrl-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: #3a3a55;
+            border: 2px solid #555;
+            color: #ddd;
+            font-size: 20px;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.1s;
+        }
+        .ctrl-btn:active {
+            background: #5a5a80;
+            transform: scale(0.9);
+            border-color: #ffd700;
+        }
+        .ctrl-row {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        @media (max-width: 900px) {
+            .mobile-controls {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            .info-bar {
+                gap: 6px;
+            }
+            .info-item {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+        }
+    body,td,th {
+	font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+    </style>
+</head>
+<body>
+
+    <div class="game-wrapper">
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <div class="info-bar" id="infoBar">
+        <span class="info-item"><span class="icon">💰</span>金币:<span class="val" id="moneyDisplay">500</span></span>
+        <span class="info-item"><span class="icon">📅</span><span id="seasonDisplay">春</span> 第<span class="val" id="dayDisplay">1</span>天</span>
+        <span class="info-item"><span class="icon">⏰</span><span id="timeDisplay">06:00</span></span>
+        <span class="info-item"><span class="icon">🛠️</span>工具:<span class="val" id="toolDisplay">锄头</span></span>
+    </div>
+
+    <div class="mobile-controls" id="mobileControls">
+        <div class="ctrl-row">
+            <button class="ctrl-btn" id="btnUp">▲</button>
+        </div>
+        <div class="ctrl-row">
+            <button class="ctrl-btn" id="btnLeft">◄</button>
+            <button class="ctrl-btn" id="btnAction">⚒️</button>
+            <button class="ctrl-btn" id="btnRight">►</button>
+        </div>
+        <div class="ctrl-row">
+            <button class="ctrl-btn" id="btnDown">▼</button>
+        </div>
+        <div class="ctrl-row" style="gap:10px;margin-top:4px;">
+            <button class="ctrl-btn" id="btnTool1" style="font-size:14px;width:auto;padding:0 12px;">🔨锄</button>
+            <button class="ctrl-btn" id="btnTool2" style="font-size:14px;width:auto;padding:0 12px;">🌱种</button>
+            <button class="ctrl-btn" id="btnTool3" style="font-size:14px;width:auto;padding:0 12px;">💧浇</button>
+            <button class="ctrl-btn" id="btnTool4" style="font-size:14px;width:auto;padding:0 12px;">🧺收</button>
+            <button class="ctrl-btn" id="btnShop" style="font-size:14px;width:auto;padding:0 12px;">🏪店</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            // --- Canvas尺寸 ---
+            const W = 900;
+            const H = 600;
+            canvas.width = W;
+            canvas.height = H;
+
+            // --- 常量 ---
+            const TILE_SIZE = 40;
+            const FARM_COLS = 10;
+            const FARM_ROWS = 8;
+            const FARM_GRID_X = 200; // 农田左上角在世界中的X
+            const FARM_GRID_Y = 140; // 农田左上角在世界中的Y
+            const PLAYER_SPEED = 150; // 像素/秒
+            const DAYS_PER_SEASON = 28;
+            const START_MONEY = 500;
+            const SEASON_NAMES = ['春', '夏', '秋', '冬'];
+            const SEASON_COLORS = ['#7ec850', '#4a9c20', '#d4952a', '#b0c8e0'];
+
+            // --- 作物数据库 ---
+            const CROP_DB = {
+                '土豆': { season: 0, daysToMature: 5, price: 50, sellPrice: 120, color: '#d4a574',
+                stages: 4 },
+                '草莓': { season: 0, daysToMature: 6, price: 80, sellPrice: 200, color: '#e84040',
+                stages: 5 },
+                '青豆': { season: 0, daysToMature: 3, price: 30, sellPrice: 70, color: '#5cb840', stages: 3 },
+                '番茄': { season: 1, daysToMature: 4, price: 40, sellPrice: 100, color: '#e83030',
+                stages: 4 },
+                '蓝莓': { season: 1, daysToMature: 5, price: 60, sellPrice: 160, color: '#4060d0',
+                stages: 4 },
+                '玉米': { season: 1, daysToMature: 5, price: 45, sellPrice: 110, color: '#e8c830',
+                stages: 4 },
+                '南瓜': { season: 2, daysToMature: 6, price: 70, sellPrice: 220, color: '#e87820',
+                stages: 5 },
+                '小麦': { season: 2, daysToMature: 3, price: 25, sellPrice: 60, color: '#d8b840',
+                stages: 3 },
+                '葡萄': { season: 2, daysToMature: 5, price: 55, sellPrice: 150, color: '#8040b0',
+                stages: 4 },
+                '冬根': { season: 3, daysToMature: 4, price: 35, sellPrice: 90, color: '#c8d8e8',
+                stages: 3 },
+            };
+
+            // --- 游戏状态 ---
+            const state = {
+                player: {
+                    x: 260,
+                    y: 350, // 世界坐标
+                    direction: 2, // 0上 1右 2下 3左
+                    tool: 0, // 0锄头 1种子 2水壶 3收获
+                    animFrame: 0,
+                    animTimer: 0,
+                    moving: false,
+                },
+                money: START_MONEY,
+                day: 1,
+                season: 0, // 0春1夏2秋3冬
+                year: 1,
+                hour: 6,
+                minute: 0,
+                timeSpeed: 0.6, // 每秒游戏分钟数（现实中1秒=游戏中0.6分钟≈游戏中1小时=现实中100秒）
+                farmland: [], // [col][row] -> {state, cropType, growthDay, watered}
+                particles: [],
+                messages: [],
+                shopOpen: false,
+                shopTab: 0, // 0买种子 1卖出
+                selectedSeed: null,
+                keys: {},
+                mouseWorldX: 0,
+                mouseWorldY: 0,
+                mouseOnCanvas: false,
+                sleepPrompt: false,
+                lastToolUse: 0,
+                toolCooldown: 0.35,
+                dayEnding: false,
+                dayEndTimer: 0,
+                harvestHighlight: null,
+            };
+
+            // --- 初始化农田 ---
+            function initFarmland() {
+                state.farmland = [];
+                for (let col = 0; col < FARM_COLS; col++) {
+                    state.farmland[col] = [];
+                    for (let row = 0; row < FARM_ROWS; row++) {
+                        state.farmland[col][row] = {
+                            state: 0, // 0空地 1已耕 2已种
+                            cropType: null,
+                            growthDay: 0,
+                            watered: false,
+                        };
+                    }
+                }
+            }
+            initFarmland();
+
+            // --- 粒子系统 ---
+            function spawnParticles(x, y, color, count = 8) {
+                for (let i = 0; i < count; i++) {
+                    state.particles.push({
+                        x,
+                        y,
+                        vx: (Math.random() - 0.5) * 120,
+                        vy: (Math.random() - 0.5) * 120 - 30,
+                        life: 0.4 + Math.random() * 0.5,
+                        maxLife: 0.4 + Math.random() * 0.5,
+                        color,
+                        size: 2 + Math.random() * 3,
+                    });
+                }
+            }
+
+            function addMessage(text, color = '#ffffff') {
+                state.messages.push({
+                    text,
+                    color,
+                    life: 2.0,
+                    maxLife: 2.0,
+                });
+                if (state.messages.length > 8) state.messages.shift();
+            }
+
+            // --- 获取农田格子 ---
+            function getFarmTile(worldX, worldY) {
+                const col = Math.floor((worldX - FARM_GRID_X) / TILE_SIZE);
+                const row = Math.floor((worldY - FARM_GRID_Y) / TILE_SIZE);
+                if (col >= 0 && col < FARM_COLS && row >= 0 && row < FARM_ROWS) {
+                    return { col, row, tile: state.farmland[col][row] };
+                }
+                return null;
+            }
+
+            function getPlayerFacingTile() {
+                const p = state.player;
+                let tx = p.x;
+                let ty = p.y;
+                const offset = TILE_SIZE * 0.7;
+                switch (p.direction) {
+                    case 0:
+                        ty -= offset;
+                        break;
+                    case 1:
+                        tx += offset;
+                        break;
+                    case 2:
+                        ty += offset;
+                        break;
+                    case 3:
+                        tx -= offset;
+                        break;
+                }
+                return getFarmTile(tx, ty);
+            }
+
+            // --- 使用工具 ---
+            function useTool() {
+                const now = performance.now() / 1000;
+                if (now - state.lastToolUse < state.toolCooldown) return;
+                state.lastToolUse = now;
+
+                const ft = getPlayerFacingTile();
+                const p = state.player;
+
+                if (!ft) {
+                    // 不在农田上，仍然播放动画
+                    spawnParticles(p.x, p.y, '#aaaaaa', 4);
+                    return;
+                }
+
+                const { col, row, tile } = ft;
+                const fx = FARM_GRID_X + col * TILE_SIZE + TILE_SIZE / 2;
+                const fy = FARM_GRID_Y + row * TILE_SIZE + TILE_SIZE / 2;
+
+                switch (p.tool) {
+                    case 0: // 锄头 - 翻土
+                        if (tile.state === 0 && canFarmInSeason()) {
+                            tile.state = 1;
+                            tile.cropType = null;
+                            tile.growthDay = 0;
+                            tile.watered = false;
+                            spawnParticles(fx, fy, '#8B6914', 10);
+                            addMessage('⛏️ 土地已翻耕', '#d4a574');
+                        } else if (tile.state === 1 && tile.cropType === null) {
+                            // 再次使用锄头将已耕土地还原
+                            tile.state = 0;
+                            tile.watered = false;
+                            spawnParticles(fx, fy, '#6b5030', 6);
+                            addMessage('土地已还原', '#aaa');
+                        } else if (tile.state === 2) {
+                            addMessage('❌ 请先收获作物', '#ff8888');
+                        } else if (!canFarmInSeason()) {
+                            addMessage('❄️ 冬天土地冻结，无法耕种', '#aaccff');
+                        }
+                        break;
+
+                    case 1: // 种子 - 播种
+                        if (tile.state === 1 && tile.cropType === null && canFarmInSeason()) {
+                            if (state.selectedSeed && CROP_DB[state.selectedSeed]) {
+                                const cropInfo = CROP_DB[state.selectedSeed];
+                                if (cropInfo.season === state.season) {
+                                    if (state.money >= cropInfo.price) {
+                                        state.money -= cropInfo.price;
+                                        tile.state = 2;
+                                        tile.cropType = state.selectedSeed;
+                                        tile.growthDay = 0;
+                                        tile.watered = false;
+                                        spawnParticles(fx, fy, '#90d060', 8);
+                                        addMessage(`🌱 种下了${state.selectedSeed}！(-${cropInfo.price}💰)`,
+                                            '#90ff90');
+                                        updateMoneyDisplay();
+                                    } else {
+                                        addMessage('💰 金币不足！', '#ff8888');
+                                    }
+                                } else {
+                                    addMessage('⚠️ 这个季节不适合种植此作物', '#ffe888');
+                                }
+                            } else {
+                                addMessage('📋 请先在商店选择种子 (按E)', '#ffe888');
+                            }
+                        } else if (tile.state === 0) {
+                            addMessage('⛏️ 请先用锄头翻土', '#ffe888');
+                        } else if (tile.state === 2) {
+                            addMessage('⚠️ 这里已经种了作物', '#ffe888');
+                        } else if (!canFarmInSeason()) {
+                            addMessage('❄️ 冬天无法种植', '#aaccff');
+                        }
+                        break;
+
+                    case 2: // 水壶 - 浇水
+                        if (tile.state >= 1 && !tile.watered) {
+                            tile.watered = true;
+                            spawnParticles(fx, fy, '#5599dd', 12);
+                            addMessage('💧 浇水完成', '#88bbff');
+                        } else if (tile.watered) {
+                            addMessage('💧 已经浇过水了', '#aaddff');
+                        } else if (tile.state === 0) {
+                            addMessage('⛏️ 请先翻土', '#ffe888');
+                        }
+                        break;
+
+                    case 3: // 收获
+                        if (tile.state === 2 && tile.cropType && CROP_DB[tile.cropType]) {
+                            const cropInfo = CROP_DB[tile.cropType];
+                            const maxDays = cropInfo.daysToMature;
+                            if (tile.growthDay >= maxDays) {
+                                // 成熟，可以收获
+                                const sellPrice = cropInfo.sellPrice;
+                                state.money += sellPrice;
+                                tile.state = 1; // 恢复为已耕状态
+                                tile.cropType = null;
+                                tile.growthDay = 0;
+                                tile.watered = false;
+                                spawnParticles(fx, fy, '#ffd700', 16);
+                                addMessage(`🧺 收获了${cropInfo.sellPrice}💰！`, '#ffdd44');
+                                updateMoneyDisplay();
+                            } else {
+                                const remain = maxDays - tile.growthDay;
+                                addMessage(`🌱 还需${remain}天成熟`, '#ffe888');
+                            }
+                        } else if (tile.state === 1 && tile.cropType === null) {
+                            addMessage('🌱 请先播种', '#ffe888');
+                        } else if (tile.state === 0) {
+                            addMessage('⛏️ 请先翻土再播种', '#ffe888');
+                        }
+                        break;
+                }
+            }
+
+            function canFarmInSeason() {
+                return state.season !== 3; // 冬天不能耕种（除冬根外）
+            }
+
+            function canPlantInWinter(cropType) {
+                return cropType === '冬根';
+            }
+
+            // --- 睡觉/结束一天 ---
+            function sleepAndEndDay() {
+                if (state.dayEnding) return;
+                state.dayEnding = true;
+                state.dayEndTimer = 0.8;
+                addMessage('😴 睡觉中...', '#dddde8');
+            }
+
+            function finishDayEnd() {
+                // 所有浇过水的作物生长
+                for (let col = 0; col < FARM_COLS; col++) {
+                    for (let row = 0; row < FARM_ROWS; row++) {
+                        const tile = state.farmland[col][row];
+                        if (tile.state === 2 && tile.cropType && tile.watered) {
+                            tile.growthDay++;
+                        }
+                        // 重置浇水状态
+                        tile.watered = false;
+                        // 冬天非冬根作物枯萎
+                        if (state.season === 3 && tile.state === 2 && tile.cropType && tile.cropType !== '冬根') {
+                            if (tile.growthDay < CROP_DB[tile.cropType]?.daysToMature) {
+                                tile.state = 1;
+                                tile.cropType = null;
+                                tile.growthDay = 0;
+                            }
+                        }
+                    }
+                }
+
+                // 日期前进
+                state.day++;
+                if (state.day > DAYS_PER_SEASON) {
+                    state.day = 1;
+                    state.season++;
+                    if (state.season > 3) {
+                        state.season = 0;
+                        state.year++;
+                        addMessage(`🎉 新的一年！第${state.year}年`, '#ffdd00');
+                    }
+                    // 季节变化时，未收获的跨季作物枯萎（简化：全部清除）
+                    for (let col = 0; col < FARM_COLS; col++) {
+                        for (let row = 0; row < FARM_ROWS; row++) {
+                            const tile = state.farmland[col][row];
+                            if (tile.state === 2 && tile.cropType) {
+                                const cropInfo = CROP_DB[tile.cropType];
+                                if (cropInfo && cropInfo.season !== state.season) {
+                                    tile.state = 1;
+                                    tile.cropType = null;
+                                    tile.growthDay = 0;
+                                }
+                            }
+                        }
+                    }
+                    addMessage(`🍂 季节更替：${SEASON_NAMES[state.season]}`, '#ffe8a0');
+                }
+                state.hour = 6;
+                state.minute = 0;
+                state.player.x = 260;
+                state.player.y = 350;
+                state.player.direction = 2;
+                state.dayEnding = false;
+                state.dayEndTimer = 0;
+                updateAllDisplays();
+                addMessage(`☀️ 新的一天！${SEASON_NAMES[state.season]}第${state.day}天`, '#ffffff');
+            }
+
+            // --- 商店系统 ---
+            function toggleShop() {
+                state.shopOpen = !state.shopOpen;
+                state.selectedSeed = null;
+                if (state.shopOpen) {
+                    // 自动选择第一个可用的种子
+                    const available = getAvailableSeeds();
+                    if (available.length > 0) state.selectedSeed = available[0];
+                }
+            }
+
+            function getAvailableSeeds() {
+                const seeds = [];
+                for (const [name, info] of Object.entries(CROP_DB)) {
+                    if (info.season === state.season || (state.season === 3 && name === '冬根')) {
+                        seeds.push(name);
+                    }
+                }
+                // 冬天也显示冬根
+                if (state.season === 3 && !seeds.includes('冬根')) {
+                    seeds.push('冬根');
+                }
+                return seeds;
+            }
+
+            function buySeed(seedName) {
+                const info = CROP_DB[seedName];
+                if (!info) return;
+                if (state.money >= info.price) {
+                    state.money -= info.price;
+                    state.selectedSeed = seedName;
+                    addMessage(`🛒 购买了${seedName}种子 (-${info.price}💰)`, '#90ff90');
+                    updateMoneyDisplay();
+                } else {
+                    addMessage('💰 金币不足！', '#ff8888');
+                }
+            }
+
+            // --- 更新显示 ---
+            function updateMoneyDisplay() {
+                document.getElementById('moneyDisplay').textContent = state.money;
+            }
+
+            function updateAllDisplays() {
+                document.getElementById('moneyDisplay').textContent = state.money;
+                document.getElementById('seasonDisplay').textContent = SEASON_NAMES[state.season];
+                document.getElementById('dayDisplay').textContent = state.day;
+                const h = Math.floor(state.hour);
+                const m = Math.floor(state.minute);
+                document.getElementById('timeDisplay').textContent =
+                    String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+                const toolNames = ['锄头', '种子袋', '水壶', '收获篮'];
+                document.getElementById('toolDisplay').textContent = toolNames[state.player.tool];
+            }
+
+            // --- 检查玩家是否靠近床 ---
+            function isNearBed() {
+                const p = state.player;
+                // 床在世界坐标约 (80, 150) 附近
+                const bedX = 80;
+                const bedY = 155;
+                const dist = Math.sqrt((p.x - bedX) ** 2 + (p.y - bedY) ** 2);
+                return dist < 50;
+            }
+
+            // --- 输入处理 ---
+            document.addEventListener('keydown', (e) => {
+                state.keys[e.key.toLowerCase()] = true;
+
+                if (e.key.toLowerCase() === 'e' && !state.dayEnding) {
+                    toggleShop();
+                }
+                if (e.key === ' ' || e.key.toLowerCase() === 'j') {
+                    e.preventDefault();
+                    if (state.dayEnding) return;
+                    if (state.shopOpen) {
+                        // 在商店中，空格确认购买
+                        if (state.selectedSeed) {
+                            buySeed(state.selectedSeed);
+                        }
+                    } else if (isNearBed()) {
+                        sleepAndEndDay();
+                    } else {
+                        useTool();
+                    }
+                }
+                if (e.key === '1') state.player.tool = 0;
+                if (e.key === '2') state.player.tool = 1;
+                if (e.key === '3') state.player.tool = 2;
+                if (e.key === '4') state.player.tool = 3;
+                updateAllDisplays();
+            });
+
+            document.addEventListener('keyup', (e) => {
+                state.keys[e.key.toLowerCase()] = false;
+            });
+
+            // 鼠标点击
+            canvas.addEventListener('click', (e) => {
+                if (state.dayEnding) return;
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = W / rect.width;
+                const scaleY = H / rect.height;
+                const mx = (e.clientX - rect.left) * scaleX;
+                const my = (e.clientY - rect.top) * scaleY;
+
+                // 检查是否点击了商店区域
+                if (state.shopOpen) {
+                    handleShopClick(mx, my);
+                    return;
+                }
+
+                // 检查是否点击了睡觉提示
+                if (state.sleepPrompt && isNearBed() && mx > 30 && mx < 160 && my > 160 && my < 210) {
+                    sleepAndEndDay();
+                    return;
+                }
+
+                // 检查是否点击了商店建筑
+                const shopBX = 660;
+                const shopBY = 60;
+                if (mx > shopBX && mx < shopBX + 140 && my > shopBY && my < shopBY + 120) {
+                    toggleShop();
+                    return;
+                }
+
+                // 点击农田使用工具
+                const worldMx = mx;
+                const worldMy = my;
+                const ft = getFarmTile(worldMx, worldMy);
+                if (ft) {
+                    // 移动玩家面向该格子
+                    const fx = FARM_GRID_X + ft.col * TILE_SIZE + TILE_SIZE / 2;
+                    const fy = FARM_GRID_Y + ft.row * TILE_SIZE + TILE_SIZE / 2;
+                    const dx = fx - state.player.x;
+                    const dy = fy - state.player.y;
+                    if (Math.abs(dx) > Math.abs(dy)) {
+                        state.player.direction = dx > 0 ? 1 : 3;
+                    } else {
+                        state.player.direction = dy > 0 ? 2 : 0;
+                    }
+                    // 检查距离
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < TILE_SIZE * 1.8) {
+                        useTool();
+                    }
+                }
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = W / rect.width;
+                const scaleY = H / rect.height;
+                state.mouseWorldX = (e.clientX - rect.left) * scaleX;
+                state.mouseWorldY = (e.clientY - rect.top) * scaleY;
+                state.mouseOnCanvas = true;
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                state.mouseOnCanvas = false;
+            });
+
+            function handleShopClick(mx, my) {
+                // 简化：在商店界面点击
+                const panelX = 200;
+                const panelY = 100;
+                const panelW = 500;
+                const panelH = 380;
+
+                if (mx < panelX || mx > panelX + panelW || my < panelY || my > panelY + panelH) {
+                    state.shopOpen = false;
+                    return;
+                }
+
+                // 标签切换
+                if (my > panelY + 40 && my < panelY + 70) {
+                    if (mx > panelX + 20 && mx < panelX + 160) state.shopTab = 0;
+                    if (mx > panelX + 180 && mx < panelX + 320) state.shopTab = 1;
+                }
+
+                // 种子列表点击
+                if (state.shopTab === 0 && my > panelY + 80 && my < panelY + 340) {
+                    const available = getAvailableSeeds();
+                    const itemH = 50;
+                    const idx = Math.floor((my - panelY - 80) / itemH);
+                    if (idx >= 0 && idx < available.length && mx > panelX + 30 && mx < panelX + 460) {
+                        state.selectedSeed = available[idx];
+                        // 双击购买
+                        if (state.selectedSeed === available[idx]) {
+                            // 单击选中，再点购买按钮
+                        }
+                    }
+                }
+
+                // 购买按钮
+                if (my > panelY + 320 && my < panelY + 360 && mx > panelX + 340 && mx < panelX + 460 && state
+                    .selectedSeed) {
+                    buySeed(state.selectedSeed);
+                }
+            }
+
+            // --- 移动端控制 ---
+            function setupMobileControls() {
+                const btnUp = document.getElementById('btnUp');
+                const btnDown = document.getElementById('btnDown');
+                const btnLeft = document.getElementById('btnLeft');
+                const btnRight = document.getElementById('btnRight');
+                const btnAction = document.getElementById('btnAction');
+                const btnTool1 = document.getElementById('btnTool1');
+                const btnTool2 = document.getElementById('btnTool2');
+                const btnTool3 = document.getElementById('btnTool3');
+                const btnTool4 = document.getElementById('btnTool4');
+                const btnShop = document.getElementById('btnShop');
+
+                function addMobileListeners(btn, key) {
+                    btn.addEventListener('pointerdown', (e) => {
+                        e.preventDefault();
+                        state.keys[key] = true;
+                    });
+                    btn.addEventListener('pointerup', (e) => {
+                        e.preventDefault();
+                        state.keys[key] = false;
+                    });
+                    btn.addEventListener('pointerleave', (e) => {
+                        state.keys[key] = false;
+                    });
+                }
+
+                addMobileListeners(btnUp, 'w');
+                addMobileListeners(btnDown, 's');
+                addMobileListeners(btnLeft, 'a');
+                addMobileListeners(btnRight, 'd');
+
+                btnAction.addEventListener('pointerdown', (e) => {
+                    e.preventDefault();
+                    if (state.dayEnding) return;
+                    if (isNearBed()) {
+                        sleepAndEndDay();
+                    } else {
+                        useTool();
+                    }
+                });
+
+                btnTool1.addEventListener('pointerdown', (e) => { e.preventDefault();
+                    state.player.tool = 0;
+                    updateAllDisplays(); });
+                btnTool2.addEventListener('pointerdown', (e) => { e.preventDefault();
+                    state.player.tool = 1;
+                    updateAllDisplays(); });
+                btnTool3.addEventListener('pointerdown', (e) => { e.preventDefault();
+                    state.player.tool = 2;
+                    updateAllDisplays(); });
+                btnTool4.addEventListener('pointerdown', (e) => { e.preventDefault();
+                    state.player.tool = 3;
+                    updateAllDisplays(); });
+                btnShop.addEventListener('pointerdown', (e) => { e.preventDefault();
+                    toggleShop(); });
+            }
+            setupMobileControls();
+
+            // --- 渲染函数 ---
+            function drawRoundedRect(x, y, w, h, r, fill, stroke = null, lineW = 1) {
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w, y + h - r);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                ctx.lineTo(x + r, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+                if (fill) { ctx.fillStyle = fill;
+                    ctx.fill(); }
+                if (stroke) { ctx.strokeStyle = stroke;
+                    ctx.lineWidth = lineW;
+                    ctx.stroke(); }
+            }
+
+            function drawPlayer(x, y, direction, animFrame, moving) {
+                ctx.save();
+                ctx.translate(x, y);
+
+                // 身体阴影
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.beginPath();
+                ctx.ellipse(0, 6, 10, 4, 0, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 身体
+                const bodyBob = moving ? Math.sin(animFrame * Math.PI * 2) * 2 : 0;
+                const bodyY = -14 + bodyBob;
+
+                // 腿
+                const legOffset = moving ? Math.sin(animFrame * Math.PI * 2) * 3 : 0;
+                ctx.fillStyle = '#5a4030';
+                ctx.fillRect(-6, -2 + legOffset, 5, 8);
+                ctx.fillRect(1, -2 - legOffset, 5, 8);
+
+                // 身体
+                ctx.fillStyle = '#e87040';
+                drawRoundedRect(-7, bodyY, 14, 14, 3, '#e87040', '#c05030', 1.5);
+
+                // 腰带
+                ctx.fillStyle = '#5a3020';
+                ctx.fillRect(-7, bodyY + 5, 14, 3);
+
+                // 头
+                ctx.fillStyle = '#fdd8b0';
+                ctx.beginPath();
+                ctx.arc(0, bodyY - 5, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#c09070';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                // 帽子
+                ctx.fillStyle = '#6b8b40';
+                ctx.beginPath();
+                ctx.ellipse(0, bodyY - 10, 9, 4, 0, Math.PI, Math.PI * 2);
+                ctx.fill();
+                ctx.fillRect(-9, bodyY - 12, 18, 4);
+                ctx.fillStyle = '#4a6b28';
+                ctx.fillRect(-5, bodyY - 14, 10, 3);
+
+                // 眼睛方向
+                const eyeX = direction === 3 ? -3 : direction === 1 ? 3 : 0;
+                const eyeY = bodyY - 6;
+                ctx.fillStyle = '#222';
+                ctx.beginPath();
+                ctx.arc(eyeX - 2, eyeY, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(eyeX + 3, eyeY, 1.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 手中工具
+                const toolColors = ['#888', '#c8a060', '#5599dd', '#e8c860'];
+                const toolShapes = ['hoe', 'bag', 'can', 'basket'];
+                const toolColor = toolColors[state.player.tool];
+                const toolShape = toolShapes[state.player.tool];
+
+                let toolX = 10;
+                let toolY = bodyY + 2;
+                if (direction === 3) toolX = -16;
+                if (direction === 0) { toolX = 0;
+                    toolY = bodyY - 18; }
+                if (direction === 2) { toolX = 0;
+                    toolY = bodyY + 14; }
+
+                ctx.fillStyle = toolColor;
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 1.5;
+
+                if (toolShape === 'hoe') {
+                    ctx.fillRect(toolX - 1, toolY - 4, 3, 12);
+                    ctx.fillRect(toolX - 5, toolY + 6, 11, 2);
+                } else if (toolShape === 'bag') {
+                    ctx.fillRect(toolX - 3, toolY - 3, 7, 8);
+                    ctx.fillStyle = '#a08040';
+                    ctx.fillRect(toolX - 1, toolY - 1, 3, 4);
+                } else if (toolShape === 'can') {
+                    ctx.fillRect(toolX - 3, toolY - 2, 7, 8);
+                    ctx.fillStyle = '#88bbff';
+                    ctx.fillRect(toolX, toolY - 5, 2, 4);
+                } else if (toolShape === 'basket') {
+                    ctx.fillRect(toolX - 4, toolY - 1, 10, 7);
+                    ctx.fillStyle = '#c89840';
+                    ctx.fillRect(toolX - 2, toolY + 1, 6, 3);
+                }
+
+                ctx.restore();
+            }
+
+            function drawFarmTile(col, row, tile) {
+                const x = FARM_GRID_X + col * TILE_SIZE;
+                const y = FARM_GRID_Y + row * TILE_SIZE;
+                const cx = x + TILE_SIZE / 2;
+                const cy = y + TILE_SIZE / 2;
+
+                // 基础土地
+                if (tile.state === 0) {
+                    // 未耕种 - 草地
+                    ctx.fillStyle = state.season === 3 ? '#d8dcc8' : '#b8c878';
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    // 草纹理
+                    ctx.fillStyle = state.season === 3 ? '#c8ccb8' : '#a8b868';
+                    for (let i = 0; i < 4; i++) {
+                        const gx = x + 5 + (i * 9) % (TILE_SIZE - 10);
+                        const gy = y + 5 + (i * 13) % (TILE_SIZE - 10);
+                        ctx.fillRect(gx, gy, 3, 6);
+                    }
+                } else if (tile.state === 1) {
+                    // 已耕 - 深色土
+                    ctx.fillStyle = '#6b4e30';
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#7d5a38';
+                    for (let i = 0; i < 6; i++) {
+                        ctx.fillRect(x + 3 + i * 6, y + 2, 3, TILE_SIZE - 4);
+                    }
+                    ctx.fillStyle = '#5a3e22';
+                    for (let i = 0; i < 5; i++) {
+                        ctx.fillRect(x + 2, y + 4 + i * 7, TILE_SIZE - 4, 2);
+                    }
+                } else if (tile.state === 2 && tile.cropType) {
+                    // 已种 - 深色土+作物
+                    ctx.fillStyle = '#6b4e30';
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = '#7d5a38';
+                    for (let i = 0; i < 6; i++) {
+                        ctx.fillRect(x + 3 + i * 6, y + 2, 3, TILE_SIZE - 4);
+                    }
+                    // 作物
+                    const cropInfo = CROP_DB[tile.cropType];
+                    const maxDays = cropInfo ? cropInfo.daysToMature : 5;
+                    const progress = Math.min(tile.growthDay / maxDays, 1);
+                    const stages = cropInfo ? cropInfo.stages : 4;
+                    const stage = Math.min(Math.floor(progress * stages), stages - 1);
+
+                    const cropColor = cropInfo ? cropInfo.color : '#80c040';
+                    const isMature = tile.growthDay >= maxDays;
+
+                    if (stage === 0) {
+                        // 刚种下 - 小芽
+                        ctx.fillStyle = '#90d050';
+                        ctx.fillRect(cx - 2, cy + 4, 4, 8);
+                    } else if (stage === 1) {
+                        // 生长中
+                        ctx.fillStyle = cropColor;
+                        ctx.fillRect(cx - 4, cy - 2, 8, 16);
+                        ctx.fillStyle = '#70a830';
+                        ctx.fillRect(cx - 1, cy - 4, 2, 6);
+                    } else if (stage >= 2 && !isMature) {
+                        // 接近成熟
+                        ctx.fillStyle = cropColor;
+                        ctx.fillRect(cx - 5, cy - 5, 10, 18);
+                        ctx.fillStyle = darkenColor(cropColor, 0.3);
+                        ctx.fillRect(cx - 2, cy - 8, 4, 8);
+                        if (stage >= 3) {
+                            ctx.fillStyle = cropColor;
+                            ctx.beginPath();
+                            ctx.arc(cx, cy - 6, 5, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    } else if (isMature) {
+                        // 成熟 - 闪亮
+                        const shimmer = Math.sin(performance.now() / 500) * 0.2 + 0.8;
+                        ctx.fillStyle = cropColor;
+                        ctx.fillRect(cx - 6, cy - 6, 12, 20);
+                        ctx.fillStyle = lightenColor(cropColor, 0.4);
+                        ctx.beginPath();
+                        ctx.arc(cx, cy - 7, 7, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#ffd700';
+                        ctx.globalAlpha = shimmer * 0.5;
+                        ctx.beginPath();
+                        ctx.arc(cx, cy - 8, 4, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.globalAlpha = 1;
+                        // 成熟标记
+                        ctx.fillStyle = '#ffd700';
+                        ctx.font = '10px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('⭐', cx, cy - 14);
+                    }
+                }
+
+                // 浇水效果
+                if (tile.watered && tile.state >= 1) {
+                    ctx.fillStyle = 'rgba(80,150,220,0.25)';
+                    ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
+                    ctx.fillStyle = 'rgba(120,190,255,0.3)';
+                    ctx.fillRect(x + 8, y + TILE_SIZE - 10, TILE_SIZE - 16, 4);
+                }
+
+                // 网格线
+                ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+                ctx.lineWidth = 0.5;
+                ctx.strokeRect(x, y, TILE_SIZE, TILE_SIZE);
+            }
+
+            function darkenColor(hex, amount) {
+                let r = parseInt(hex.slice(1, 3), 16);
+                let g = parseInt(hex.slice(3, 5), 16);
+                let b = parseInt(hex.slice(5, 7), 16);
+                r = Math.floor(r * (1 - amount));
+                g = Math.floor(g * (1 - amount));
+                b = Math.floor(b * (1 - amount));
+                return '#' + [r, g, b].map(c => Math.max(0, Math.min(255, c)).toString(16).padStart(2, '0')).join('');
+            }
+
+            function lightenColor(hex, amount) {
+                let r = parseInt(hex.slice(1, 3), 16);
+                let g = parseInt(hex.slice(3, 5), 16);
+                let b = parseInt(hex.slice(5, 7), 16);
+                r = Math.floor(r + (255 - r) * amount);
+                g = Math.floor(g + (255 - g) * amount);
+                b = Math.floor(b + (255 - b) * amount);
+                return '#' + [r, g, b].map(c => Math.max(0, Math.min(255, c)).toString(16).padStart(2, '0')).join('');
+            }
+
+            function drawHouse(x, y) {
+                // 房屋主体
+                ctx.fillStyle = '#d4a878';
+                drawRoundedRect(x, y, 90, 70, 8, '#d4a878', '#8b6040', 2);
+                // 屋顶
+                ctx.fillStyle = '#c04030';
+                ctx.beginPath();
+                ctx.moveTo(x - 8, y);
+                ctx.lineTo(x + 45, y - 35);
+                ctx.lineTo(x + 98, y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#802018';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                // 门
+                ctx.fillStyle = '#6b4030';
+                ctx.fillRect(x + 35, y + 30, 22, 40);
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(x + 52, y + 50, 3, 0, Math.PI * 2);
+                ctx.fill();
+                // 窗户
+                ctx.fillStyle = '#c8e8ff';
+                ctx.fillRect(x + 12, y + 20, 18, 18);
+                ctx.fillRect(x + 62, y + 20, 18, 18);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x + 12, y + 20, 18, 18);
+                ctx.strokeRect(x + 62, y + 20, 18, 18);
+                // 床（在屋内可见）
+                ctx.fillStyle = '#e8d8c0';
+                ctx.fillRect(x + 15, y + 50, 28, 16);
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(x + 17, y + 52, 24, 10);
+            }
+
+            function drawShop(x, y) {
+                ctx.fillStyle = '#c8b898';
+                drawRoundedRect(x, y, 100, 70, 6, '#c8b898', '#8b7050', 2);
+                ctx.fillStyle = '#5a9040';
+                ctx.beginPath();
+                ctx.moveTo(x - 5, y);
+                ctx.lineTo(x + 50, y - 25);
+                ctx.lineTo(x + 105, y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.strokeStyle = '#3a6028';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                // 招牌
+                ctx.fillStyle = '#fdd8a0';
+                ctx.fillRect(x + 20, y + 10, 60, 22);
+                ctx.fillStyle = '#444';
+                ctx.font = 'bold 12px "PingFang SC","Microsoft YaHei",sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🏪 商店', x + 50, y + 27);
+                ctx.textAlign = 'start';
+                // 柜台
+                ctx.fillStyle = '#8b6040';
+                ctx.fillRect(x + 10, y + 38, 80, 28);
+            }
+
+            function drawWorld() {
+                // 天空/背景
+                const seasonBgColors = ['#c8e8c0', '#d8f0c8', '#f0d8b8', '#e0e8f0'];
+                ctx.fillStyle = seasonBgColors[state.season];
+                ctx.fillRect(0, 48, W, 492);
+
+                // 草地
+                const grassColors = ['#a8d878', '#90c868', '#c8b878', '#d0d8d0'];
+                ctx.fillStyle = grassColors[state.season];
+                ctx.fillRect(0, 48, W, 492);
+
+                // 路径
+                ctx.fillStyle = '#c8b898';
+                ctx.fillRect(100, 48, 50, 492); // 纵向路径
+                ctx.fillRect(0, 200, W, 40); // 横向路径
+
+                // 装饰树木
+                function drawTree(tx, ty, s = 1) {
+                    ctx.fillStyle = '#6b4030';
+                    ctx.fillRect(tx - 4 * s, ty, 8 * s, 20 * s);
+                    ctx.fillStyle = state.season === 3 ? '#a0b8c0' :
+                        state.season === 2 ? '#d89040' : '#5a9040';
+                    ctx.beginPath();
+                    ctx.arc(tx, ty - 5 * s, 18 * s, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = state.season === 3 ? '#8898a0' :
+                        state.season === 2 ? '#c07030' : '#408030';
+                    ctx.beginPath();
+                    ctx.arc(tx + 3 * s, ty - 8 * s, 12 * s, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                drawTree(30, 260, 0.9);
+                drawTree(60, 430, 1.1);
+                drawTree(750, 300, 0.8);
+                drawTree(820, 440, 1);
+                drawTree(700, 470, 0.7);
+                drawTree(160, 460, 0.85);
+
+                // 房屋
+                drawHouse(25, 100);
+
+                // 商店
+                drawShop(660, 60);
+
+                // 农田区域背景
+                ctx.fillStyle = 'rgba(0,0,0,0.08)';
+                ctx.fillRect(FARM_GRID_X - 6, FARM_GRID_Y - 6,
+                    FARM_COLS * TILE_SIZE + 12, FARM_ROWS * TILE_SIZE + 12);
+                ctx.strokeStyle = '#8b6b40';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(FARM_GRID_X - 6, FARM_GRID_Y - 6,
+                    FARM_COLS * TILE_SIZE + 12, FARM_ROWS * TILE_SIZE + 12);
+
+                // 渲染农田
+                for (let col = 0; col < FARM_COLS; col++) {
+                    for (let row = 0; row < FARM_ROWS; row++) {
+                        drawFarmTile(col, row, state.farmland[col][row]);
+                    }
+                }
+
+                // 围栏
+                ctx.fillStyle = '#a08060';
+                for (let i = 0; i <= FARM_COLS; i++) {
+                    const fx = FARM_GRID_X + i * TILE_SIZE - 3;
+                    ctx.fillRect(fx, FARM_GRID_Y - 8, 6, 10);
+                    ctx.fillRect(fx, FARM_GRID_Y + FARM_ROWS * TILE_SIZE - 2, 6, 10);
+                }
+                for (let i = 0; i <= FARM_ROWS; i++) {
+                    const fy = FARM_GRID_Y + i * TILE_SIZE - 3;
+                    ctx.fillRect(FARM_GRID_X - 8, fy, 10, 6);
+                    ctx.fillRect(FARM_GRID_X + FARM_COLS * TILE_SIZE - 2, fy, 10, 6);
+                }
+                // 围栏角
+                [
+                    [FARM_GRID_X - 8, FARM_GRID_Y - 8],
+                    [FARM_GRID_X + FARM_COLS * TILE_SIZE - 4, FARM_GRID_Y - 8],
+                    [FARM_GRID_X - 8, FARM_GRID_Y + FARM_ROWS * TILE_SIZE - 4],
+                    [FARM_GRID_X + FARM_COLS * TILE_SIZE - 4, FARM_GRID_Y + FARM_ROWS * TILE_SIZE - 4]
+                ].forEach(([cx, cy]) => {
+                    ctx.fillStyle = '#7a5a3a';
+                    ctx.fillRect(cx, cy, 10, 10);
+                });
+
+                // 睡觉提示
+                if (state.sleepPrompt && isNearBed() && !state.dayEnding) {
+                    const bx = 50;
+                    const by = 170;
+                    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                    drawRoundedRect(bx - 30, by - 15, 100, 30, 10, 'rgba(0,0,0,0.75)', '#ffd700', 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 14px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('💤 按空格睡觉', bx + 20, by + 5);
+                    ctx.textAlign = 'start';
+                }
+
+                // 玩家
+                drawPlayer(state.player.x, state.player.y,
+                    state.player.direction, state.player.animFrame, state.player.moving);
+
+                // 粒子
+                for (const p of state.particles) {
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.life / p.maxLife;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 1;
+
+                // 消息
+                let msgY = 60;
+                for (const msg of state.messages) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+                    const textW = ctx.measureText(msg.text).width + 20;
+                    drawRoundedRect(W / 2 - textW / 2, msgY - 12, textW, 22, 8, 'rgba(0,0,0,0.6)');
+                    ctx.fillStyle = msg.color;
+                    ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(msg.text, W / 2, msgY + 4);
+                    ctx.textAlign = 'start';
+                    msgY += 24;
+                }
+            }
+
+            function drawShopUI() {
+                // 半透明背景
+                ctx.fillStyle = 'rgba(0,0,0,0.55)';
+                ctx.fillRect(0, 48, W, 492);
+
+                const px = 200;
+                const py = 100;
+                const pw = 500;
+                const ph = 380;
+
+                // 面板
+                drawRoundedRect(px, py, pw, ph, 16, '#fdf5e6', '#6b5030', 3);
+                ctx.fillStyle = '#f0e0c8';
+                drawRoundedRect(px + 8, py + 8, pw - 16, 32, 8, '#f0e0c8');
+                ctx.fillStyle = '#444';
+                ctx.font = 'bold 16px "PingFang SC","Microsoft YaHei",sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('🏪 商 店', px + pw / 2, py + 32);
+                ctx.textAlign = 'start';
+
+                // 标签
+                const tabY = py + 48;
+                const tabs = ['🛒 购买种子', '💰 卖出作物'];
+                for (let i = 0; i < 2; i++) {
+                    const tx = px + 20 + i * 170;
+                    const isActive = state.shopTab === i;
+                    drawRoundedRect(tx, tabY, 150, 30, 8,
+                        isActive ? '#ffe0a0' : '#e8d8c0',
+                        isActive ? '#c08020' : '#b8a080', isActive ? 2.5 : 1);
+                    ctx.fillStyle = '#444';
+                    ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(tabs[i], tx + 75, tabY + 21);
+                    ctx.textAlign = 'start';
+                }
+
+                // 内容区
+                const contentY = tabY + 40;
+                if (state.shopTab === 0) {
+                    // 购买种子
+                    const available = getAvailableSeeds();
+                    ctx.fillStyle = '#444';
+                    ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText(`当前季节：${SEASON_NAMES[state.season]} | 可用种子：`, px + 25, contentY);
+
+                    let itemY = contentY + 20;
+                    for (const seedName of available) {
+                        const info = CROP_DB[seedName];
+                        const isSelected = state.selectedSeed === seedName;
+                        drawRoundedRect(px + 25, itemY, pw - 55, 44, 8,
+                            isSelected ? '#ffe8b0' : '#faf5ec',
+                            isSelected ? '#e0a020' : '#d8c8b0', isSelected ? 2.5 : 1);
+
+                        // 作物图标
+                        ctx.fillStyle = info.color;
+                        ctx.beginPath();
+                        ctx.arc(px + 50, itemY + 22, 12, 0, Math.PI * 2);
+                        ctx.fill();
+                        ctx.fillStyle = '#fff';
+                        ctx.font = '12px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🌱', px + 50, itemY + 27);
+                        ctx.textAlign = 'start';
+
+                        // 信息
+                        ctx.fillStyle = '#333';
+                        ctx.font = 'bold 14px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText(seedName, px + 75, itemY + 18);
+                        ctx.fillStyle = '#666';
+                        ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText(`成熟:${info.daysToMature}天 | 售价:${info.sellPrice}💰`, px + 75, itemY + 34);
+
+                        // 价格
+                        ctx.fillStyle = '#c04020';
+                        ctx.font = 'bold 14px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.textAlign = 'right';
+                        ctx.fillText(`${info.price}💰`, px + pw - 50, itemY + 24);
+                        ctx.textAlign = 'start';
+
+                        if (isSelected) {
+                            ctx.fillStyle = '#ffd700';
+                            ctx.font = '18px sans-serif';
+                            ctx.fillText('▶', px + 30, itemY + 28);
+                        }
+
+                        itemY += 50;
+                    }
+
+                    // 购买按钮
+                    if (state.selectedSeed) {
+                        const btnX = px + pw - 130;
+                        const btnY = py + ph - 55;
+                        drawRoundedRect(btnX, btnY, 110, 36, 10, '#ff9040', '#c05020', 2);
+                        ctx.fillStyle = '#fff';
+                        ctx.font = 'bold 15px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('购买选中', btnX + 55, btnY + 24);
+                        ctx.textAlign = 'start';
+                    }
+
+                    if (available.length === 0) {
+                        ctx.fillStyle = '#999';
+                        ctx.font = '14px "PingFang SC","Microsoft YaHei",sans-serif';
+                        ctx.fillText('⚠️ 当前季节没有可种植的种子（冬季仅有冬根）', px + 30, contentY + 50);
+                    }
+                } else {
+                    // 卖出
+                    ctx.fillStyle = '#444';
+                    ctx.font = '13px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText('点击农田中成熟的作物即可收获并自动卖出', px + 25, contentY + 10);
+                    ctx.fillText('成熟作物会有 ⭐ 标记', px + 25, contentY + 35);
+                    ctx.fillText('使用工具4(收获篮)或点击成熟作物进行收获', px + 25, contentY + 60);
+                }
+
+                // 关闭提示
+                ctx.fillStyle = '#999';
+                ctx.font = '12px "PingFang SC","Microsoft YaHei",sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('按 E 或点击外部关闭商店', px + pw / 2, py + ph - 10);
+                ctx.textAlign = 'start';
+            }
+
+            function drawToolbar() {
+                const barY = 540;
+                const barH = 60;
+
+                // 背景
+                ctx.fillStyle = '#3a3040';
+                ctx.fillRect(0, barY, W, barH);
+                ctx.fillStyle = '#4a4050';
+                ctx.fillRect(0, barY, W, 3);
+
+                // 工具槽
+                const tools = [
+                    { name: '锄头', icon: '⛏️', key: '1', desc: '翻土/还原' },
+                    { name: '种子袋', icon: '🌱', key: '2', desc: '播种' },
+                    { name: '水壶', icon: '💧', key: '3', desc: '浇水' },
+                    { name: '收获篮', icon: '🧺', key: '4', desc: '收获' },
+                ];
+
+                const slotW = 80;
+                const startX = W / 2 - (tools.length * slotW) / 2;
+
+                for (let i = 0; i < tools.length; i++) {
+                    const sx = startX + i * slotW;
+                    const isActive = state.player.tool === i;
+                    drawRoundedRect(sx + 5, barY + 8, slotW - 10, barH - 16, 10,
+                        isActive ? '#ffe8b0' : '#5a5060',
+                        isActive ? '#ffc040' : '#706878', isActive ? 3 : 1);
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '20px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(tools[i].icon, sx + slotW / 2, barY + 30);
+                    ctx.fillStyle = isActive ? '#333' : '#ccc';
+                    ctx.font = '10px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.fillText(tools[i].name + ' [' + tools[i].key + ']', sx + slotW / 2, barY + 48);
+                    ctx.textAlign = 'start';
+                }
+
+                // 选中种子指示
+                if (state.player.tool === 1 && state.selectedSeed) {
+                    ctx.fillStyle = '#ffd700';
+                    ctx.font = 'bold 12px "PingFang SC","Microsoft YaHei",sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`已选: ${state.selectedSeed}`, W / 2, barY - 2);
+                    ctx.textAlign = 'start';
+                }
+            }
+
+            function drawDayEndOverlay() {
+                if (!state.dayEnding) return;
+                const alpha = Math.min(state.dayEndTimer / 0.3, 1) * 0.7;
+                ctx.fillStyle = `rgba(0,0,30,${alpha})`;
+                ctx.fillRect(0, 0, W, H);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 28px "PingFang SC","Microsoft YaHei",sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('😴 睡觉中...', W / 2, H / 2);
+                ctx.textAlign = 'start';
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, W, H);
+
+                // 顶部信息栏背景
+                ctx.fillStyle = '#2a2035';
+                ctx.fillRect(0, 0, W, 48);
+                ctx.fillStyle = '#3a3045';
+                ctx.fillRect(0, 46, W, 2);
+
+                // 顶部信息文字
+                ctx.fillStyle = '#ffe8c0';
+                ctx.font = 'bold 14px "PingFang SC","Microsoft YaHei",sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(`💰 ${state.money}`, 20, 30);
+                ctx.fillText(`📅 ${SEASON_NAMES[state.season]} · 第${state.day}天 · 第${state.year}年`, 160, 30);
+                const h = Math.floor(state.hour);
+                const m = Math.floor(state.minute);
+                ctx.fillText(`⏰ ${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`, 440, 30);
+                const toolNames = ['⛏️锄头', '🌱种子袋', '💧水壶', '🧺收获篮'];
+                ctx.fillText(`🛠️ ${toolNames[state.player.tool]}`, 590, 30);
+                if (state.selectedSeed && state.player.tool === 1) {
+                    ctx.fillText(`| 种子:${state.selectedSeed}`, 710, 30);
+                }
+                ctx.textAlign = 'start';
+
+                // 绘制世界
+                drawWorld();
+
+                // 商店UI
+                if (state.shopOpen) {
+                    drawShopUI();
+                }
+
+                // 工具栏
+                drawToolbar();
+
+                // 睡觉覆盖层
+                drawDayEndOverlay();
+
+                // 收获高亮
+                if (state.harvestHighlight && state.player.tool === 3) {
+                    const hh = state.harvestHighlight;
+                    const hx = FARM_GRID_X + hh.col * TILE_SIZE;
+                    const hy = FARM_GRID_Y + hh.row * TILE_SIZE;
+                    const pulse = Math.sin(performance.now() / 300) * 0.3 + 0.7;
+                    ctx.strokeStyle = `rgba(255,215,0,${pulse})`;
+                    ctx.lineWidth = 3;
+                    ctx.setLineDash([4, 4]);
+                    ctx.strokeRect(hx - 2, hy - 2, TILE_SIZE + 4, TILE_SIZE + 4);
+                    ctx.setLineDash([]);
+                    ctx.lineWidth = 1;
+                }
+            }
+
+            // --- 游戏循环 ---
+            let lastTime = performance.now();
+            let accumTime = 0;
+
+            function update(dt) {
+                if (state.dayEnding) {
+                    state.dayEndTimer -= dt;
+                    if (state.dayEndTimer <= 0) {
+                        finishDayEnd();
+                    }
+                    // 仍然更新粒子
+                    updateParticles(dt);
+                    updateMessages(dt);
+                    return;
+                }
+
+                // 更新时间
+                if (!state.shopOpen) {
+                    state.minute += state.timeSpeed * dt;
+                    if (state.minute >= 60) {
+                        state.minute -= 60;
+                        state.hour++;
+                        if (state.hour >= 26) {
+                            // 凌晨2点强制睡觉
+                            state.hour = 6;
+                            state.minute = 0;
+                            sleepAndEndDay();
+                        }
+                    }
+                }
+
+                // 玩家移动
+                let moveX = 0;
+                let moveY = 0;
+                if (state.keys['w'] || state.keys['arrowup']) moveY = -1;
+                if (state.keys['s'] || state.keys['arrowdown']) moveY = 1;
+                if (state.keys['a'] || state.keys['arrowleft']) moveX = -1;
+                if (state.keys['d'] || state.keys['arrowright']) moveX = 1;
+
+                // 归一化
+                const mag = Math.sqrt(moveX * moveX + moveY * moveY);
+                if (mag > 1) {
+                    moveX /= mag;
+                    moveY /= mag;
+                }
+
+                state.player.moving = mag > 0.1;
+                if (state.player.moving) {
+                    state.player.x += moveX * PLAYER_SPEED * dt;
+                    state.player.y += moveY * PLAYER_SPEED * dt;
+                    state.player.animTimer += dt;
+                    if (state.player.animTimer > 0.2) {
+                        state.player.animTimer -= 0.2;
+                        state.player.animFrame = (state.player.animFrame + 1) % 4;
+                    }
+                    // 更新方向
+                    if (Math.abs(moveY) > Math.abs(moveX)) {
+                        state.player.direction = moveY > 0 ? 2 : 0;
+                    } else if (Math.abs(moveX) > 0) {
+                        state.player.direction = moveX > 0 ? 1 : 3;
+                    }
+                } else {
+                    state.player.animTimer = 0;
+                    state.player.animFrame = 0;
+                }
+
+                // 边界限制
+                state.player.x = Math.max(15, Math.min(W - 15, state.player.x));
+                state.player.y = Math.max(55, Math.min(530, state.player.y));
+
+                // 睡觉提示
+                state.sleepPrompt = isNearBed();
+
+                // 收获高亮检测
+                state.harvestHighlight = null;
+                if (state.player.tool === 3) {
+                    const ft = getPlayerFacingTile();
+                    if (ft && ft.tile.state === 2 && ft.tile.cropType &&
+                        ft.tile.growthDay >= (CROP_DB[ft.tile.cropType]?.daysToMature || 999)) {
+                        state.harvestHighlight = ft;
+                    }
+                }
+
+                // 更新粒子
+                updateParticles(dt);
+                updateMessages(dt);
+
+                // 更新显示
+                updateAllDisplays();
+            }
+
+            function updateParticles(dt) {
+                for (let i = state.particles.length - 1; i >= 0; i--) {
+                    const p = state.particles[i];
+                    p.life -= dt;
+                    p.x += p.vx * dt;
+                    p.y += p.vy * dt;
+                    p.vy += 100 * dt; // 重力
+                    if (p.life <= 0) {
+                        state.particles.splice(i, 1);
+                    }
+                }
+            }
+
+            function updateMessages(dt) {
+                for (let i = state.messages.length - 1; i >= 0; i--) {
+                    state.messages[i].life -= dt;
+                    if (state.messages[i].life <= 0) {
+                        state.messages.splice(i, 1);
+                    }
+                }
+            }
+
+            function gameLoop(timestamp) {
+                let dt = (timestamp - lastTime) / 1000;
+                lastTime = timestamp;
+
+                // 防止大帧跳跃
+                if (dt > 0.2) dt = 0.2;
+                if (dt <= 0) dt = 0.016;
+
+                update(dt);
+                render();
+                requestAnimationFrame(gameLoop);
+            }
+
+            // --- 启动 ---
+            updateAllDisplays();
+            addMessage('🌟 欢迎来到像素田园！', '#ffdd88');
+            addMessage('WASD移动 | 空格使用工具 | 1-4切换工具 | E打开商店', '#ccddff');
+            addMessage('走到房子里的床边按空格睡觉', '#ddccff');
+            requestAnimationFrame(gameLoop);
+
+            console.log('🌾 像素田园已就绪！');
+            console.log('  WASD - 移动');
+            console.log('  空格 - 使用工具 / 睡觉');
+            console.log('  1-4  - 切换工具 (锄头/种子/水壶/收获)');
+            console.log('  E    - 打开商店');
+            console.log('  鼠标点击农田 - 快速使用工具');
+            console.log('  走到床旁边按空格 - 睡觉结束一天');
+            console.log('  当前季节:', SEASON_NAMES[state.season]);
+        })();
+    </script>
+</body>
+</html>
