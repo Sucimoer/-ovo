@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0, touch-action: manipulation">
+  <title>刻刻帝 · 狂三与折纸的Roguelike地牢</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --text: #c8c8d4;
+      --gold: #d4a840;
+      --red: #c0392b;
+      --blue: #3498db;
+      --green: #27ae60;
+      --purple: #8e44ad;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      background: #050508; display:flex; justify-content:center; align-items:center;
+      height:100vh; overflow:hidden; font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;
+      user-select:none; -webkit-user-select:none; -webkit-tap-highlight-color:transparent; cursor:default;
+    }
+    #game-container {
+      position:relative; width:100vw; height:100vh; max-width:1200px; max-height:800px;
+      border:3px solid #1a1a2e; border-radius:8px; overflow:hidden;
+      box-shadow:0 0 60px rgba(100,40,200,0.25),0 0 120px rgba(0,0,0,0.6); background:#080812;
+    }
+    canvas { display:block; width:100%; height:100%; image-rendering:auto; }
+    #ui-overlay { position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; display:flex; flex-direction:column; justify-content:space-between; }
+    #top-hud { display:flex; justify-content:space-between; align-items:flex-start; padding:12px 16px; gap:10px; flex-wrap:wrap; }
+    .hud-panel {
+      background:rgba(10,10,20,0.85); border:1px solid rgba(255,255,255,0.15); border-radius:6px;
+      padding:8px 14px; color:#d0d0dc; font-size:13px; backdrop-filter:blur(4px); letter-spacing:0.5px;
+      min-width:70px; text-align:center;
+    }
+    .hud-panel .label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:#8888a0; margin-bottom:2px; }
+    .hud-panel .value { font-size:18px; font-weight:bold; color:#fff; }
+    .hud-panel.hp .value { color:#e74c3c; }
+    .hud-panel.floor .value { color:#f0c040; }
+    .hud-panel.gold .value { color:#f7c948; }
+    .hud-panel.kills .value { color:#e67e22; }
+    #level-bar {
+      position:absolute; bottom:50px; left:50%; transform:translateX(-50%);
+      background:rgba(10,10,20,0.8); border:1px solid rgba(255,255,255,0.2); border-radius:20px;
+      padding:6px 16px; display:flex; align-items:center; gap:8px; pointer-events:none;
+      font-size:11px; color:#aaa; letter-spacing:1px;
+    }
+    #level-bar .exp-fill { width:120px; height:6px; background:#222; border-radius:3px; overflow:hidden; }
+    #level-bar .exp-fill-inner { height:100%; background:linear-gradient(90deg,#6c3ce0,#a855f7); border-radius:3px; transition:width 0.3s; }
+    #level-bar .lv { color:#c084fc; font-weight:bold; font-size:13px; }
+    #message-popup {
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
+      color:#fff; font-size:28px; font-weight:bold; letter-spacing:3px; pointer-events:none;
+      text-shadow:0 0 30px rgba(255,200,50,0.8); transition:transform 0.2s cubic-bezier(0.175,0.885,0.32,1.275); white-space:nowrap;
+    }
+    #message-popup.show { transform:translate(-50%,-50%) scale(1); }
+    #mobile-controls {
+      display:none; position:absolute; bottom:20px; left:50%; transform:translateX(-50%); gap:4px;
+      pointer-events:all; z-index:10;
+    }
+    .ctrl-btn {
+      width:52px; height:52px; background:rgba(255,255,255,0.08); border:2px solid rgba(255,255,255,0.25);
+      border-radius:50%; color:#fff; font-size:22px; display:flex; align-items:center; justify-content:center;
+      cursor:pointer; -webkit-tap-highlight-color:transparent; touch-action:manipulation; transition:background 0.1s;
+    }
+    .ctrl-btn:active { background:rgba(255,255,255,0.25); }
+    .ctrl-btn.atk {
+      width:64px; height:64px; background:rgba(220,60,40,0.3); border-color:rgba(255,100,80,0.5);
+      font-size:14px; letter-spacing:1px; font-weight:bold;
+    }
+    @media (max-width:768px) {
+      #mobile-controls { display:flex; align-items:center; gap:8px; bottom:16px; }
+      #top-hud { padding:6px 8px; gap:4px; }
+      .hud-panel { padding:4px 8px; font-size:10px; }
+      .hud-panel .value { font-size:14px; }
+      #level-bar { bottom:90px; font-size:10px; padding:4px 10px; }
+      #level-bar .exp-fill { width:80px; height:4px; }
+      .ctrl-btn { width:40px; height:40px; font-size:16px; }
+      .ctrl-btn.atk { width:50px; height:50px; font-size:11px; }
+    }
+  </style>
+</head>
+<body>
+<div id="game-container">
+  <canvas id="gameCanvas"></canvas>
+  <div id="ui-overlay">
+    <div id="top-hud">
+      <div class="hud-panel hp"><div class="label">❤️ 生命</div><div class="value" id="hp-display">100</div></div>
+      <div class="hud-panel floor"><div class="label">🏛️ 层数</div><div class="value" id="floor-display">1</div></div>
+      <div class="hud-panel gold"><div class="label">💰 金币</div><div class="value" id="gold-display">0</div></div>
+      <div class="hud-panel kills"><div class="label">⚔️ 击杀</div><div class="value" id="kills-display">0</div></div>
+      <div class="hud-panel" style="min-width:55px;"><div class="label">🛡️ ATK</div><div class="value" id="atk-display" style="color:#ff9f43;">15</div></div>
+    </div>
+    <div id="level-bar">
+      <span class="lv" id="lv-display">Lv.1</span>
+      <div class="exp-fill"><div class="exp-fill-inner" id="exp-fill-bar" style="width:0%"></div></div>
+      <span id="exp-text">0/30</span>
+    </div>
+    <div id="message-popup"></div>
+  </div>
+  <div id="mobile-controls">
+    <button class="ctrl-btn" data-key="ArrowUp">▲</button>
+    <button class="ctrl-btn" data-key="ArrowLeft">◀</button>
+    <button class="ctrl-btn" data-key="ArrowDown">▼</button>
+    <button class="ctrl-btn" data-key="ArrowRight">▶</button>
+    <button class="ctrl-btn atk" data-key=" ">⚔️攻击</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const container = document.getElementById('game-container');
+    const messagePopup = document.getElementById('message-popup');
+    const hpDisplay = document.getElementById('hp-display');
+    const floorDisplay = document.getElementById('floor-display');
+    const goldDisplay = document.getElementById('gold-display');
+    const killsDisplay = document.getElementById('kills-display');
+    const atkDisplay = document.getElementById('atk-display');
+    const lvDisplay = document.getElementById('lv-display');
+    const expFillBar = document.getElementById('exp-fill-bar');
+    const expText = document.getElementById('exp-text');
+
+    const TILE_SIZE = 16;
+    const MAP_W = 80;
+    const MAP_H = 60;
+    const WORLD_W = MAP_W * TILE_SIZE;
+    const WORLD_H = MAP_H * TILE_SIZE;
+
+    // ---------- 音效系统 ----------
+    let audioCtx = null;
+    function initAudio() { if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); }
+    function playSound(freq,type,duration,vol=0.08,glide=0){
+      if(!audioCtx) return;
+      try{ const t=audioCtx.currentTime; const osc=audioCtx.createOscillator(); const gain=audioCtx.createGain();
+        osc.type=type; osc.frequency.setValueAtTime(freq,t); if(glide) osc.frequency.linearRampToValueAtTime(freq+glide,t+duration);
+        gain.gain.setValueAtTime(vol,t); gain.gain.exponentialRampToValueAtTime(0.001,t+duration);
+        osc.connect(gain); gain.connect(audioCtx.destination); osc.start(t); osc.stop(t+duration);
+      }catch(e){}
+    }
+    function sfxAttack(){ playSound(200,'square',0.1,0.06,-80); playSound(80,'triangle',0.08,0.04); }
+    function sfxHit(){ playSound(50,'sawtooth',0.15,0.08); playSound(30,'triangle',0.12,0.06); }
+    function sfxPickup(){ playSound(600,'sine',0.1,0.06,300); playSound(900,'sine',0.08,0.08); }
+    function sfxLevelUp(){ playSound(400,'sine',0.08,0.1,400); playSound(600,'sine',0.06,0.12,300); playSound(800,'sine',0.05,0.15,200); }
+    function sfxDeath(){ playSound(100,'sawtooth',0.15,0.3,-80); playSound(40,'triangle',0.2,0.4); }
+    function sfxStep(){ playSound(25,'sine',0.03,0.03); }
+
+    // ---------- 状态机 ----------
+    const STATE = { MENU:'menu', PLAYING:'playing', DEAD:'dead', TRANSITION:'transition' };
+    let gameState = STATE.MENU;
+    let floorNumber = 1, totalKills = 0, totalGold = 0, highScore = 0;
+    let screenShake = 0, transitionTimer = 0, deathTimer = 0, menuPulse = 0;
+    try{ highScore = parseInt(localStorage.getItem('dungeonRogue_highScore'))||0; }catch(e){}
+    function saveHighScore(){
+      const score = totalGold + totalKills*10 + (floorNumber-1)*50;
+      if(score>highScore){ highScore=score; try{ localStorage.setItem('dungeonRogue_highScore',highScore); }catch(e){} }
+    }
+
+    // ---------- 地图数据 ----------
+    let mapTiles=[], exploredTiles=[], rooms=[], playerStartRoom=null, exitRoom=null, exitTileX=-1, exitTileY=-1;
+    function initMapArrays(){
+      mapTiles=new Array(MAP_H); exploredTiles=new Array(MAP_H);
+      for(let y=0;y<MAP_H;y++){ mapTiles[y]=new Array(MAP_W).fill(0); exploredTiles[y]=new Array(MAP_W).fill(false); }
+      rooms=[]; playerStartRoom=null; exitRoom=null; exitTileX=-1; exitTileY=-1;
+    }
+
+    // 🌟 走廊拓宽关键：生成宽度至少3格的走廊
+    function carveWideHCorridor(x1, x2, y){
+      const start = Math.min(x1, x2);
+      const end = Math.max(x1, x2);
+      for(let x = start; x <= end; x++){
+        for(let dy = -1; dy <= 1; dy++){
+          const ny = y + dy;
+          if(x >= 0 && x < MAP_W && ny >= 0 && ny < MAP_H){
+            if(mapTiles[ny][x] === 0) mapTiles[ny][x] = 1;
+          }
+        }
+      }
+    }
+    function carveWideVCorridor(y1, y2, x){
+      const start = Math.min(y1, y2);
+      const end = Math.max(y1, y2);
+      for(let y = start; y <= end; y++){
+        for(let dx = -1; dx <= 1; dx++){
+          const nx = x + dx;
+          if(nx >= 0 && nx < MAP_W && y >= 0 && y < MAP_H){
+            if(mapTiles[y][nx] === 0) mapTiles[y][nx] = 1;
+          }
+        }
+      }
+    }
+
+    function connectRooms(a, b){
+      let ax = a.cx, ay = a.cy, bx = b.cx, by = b.cy;
+      if(Math.random() < 0.5){
+        carveWideHCorridor(ax, bx, ay);
+        carveWideVCorridor(ay, by, bx);
+      } else {
+        carveWideVCorridor(ay, by, ax);
+        carveWideHCorridor(ax, bx, by);
+      }
+    }
+
+    function generateDungeon(){
+      initMapArrays();
+      const numRooms = 7 + Math.floor(Math.random()*6);
+      const minRoomSize = 4, maxRoomW = 10, maxRoomH = 8, margin = 2;
+      for(let i=0;i<200 && rooms.length<numRooms;i++){
+        const rw = minRoomSize + Math.floor(Math.random()*(maxRoomW-minRoomSize+1));
+        const rh = minRoomSize + Math.floor(Math.random()*(maxRoomH-minRoomSize+1));
+        const rx = margin + Math.floor(Math.random()*(MAP_W-rw-margin*2));
+        const ry = margin + Math.floor(Math.random()*(MAP_H-rh-margin*2));
+        let overlaps = false; const pad = 2;
+        for(const room of rooms){
+          if(rx-pad<room.x+room.w && rx+rw+pad>room.x && ry-pad<room.y+room.h && ry+rh+pad>room.y){ overlaps=true; break; }
+        }
+        if(!overlaps){
+          const room = {x:rx,y:ry,w:rw,h:rh,cx:Math.floor(rx+rw/2),cy:Math.floor(ry+rh/2)};
+          rooms.push(room);
+          for(let dy=ry;dy<ry+rh;dy++) for(let dx=rx;dx<rx+rw;dx++) if(dy>=0&&dy<MAP_H&&dx>=0&&dx<MAP_W) mapTiles[dy][dx]=1;
+        }
+      }
+      if(rooms.length < 5){
+        const forced = [{x:5,y:5,w:6,h:5},{x:30,y:10,w:7,h:6},{x:55,y:20,w:5,h:7},{x:20,y:35,w:8,h:5},{x:50,y:42,w:6,h:6}];
+        for(const fr of forced){
+          if(rooms.length >= 7) break;
+          const room = {x:fr.x, y:fr.y, w:fr.w, h:fr.h, cx:Math.floor(fr.x+fr.w/2), cy:Math.floor(fr.y+fr.h/2)};
+          rooms.push(room);
+          for(let dy=fr.y; dy<fr.y+fr.h; dy++) for(let dx=fr.x; dx<fr.x+fr.w; dx++) if(dy>=0&&dy<MAP_H&&dx>=0&&dx<MAP_W) mapTiles[dy][dx]=1;
+        }
+      }
+      rooms.sort((a,b) => a.cx - b.cx);
+      for(let i=0; i<rooms.length-1; i++) connectRooms(rooms[i], rooms[i+1]);
+      const extraConn = 1 + Math.floor(Math.random()*2);
+      for(let i=0; i<extraConn; i++){
+        const a = Math.floor(Math.random()*rooms.length);
+        let b = Math.floor(Math.random()*rooms.length);
+        if(b===a) b = (b+1)%rooms.length;
+        if(Math.abs(a-b)>1) connectRooms(rooms[a], rooms[b]);
+      }
+      playerStartRoom = rooms[0];
+      exitRoom = rooms[rooms.length-1];
+      exitTileX = exitRoom.cx;
+      exitTileY = exitRoom.cy;
+      mapTiles[exitTileY][exitTileX] = 2;
+    }
+
+    function isFloorTile(tx,ty){ return tx>=0 && tx<MAP_W && ty>=0 && ty<MAP_H && mapTiles[ty][tx] >= 1; }
+    function isWallTile(tx,ty){ return tx<0 || tx>=MAP_W || ty<0 || ty>=MAP_H || mapTiles[ty][tx] === 0; }
+
+    // ---------- 实体 ----------
+    let player = {
+      x:0, y:0, radius:8, hp:100, maxHp:100, atk:15, def:0, speed:110,
+      level:1, exp:0, expNeeded:30, attackCooldown:0, attackCooldownMax:0.35,
+      invincibleTimer:0, facingDir:{x:0,y:-1}, trailPositions:[],
+    };
+    let enemies=[], items=[], particles=[], floatingTexts=[];
+
+    function resetPlayer(){
+      player.hp = player.maxHp; player.atk = 15; player.def = 0; player.speed = 110;
+      player.level = 1; player.exp = 0; player.expNeeded = 30;
+      player.attackCooldown = 0; player.invincibleTimer = 0; player.trailPositions = [];
+      if(playerStartRoom){
+        player.x = playerStartRoom.cx * TILE_SIZE + TILE_SIZE/2;
+        player.y = playerStartRoom.cy * TILE_SIZE + TILE_SIZE/2;
+      }
+    }
+
+    function spawnEnemies(){
+      enemies = [];
+      const numEnemies = 6 + floorNumber*3 + Math.floor(Math.random()*5);
+      const weights = [Math.max(1,5-floorNumber), 3+Math.floor(floorNumber/2), 1+Math.floor(floorNumber/3)];
+      for(let i=0; i<numEnemies; i++){
+        const totalW = weights[0]+weights[1]+weights[2];
+        let r = Math.random()*totalW, typeIdx = 0;
+        if(r<weights[0]) typeIdx=0; else if(r<weights[0]+weights[1]) typeIdx=1; else typeIdx=2;
+        let spawnRoom, attempts=0;
+        do{ spawnRoom = rooms[Math.floor(Math.random()*rooms.length)]; attempts++; }
+        while(spawnRoom===playerStartRoom && attempts<50 && rooms.length>1);
+        const sx = spawnRoom.x+1+Math.floor(Math.random()*(spawnRoom.w-2));
+        const sy = spawnRoom.y+1+Math.floor(Math.random()*(spawnRoom.h-2));
+        const wx = sx*TILE_SIZE+TILE_SIZE/2, wy = sy*TILE_SIZE+TILE_SIZE/2;
+        if(Math.hypot(wx-player.x, wy-player.y) < 60 && attempts<80){ i--; continue; }
+        enemies.push(createEnemy(wx, wy, ['slime','skeleton','bat'][typeIdx]));
+      }
+      if(floorNumber%5===0 && floorNumber>0){
+        const bossRoom = rooms[Math.floor(Math.random()*rooms.length)];
+        const bx = bossRoom.cx*TILE_SIZE+TILE_SIZE/2, by = bossRoom.cy*TILE_SIZE+TILE_SIZE/2;
+        const boss = createEnemy(bx, by, 'boss');
+        boss.hp *= (1+Math.floor(floorNumber/5));
+        boss.atk *= (1+Math.floor(floorNumber/10));
+        enemies.push(boss);
+      }
+    }
+
+    function createEnemy(wx, wy, type){
+      const base = {
+        slime:  {hp:25,atk:8,speed:40,radius:8,exp:8,gold:3},
+        skeleton:{hp:40,atk:14,speed:65,radius:7,exp:15,gold:7},
+        bat:    {hp:18,atk:10,speed:100,radius:6,exp:10,gold:5},
+        boss:   {hp:150,atk:25,speed:50,radius:14,exp:80,gold:40},
+      };
+      const s = base[type] || base.slime;
+      const scale = 1 + (floorNumber-1)*0.15;
+      const nameMap = { slime:'折纸·史莱姆', skeleton:'折纸·骷髅兵', bat:'折纸·蝙蝠', boss:'折纸·暗影领主' };
+      return {
+        x:wx, y:wy, radius:s.radius,
+        hp:Math.floor(s.hp*scale), maxHp:Math.floor(s.hp*scale),
+        atk:Math.floor(s.atk*scale), speed:s.speed + Math.floor(floorNumber/3)*3,
+        color: '#f0f4ff', name: nameMap[type] || '折纸',
+        type, exp:Math.floor(s.exp*scale), gold:Math.floor(s.gold*scale),
+        hitCooldown:0, hitCooldownMax:type==='boss'?0.6:0.9, stunTimer:0, wobble:Math.random()*Math.PI*2,
+      };
+    }
+
+    function spawnItems(){
+      items = [];
+      const numItems = 4 + floorNumber + Math.floor(Math.random()*4);
+      const itemTypes = [
+        {type:'hp_small',name:'小型生命药水',color:'#ff6b6b',effect:'heal15',value:15,weight:4},
+        {type:'hp_medium',name:'生命药水',color:'#ff3b3b',effect:'heal30',value:30,weight:3},
+        {type:'hp_large',name:'大型生命药水',color:'#ff0000',effect:'heal50',value:50,weight:1},
+        {type:'atk_up',name:'攻击卷轴',color:'#ff9f43',effect:'atk_boost',value:4,weight:3},
+        {type:'def_up',name:'防御卷轴',color:'#54a0ff',effect:'def_boost',value:2,weight:2},
+        {type:'gold_pile',name:'金币堆',color:'#feca57',effect:'gold',value:15,weight:5},
+        {type:'exp_gem',name:'经验宝石',color:'#a29bfe',effect:'exp',value:12,weight:4},
+      ];
+      const totalW = itemTypes.reduce((s,it)=>s+it.weight,0);
+      for(let i=0;i<numItems;i++){
+        const room = rooms[Math.floor(Math.random()*rooms.length)];
+        const sx = room.x+1+Math.floor(Math.random()*(room.w-2));
+        const sy = room.y+1+Math.floor(Math.random()*(room.h-2));
+        const wx = sx*TILE_SIZE+TILE_SIZE/2, wy = sy*TILE_SIZE+TILE_SIZE/2;
+        if(sx===exitTileX && sy===exitTileY) continue;
+        if(Math.hypot(wx-player.x, wy-player.y)<30) continue;
+        let r = Math.random()*totalW, chosen = itemTypes[0];
+        for(const it of itemTypes){ r-=it.weight; if(r<=0){ chosen=it; break; } }
+        items.push({x:wx,y:wy,radius:6,type:chosen.type,name:chosen.name,color:chosen.color,effect:chosen.effect,value:chosen.value,bobOffset:Math.random()*Math.PI*2,sparkTimer:0});
+      }
+    }
+
+    function spawnParticles(x,y,count,color,speed=60,life=0.4){
+      for(let i=0;i<count;i++){
+        const ang = Math.random()*Math.PI*2;
+        particles.push({x,y,vx:Math.cos(ang)*speed*(0.5+Math.random()),vy:Math.sin(ang)*speed*(0.5+Math.random()),life:life*(0.5+Math.random()),maxLife:life,color,radius:1.5+Math.random()*3});
+      }
+      if(particles.length>300) particles.splice(0,particles.length-300);
+    }
+    function spawnFloatingText(x,y,text,color='#fff'){
+      floatingTexts.push({x,y,text,life:0.7,maxLife:0.7,color,vy:-40-Math.random()*30});
+      if(floatingTexts.length>40) floatingTexts.splice(0,floatingTexts.length-40);
+    }
+
+    // ---------- 游戏流程 ----------
+    function startNewGame(){
+      initAudio(); floorNumber=1; totalKills=0; totalGold=0;
+      generateDungeon(); resetPlayer();
+      enemies=[]; items=[]; particles=[]; floatingTexts=[];
+      spawnEnemies(); spawnItems();
+      screenShake=0; gameState=STATE.PLAYING; updateHUD();
+      showMessage('⚔️ 狂三，深入折纸的领域 ⚔️');
+    }
+    function nextFloor(){
+      floorNumber++; generateDungeon(); resetPlayer();
+      enemies=[]; items=[]; particles=[]; floatingTexts=[];
+      spawnEnemies(); spawnItems();
+      screenShake=0; gameState=STATE.PLAYING; updateHUD();
+      showMessage('🏛️ 第 '+floorNumber+' 层'); sfxLevelUp();
+    }
+    function playerDeath(){
+      gameState=STATE.DEAD; deathTimer=2.0; saveHighScore();
+      spawnParticles(player.x,player.y,40,'#ff3333',120,0.8);
+      spawnParticles(player.x,player.y,20,'#ffaaaa',80,0.6);
+      sfxDeath(); screenShake=12; showMessage('💀 狂三陨落...');
+    }
+    function showMessage(msg){
+      messagePopup.textContent=msg; messagePopup.classList.add('show');
+      clearTimeout(messagePopup._timeout);
+      messagePopup._timeout=setTimeout(()=>{ messagePopup.classList.remove('show'); },1800);
+    }
+    function updateHUD(){
+      hpDisplay.textContent = Math.max(0,Math.floor(player.hp));
+      floorDisplay.textContent = floorNumber;
+      goldDisplay.textContent = totalGold;
+      killsDisplay.textContent = totalKills;
+      atkDisplay.textContent = player.atk;
+      lvDisplay.textContent = 'Lv.'+player.level;
+      const pct = Math.min(100,(player.exp/player.expNeeded)*100);
+      expFillBar.style.width = pct+'%';
+      expText.textContent = Math.floor(player.exp)+'/'+player.expNeeded;
+    }
+    function giveExp(amount){ player.exp+=amount; while(player.exp>=player.expNeeded){ player.exp-=player.expNeeded; levelUp(); } updateHUD(); }
+    function levelUp(){
+      player.level++; player.maxHp+=12; player.hp=Math.min(player.maxHp,player.hp+player.maxHp*0.3);
+      player.atk+=3; player.def+=1; player.expNeeded=Math.floor(player.expNeeded*1.4); player.speed+=2;
+      spawnParticles(player.x,player.y,20,'#f0c040',70,0.5);
+      spawnFloatingText(player.x,player.y-10,'LEVEL UP!','#ffd700');
+      sfxLevelUp(); showMessage('⬆️ 升级！Lv.'+player.level);
+    }
+    function damagePlayer(dmg){
+      if(player.invincibleTimer>0) return;
+      const actual = Math.max(1, dmg - player.def);
+      player.hp -= actual; player.invincibleTimer = 0.5;
+      screenShake = Math.max(screenShake, actual*0.6);
+      spawnFloatingText(player.x, player.y-8, '-'+Math.floor(actual), '#ff4444');
+      sfxHit(); updateHUD();
+      if(player.hp<=0){ player.hp=0; playerDeath(); }
+    }
+    function healPlayer(amount){
+      const old = player.hp; player.hp = Math.min(player.maxHp, player.hp+amount);
+      const healed = player.hp - old;
+      if(healed>0) spawnFloatingText(player.x,player.y-10,'+'+Math.floor(healed)+' HP','#5cdb5c');
+      updateHUD();
+    }
+
+    // 碰撞
+    function circleWallCollision(cx,cy,radius){
+      const minTX=Math.floor((cx-radius)/TILE_SIZE), maxTX=Math.floor((cx+radius)/TILE_SIZE);
+      const minTY=Math.floor((cy-radius)/TILE_SIZE), maxTY=Math.floor((cy+radius)/TILE_SIZE);
+      for(let ty=minTY;ty<=maxTY;ty++) for(let tx=minTX;tx<=maxTX;tx++) if(isWallTile(tx,ty)){
+        const left=tx*TILE_SIZE, right=(tx+1)*TILE_SIZE, top=ty*TILE_SIZE, bottom=(ty+1)*TILE_SIZE;
+        const closestX=Math.max(left,Math.min(cx,right)), closestY=Math.max(top,Math.min(cy,bottom));
+        const dist=Math.hypot(cx-closestX, cy-closestY);
+        if(dist < radius) return {hit:true, pushX:cx-closestX, pushY:cy-closestY, dist};
+      }
+      return {hit:false};
+    }
+    function resolveWallCollision(entity,radius){
+      const r = circleWallCollision(entity.x,entity.y,radius);
+      if(r.hit && r.dist>0.001){ const overlap=radius-r.dist; entity.x+=r.pushX/r.dist*overlap; entity.y+=r.pushY/r.dist*overlap; }
+      entity.x=Math.max(radius,Math.min(WORLD_W-radius,entity.x));
+      entity.y=Math.max(radius,Math.min(WORLD_H-radius,entity.y));
+    }
+
+    // 更新
+    function update(dt){
+      if(gameState===STATE.DEAD){ deathTimer-=dt; screenShake*=Math.exp(-dt*4); updateParticles(dt); updateFloatingTexts(dt); if(deathTimer<=0) gameState=STATE.MENU; return; }
+      if(gameState===STATE.MENU){ menuPulse+=dt; return; }
+      if(gameState===STATE.TRANSITION){ transitionTimer-=dt; screenShake*=Math.exp(-dt*5); updateParticles(dt); updateFloatingTexts(dt); if(transitionTimer<=0) nextFloor(); return; }
+      const cdt = Math.min(dt,0.1);
+      updatePlayer(cdt); updateEnemies(cdt); updateItems(cdt); updateParticles(cdt); updateFloatingTexts(cdt);
+      screenShake *= Math.exp(-cdt*6); updateExploration(); updateHUD();
+    }
+
+    function updatePlayer(dt){
+      if(player.attackCooldown>0) player.attackCooldown-=dt;
+      if(player.invincibleTimer>0) player.invincibleTimer-=dt;
+      let mx=0,my=0;
+      if(keys['ArrowUp']||keys['KeyW']) my-=1; if(keys['ArrowDown']||keys['KeyS']) my+=1;
+      if(keys['ArrowLeft']||keys['KeyA']) mx-=1; if(keys['ArrowRight']||keys['KeyD']) mx+=1;
+      const mag = Math.hypot(mx,my);
+      if(mag>0.01){ mx/=mag; my/=mag; player.facingDir={x:mx,y:my}; }
+      const speed = player.speed * dt;
+      const newX = player.x + mx*speed, newY = player.y + my*speed;
+      if(!circleWallCollision(newX, player.y, player.radius).hit) player.x = newX;
+      if(!circleWallCollision(player.x, newY, player.radius).hit) player.y = newY;
+      resolveWallCollision(player, player.radius);
+      if(mag>0.3){
+        player.trailPositions.push({x:player.x,y:player.y,life:0.15});
+        if(player.trailPositions.length>12) player.trailPositions.shift();
+      }
+      for(let i=player.trailPositions.length-1;i>=0;i--){ player.trailPositions[i].life-=dt; if(player.trailPositions[i].life<=0) player.trailPositions.splice(i,1); }
+      if(player.attackCooldown<=0 && (keys['Space']||keys['KeyJ']||keys['KeyF']||autoAttackEnabled)) attackNearestEnemy();
+      const ex = exitTileX*TILE_SIZE+TILE_SIZE/2, ey = exitTileY*TILE_SIZE+TILE_SIZE/2;
+      if(Math.hypot(player.x-ex, player.y-ey) < TILE_SIZE && enemies.length===0){
+        gameState=STATE.TRANSITION; transitionTimer=0.6; screenShake=3; showMessage('⬇️ 深入下一层...'); sfxLevelUp();
+      }
+    }
+
+    function attackNearestEnemy(){
+      let nearest=null, dist=55;
+      for(const e of enemies){ const d=Math.hypot(player.x-e.x,player.y-e.y); if(d<dist){ dist=d; nearest=e; } }
+      if(nearest){
+        player.attackCooldown = player.attackCooldownMax;
+        const dmg = player.atk + Math.floor(Math.random()*6)-2;
+        nearest.hp -= dmg; nearest.stunTimer = 0.15;
+        spawnParticles(nearest.x,nearest.y,6,'#ffffff',50,0.25);
+        spawnFloatingText(nearest.x,nearest.y-6,'-'+dmg,'#ffdd57');
+        sfxAttack();
+        const ang = Math.atan2(nearest.y-player.y, nearest.x-player.x);
+        nearest.x += Math.cos(ang)*12; nearest.y += Math.sin(ang)*12;
+        resolveWallCollision(nearest, nearest.radius);
+        if(nearest.hp<=0) killEnemy(nearest);
+      }
+    }
+    let autoAttackEnabled = true;
+
+    function killEnemy(enemy){
+      spawnParticles(enemy.x,enemy.y,15,'#ffffff',90,0.5);
+      spawnFloatingText(enemy.x,enemy.y,'击杀!','#ffaa00');
+      totalKills++; totalGold += enemy.gold; giveExp(enemy.exp);
+      const idx = enemies.indexOf(enemy); if(idx>=0) enemies.splice(idx,1);
+      updateHUD();
+    }
+
+    function updateEnemies(dt){
+      for(const e of enemies){
+        if(e.stunTimer>0){ e.stunTimer-=dt; continue; }
+        if(e.hitCooldown>0) e.hitCooldown-=dt;
+        e.wobble += dt*4;
+        const dx = player.x-e.x, dy = player.y-e.y, dist = Math.hypot(dx,dy);
+        const move = e.speed*dt;
+        if(dist>0.01){ const nx=dx/dist, ny=dy/dist; const tx=e.x+nx*move, ty=e.y+ny*move; if(!circleWallCollision(tx,e.y,e.radius).hit) e.x=tx; if(!circleWallCollision(e.x,ty,e.radius).hit) e.y=ty; resolveWallCollision(e,e.radius); }
+        if(Math.hypot(player.x-e.x,player.y-e.y) < player.radius+e.radius+2 && e.hitCooldown<=0 && player.invincibleTimer<=0){ e.hitCooldown=e.hitCooldownMax; damagePlayer(e.atk); }
+      }
+    }
+
+    function updateItems(dt){
+      for(let i=items.length-1;i>=0;i--){
+        const it = items[i]; it.bobOffset+=dt*3; it.sparkTimer+=dt;
+        if(Math.hypot(player.x-it.x, player.y-it.y) < player.radius+it.radius+6){ pickupItem(it); items.splice(i,1); }
+      }
+    }
+    function pickupItem(it){
+      sfxPickup(); spawnParticles(it.x,it.y,8,it.color,40,0.3);
+      switch(it.effect){
+        case'heal15':healPlayer(15); spawnFloatingText(it.x,it.y,'+15 HP','#5cdb5c'); break;
+        case'heal30':healPlayer(30); spawnFloatingText(it.x,it.y,'+30 HP','#5cdb5c'); break;
+        case'heal50':healPlayer(50); spawnFloatingText(it.x,it.y,'+50 HP','#5cdb5c'); break;
+        case'atk_boost':player.atk+=it.value; spawnFloatingText(it.x,it.y,'+ATK','#ff9f43'); showMessage('⚡ 攻击力提升！'); break;
+        case'def_boost':player.def+=it.value; spawnFloatingText(it.x,it.y,'+DEF','#54a0ff'); showMessage('🛡️ 防御力提升！'); break;
+        case'gold':totalGold+=it.value; spawnFloatingText(it.x,it.y,'+'+it.value+' 💰','#feca57'); break;
+        case'exp':giveExp(it.value); spawnFloatingText(it.x,it.y,'+'+it.value+' EXP','#a29bfe'); break;
+      }
+      updateHUD();
+    }
+    function updateParticles(dt){ for(let i=particles.length-1;i>=0;i--){ const p=particles[i]; p.x+=p.vx*dt; p.y+=p.vy*dt; p.life-=dt; if(p.life<=0) particles.splice(i,1); } }
+    function updateFloatingTexts(dt){ for(let i=floatingTexts.length-1;i>=0;i--){ const ft=floatingTexts[i]; ft.y+=ft.vy*dt; ft.life-=dt; if(ft.life<=0) floatingTexts.splice(i,1); } }
+    function updateExploration(){
+      const px=Math.floor(player.x/TILE_SIZE), py=Math.floor(player.y/TILE_SIZE), r=12;
+      for(let dy=-r;dy<=r;dy++) for(let dx=-r;dx<=r;dx++){ const tx=px+dx,ty=py+dy; if(tx>=0&&tx<MAP_W&&ty>=0&&ty<MAP_H&&dx*dx+dy*dy<=r*r) exploredTiles[ty][tx]=true; }
+    }
+
+    // ---------- 渲染 ----------
+    let cameraX=0,cameraY=0,canvasW=800,canvasH=600;
+    function updateCamera(){
+      const tx = player.x - canvasW/2, ty = player.y - canvasH/2;
+      cameraX += (tx-cameraX)*0.08; cameraY += (ty-cameraY)*0.08;
+      cameraX = Math.max(0, Math.min(WORLD_W-canvasW, cameraX));
+      cameraY = Math.max(0, Math.min(WORLD_H-canvasH, cameraY));
+      if(WORLD_W<=canvasW) cameraX=(WORLD_W-canvasW)/2;
+      if(WORLD_H<=canvasH) cameraY=(WORLD_H-canvasH)/2;
+    }
+    function worldToScreen(wx,wy){ return {x:wx-cameraX, y:wy-cameraY}; }
+
+    function render(){
+      ctx.fillStyle='#060610'; ctx.fillRect(0,0,canvasW,canvasH);
+      let sx=0,sy=0; if(screenShake>0.1){ sx=(Math.random()-0.5)*screenShake*2; sy=(Math.random()-0.5)*screenShake*2; }
+      updateCamera(); ctx.save(); ctx.translate(sx,sy);
+      renderMap(); renderItems(); renderEnemies(); renderPlayer(); renderParticles(); renderFloatingTexts();
+      ctx.restore();
+      renderMinimap(); renderLightingOverlay();
+      if(gameState===STATE.MENU) renderMenuScreen();
+      else if(gameState===STATE.DEAD) renderDeathScreen();
+    }
+
+    function renderMap(){
+      const stx=Math.max(0,Math.floor(cameraX/TILE_SIZE)-1), etx=Math.min(MAP_W-1,Math.floor((cameraX+canvasW)/TILE_SIZE)+1);
+      const sty=Math.max(0,Math.floor(cameraY/TILE_SIZE)-1), ety=Math.min(MAP_H-1,Math.floor((cameraY+canvasH)/TILE_SIZE)+1);
+      for(let ty=sty;ty<=ety;ty++) for(let tx=stx;tx<=etx;tx++){
+        const tile=mapTiles[ty][tx], explored=exploredTiles[ty][tx], sx=tx*TILE_SIZE-cameraX, sy=ty*TILE_SIZE-cameraY;
+        if(tile===0){ if(explored){ ctx.fillStyle='#1a1a2e'; ctx.fillRect(sx,sy,TILE_SIZE,TILE_SIZE); } }
+        else if(tile>=1){ if(explored){ ctx.fillStyle='#2a2a3a'; ctx.fillRect(sx,sy,TILE_SIZE,TILE_SIZE); } else{ ctx.fillStyle='#080812'; ctx.fillRect(sx,sy,TILE_SIZE,TILE_SIZE); } }
+        if(tile===2&&explored){ const cx=sx+TILE_SIZE/2,cy=sy+TILE_SIZE/2; ctx.fillStyle='rgba(255,200,40,0.8)'; ctx.beginPath(); ctx.arc(cx,cy,6,0,Math.PI*2); ctx.fill(); }
+      }
+    }
+
+    function renderPlayer(){
+      if(gameState===STATE.DEAD) return;
+      const s = worldToScreen(player.x, player.y);
+      for(const t of player.trailPositions){ const ts=worldToScreen(t.x,t.y); ctx.fillStyle=`rgba(180,0,0,${t.life/0.15*0.4})`; ctx.beginPath(); ctx.arc(ts.x,ts.y,player.radius*0.7,0,Math.PI*2); ctx.fill(); }
+      if(player.invincibleTimer>0 && Math.floor(player.invincibleTimer*20)%2===0) ctx.globalAlpha=0.5;
+      ctx.fillStyle='rgba(0,0,0,0.6)'; ctx.beginPath(); ctx.arc(s.x+1,s.y+2,player.radius,0,Math.PI*2); ctx.fill();
+      // 裙子
+      ctx.fillStyle='#1a1a1a'; ctx.beginPath(); ctx.moveTo(s.x-player.radius*1.1,s.y+player.radius*0.3); ctx.lineTo(s.x+player.radius*1.1,s.y+player.radius*0.3); ctx.lineTo(s.x+player.radius*0.7,s.y+player.radius*1.3); ctx.lineTo(s.x-player.radius*0.7,s.y+player.radius*1.3); ctx.closePath(); ctx.fill();
+      ctx.fillStyle='#c0392b'; ctx.beginPath(); ctx.arc(s.x,s.y-player.radius*0.1,player.radius*0.45,0,Math.PI*2); ctx.fill();
+      // 头
+      ctx.fillStyle='#f5d5c8'; ctx.beginPath(); ctx.arc(s.x,s.y-player.radius*0.7,player.radius*0.6,0,Math.PI*2); ctx.fill();
+      // 双马尾
+      ctx.fillStyle='#111'; ctx.beginPath(); ctx.ellipse(s.x-player.radius*0.7,s.y-player.radius*0.3,player.radius*0.25,player.radius*0.6,0.4,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(s.x+player.radius*0.7,s.y-player.radius*0.3,player.radius*0.25,player.radius*0.6,-0.4,0,Math.PI*2); ctx.fill();
+      // 时钟眼
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(s.x-player.radius*0.2,s.y-player.radius*0.8,player.radius*0.2,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x+player.radius*0.2,s.y-player.radius*0.8,player.radius*0.2,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#c0392b'; ctx.beginPath(); ctx.arc(s.x-player.radius*0.2,s.y-player.radius*0.8,player.radius*0.1,0,Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(s.x+player.radius*0.2,s.y-player.radius*0.8,player.radius*0.1,0,Math.PI*2); ctx.fill();
+      ctx.fillStyle='#fff'; ctx.font='bold 10px "Segoe UI","PingFang SC"'; ctx.textAlign='center'; ctx.fillText('狂三',s.x,s.y-player.radius-10);
+      ctx.globalAlpha=1;
+    }
+
+    function renderEnemies(){
+      for(const e of enemies){
+        const s = worldToScreen(e.x, e.y);
+        if(s.x<-30||s.x>canvasW+30||s.y<-30||s.y>canvasH+30) continue;
+        const wob = Math.sin(e.wobble)*1.5;
+        ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.arc(s.x+1,s.y+2+wob,e.radius,0,Math.PI*2); ctx.fill();
+        // 白色折纸身体
+        ctx.fillStyle='#f8f9ff'; ctx.beginPath(); ctx.arc(s.x,s.y+wob,e.radius,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle='#b0b8d0'; ctx.lineWidth=1; ctx.stroke();
+        // 银发
+        ctx.fillStyle='#d8dce8'; ctx.beginPath(); ctx.arc(s.x,s.y-e.radius*0.45+wob,e.radius*0.7,0,Math.PI*2); ctx.fill();
+        // 眼睛
+        const dx=player.x-e.x, dy=player.y-e.y, dist=Math.hypot(dx,dy)||1;
+        const ex=s.x+(dx/dist)*e.radius*0.3, ey=s.y+(dy/dist)*e.radius*0.25+wob-e.radius*0.15;
+        ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(ex-1.8,ey,e.radius*0.22,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(ex+1.8,ey,e.radius*0.22,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#4a6fa5'; ctx.beginPath(); ctx.arc(ex-1.8,ey,e.radius*0.11,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(ex+1.8,ey,e.radius*0.11,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#eee'; ctx.font='bold 9px "Segoe UI","PingFang SC"'; ctx.textAlign='center'; ctx.fillText(e.name,s.x,s.y-e.radius-8+wob);
+        if(e.hp<e.maxHp){ const bw=e.radius*2,bh=3,by=s.y-e.radius-6+wob; ctx.fillStyle='#333'; ctx.fillRect(s.x-bw/2,by,bw,bh); ctx.fillStyle='#e74c3c'; ctx.fillRect(s.x-bw/2,by,bw*(e.hp/e.maxHp),bh); }
+      }
+    }
+
+    function renderItems(){
+      for(const it of items){ const s=worldToScreen(it.x,it.y); if(s.x<-20||s.x>canvasW+20||s.y<-20||s.y>canvasH+20) continue; const bob=Math.sin(it.bobOffset)*3; ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.arc(s.x,s.y+bob,it.radius+3,0,Math.PI*2); ctx.fill(); ctx.fillStyle=it.color; ctx.beginPath(); ctx.arc(s.x,s.y+bob,it.radius,0,Math.PI*2); ctx.fill(); }
+    }
+    function renderParticles(){ for(const p of particles){ const s=worldToScreen(p.x,p.y); ctx.globalAlpha=p.life/p.maxLife; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(s.x,s.y,p.radius,0,Math.PI*2); ctx.fill(); } ctx.globalAlpha=1; }
+    function renderFloatingTexts(){ for(const ft of floatingTexts){ const s=worldToScreen(ft.x,ft.y); ctx.globalAlpha=ft.life/ft.maxLife; ctx.fillStyle=ft.color; ctx.font='bold 12px "Segoe UI","PingFang SC"'; ctx.textAlign='center'; ctx.fillText(ft.text,s.x,s.y); } ctx.globalAlpha=1; }
+    function renderLightingOverlay(){ const s=worldToScreen(player.x,player.y); const grad=ctx.createRadialGradient(s.x,s.y,80,s.x,s.y,280); grad.addColorStop(0,'rgba(0,0,0,0)'); grad.addColorStop(0.5,'rgba(0,0,0,0.2)'); grad.addColorStop(1,'rgba(0,0,0,0.8)'); ctx.fillStyle=grad; ctx.fillRect(0,0,canvasW,canvasH); }
+    function renderMinimap(){
+      const w=150,h=112,x=canvasW-w-12,y=canvasH-h-50;
+      ctx.fillStyle='rgba(0,0,0,0.7)'; ctx.fillRect(x-2,y-2,w+4,h+4);
+      for(let ty=0;ty<MAP_H;ty++) for(let tx=0;tx<MAP_W;tx++) if(exploredTiles[ty][tx]&&mapTiles[ty][tx]>=1){ ctx.fillStyle=mapTiles[ty][tx]===2?'#aa8833':'#334'; ctx.fillRect(x+tx/MAP_W*w,y+ty/MAP_H*h,Math.ceil(w/MAP_W),Math.ceil(h/MAP_H)); }
+      for(const e of enemies){ ctx.fillStyle='#f66'; ctx.fillRect(x+(e.x/WORLD_W)*w-1,y+(e.y/WORLD_H)*h-1,2,2); }
+      ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(x+(player.x/WORLD_W)*w,y+(player.y/WORLD_H)*h,3,0,Math.PI*2); ctx.fill();
+    }
+    function renderMenuScreen(){
+      const cx=canvasW/2,cy=canvasH/2; ctx.fillStyle='rgba(0,0,0,0.8)'; ctx.fillRect(0,0,canvasW,canvasH);
+      ctx.fillStyle='#f0c040'; ctx.font='bold 38px "Segoe UI","PingFang SC"'; ctx.textAlign='center'; ctx.fillText('刻刻帝 · 狂三与折纸',cx,cy-50);
+      ctx.fillStyle='#ccc'; ctx.font='16px sans-serif'; ctx.fillText('Roguelike地牢探险',cx,cy-10);
+      const tips=['WASD/方向键 移动','空格/J/F 攻击','收集物品提升能力','清空敌人后找到出口','死亡后重新开始'];
+      ctx.fillStyle='#999'; ctx.font='13px sans-serif'; tips.forEach((t,i)=>ctx.fillText(t,cx,cy+25+i*22));
+      if(highScore>0){ ctx.fillStyle='#f7c948'; ctx.fillText('🏆 最高分：'+highScore,cx,cy+165); }
+      ctx.fillStyle=`rgba(255,255,255,${Math.sin(menuPulse*3)*0.4+0.6})`; ctx.fillText('按空格键开始',cx,cy+200);
+    }
+    function renderDeathScreen(){
+      const cx=canvasW/2,cy=canvasH/2,a=Math.min(1,(2.0-deathTimer)/0.8); ctx.fillStyle=`rgba(10,0,0,${a*0.8})`; ctx.fillRect(0,0,canvasW,canvasH);
+      const score=totalGold+totalKills*10+(floorNumber-1)*50;
+      ctx.fillStyle='#ff4444'; ctx.font='bold 34px sans-serif'; ctx.textAlign='center'; ctx.fillText('狂三陨落',cx,cy-50);
+      ctx.fillStyle='#ddd'; ctx.font='16px sans-serif'; ctx.fillText(`层数：${floorNumber}  击杀：${totalKills}  金币：${totalGold}`,cx,cy);
+      ctx.fillText(`总分：${score}`,cx,cy+30);
+      if(score>=highScore&&score>0){ ctx.fillStyle='#ffd700'; ctx.fillText('👑 新最高分！',cx,cy+65); }
+      ctx.fillStyle='#aaa'; ctx.fillText('按空格键重新开始',cx,cy+110);
+    }
+
+    // ---------- 游戏循环 ----------
+    let lastTime=performance.now(), stepSoundTimer=0;
+    function gameLoop(ts){
+      let dt=(ts-lastTime)/1000; if(dt<=0) dt=0.016; if(dt>0.2) dt=0.2; lastTime=ts;
+      const rect=container.getBoundingClientRect(); const dpr=Math.min(window.devicePixelRatio||1,2);
+      const nw=Math.floor(rect.width), nh=Math.floor(rect.height);
+      if(canvas.width!==nw*dpr||canvas.height!==nh*dpr){ canvas.width=nw*dpr; canvas.height=nh*dpr; canvas.style.width=nw+'px'; canvas.style.height=nh+'px'; canvasW=nw; canvasH=nh; ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr); }
+      update(dt); render();
+      if(gameState===STATE.PLAYING&&(keys['ArrowUp']||keys['ArrowDown']||keys['ArrowLeft']||keys['ArrowRight']||keys['KeyW']||keys['KeyA']||keys['KeyS']||keys['KeyD'])){ stepSoundTimer+=dt; if(stepSoundTimer>0.35){ stepSoundTimer=0; sfxStep(); } }
+      requestAnimationFrame(gameLoop);
+    }
+
+    const keys={};
+    window.addEventListener('keydown',e=>{
+      keys[e.code]=true;
+      if(e.code==='Space'||e.code==='KeyJ'||e.code==='KeyF'){
+        e.preventDefault();
+        if(gameState===STATE.MENU) startNewGame();
+        else if(gameState===STATE.DEAD&&deathTimer<=0.5) startNewGame();
+        else if(gameState===STATE.PLAYING&&player.attackCooldown<=0) attackNearestEnemy();
+      }
+      initAudio();
+    });
+    window.addEventListener('keyup',e=>{ keys[e.code]=false; });
+    canvas.addEventListener('click',()=>{ initAudio(); if(gameState===STATE.MENU) startNewGame(); else if(gameState===STATE.DEAD&&deathTimer<=0.5) startNewGame(); });
+    document.querySelectorAll('.ctrl-btn').forEach(btn=>{
+      const key=btn.dataset.key;
+      btn.addEventListener('pointerdown',e=>{
+        e.preventDefault(); initAudio();
+        if(key===' '){ if(gameState===STATE.MENU) startNewGame(); else if(gameState===STATE.DEAD&&deathTimer<=0.5) startNewGame(); else if(gameState===STATE.PLAYING&&player.attackCooldown<=0) attackNearestEnemy(); }
+        else{ const m={ArrowUp:'ArrowUp',ArrowDown:'ArrowDown',ArrowLeft:'ArrowLeft',ArrowRight:'ArrowRight'}; keys[m[key]||key]=true; }
+      });
+      btn.addEventListener('pointerup',e=>{ e.preventDefault(); const m={ArrowUp:'ArrowUp',ArrowDown:'ArrowDown',ArrowLeft:'ArrowLeft',ArrowRight:'ArrowRight'}; keys[m[key]||key]=false; });
+      btn.addEventListener('pointerleave',()=>{ const m={ArrowUp:'ArrowUp',ArrowDown:'ArrowDown',ArrowLeft:'ArrowLeft',ArrowRight:'ArrowRight'}; keys[m[key]||key]=false; });
+    });
+    document.addEventListener('touchmove',e=>{ if(e.target.closest('#game-container')) e.preventDefault(); },{passive:false});
+
+    function init(){
+      canvasW=container.clientWidth; canvasH=container.clientHeight;
+      canvas.width=canvasW*(Math.min(window.devicePixelRatio||1,2)); canvas.height=canvasH*(Math.min(window.devicePixelRatio||1,2));
+      canvas.style.width=canvasW+'px'; canvas.style.height=canvasH+'px';
+      ctx.setTransform(1,0,0,1,0,0); ctx.scale(Math.min(window.devicePixelRatio||1,2),Math.min(window.devicePixelRatio||1,2));
+      generateDungeon(); resetPlayer(); updateHUD(); lastTime=performance.now(); requestAnimationFrame(gameLoop);
+    }
+    window.addEventListener('resize',()=>{ const r=container.getBoundingClientRect(); canvasW=Math.floor(r.width); canvasH=Math.floor(r.height); });
+    init();
+  })();
+</script>
+</body>
+</html>
