@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" style="color-scheme: light;">
+<head>
+    <link rel="stylesheet" href="assets/waifu.css">
+	
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澪鸢 · 动漫相关</title>
+    <link rel="icon" href="images/favicon.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-image: url(images/6.jpg);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            transition: background-color 0.3s;
+        }
+        html.light body::before {
+            background-color: rgba(255, 248, 240, 0.28);
+        }
+        html.dark body::before {
+            background-color: rgba(8, 8, 16, 0.82);
+            backdrop-filter: blur(1px);
+        }
+        nav, main, footer, .relative, .container {
+            position: relative;
+            z-index: 2;
+        }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .result-card {
+            transition: box-shadow 0.2s ease;
+            background-color: rgba(255, 255, 255, 0.8) !important;
+            backdrop-filter: blur(2px);
+        }
+        html.dark .result-card {
+            background-color: rgba(20, 20, 32, 0.75) !important;
+        }
+        .result-card:hover {
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2);
+        }
+        .gradient-text {
+            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        /* 分页按钮样式 */
+        .pagination-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .page-number.active {
+            background: linear-gradient(135deg, #FF72E1, #F54C7A);
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 10px rgba(245,76,122,0.3);
+        }
+        html.dark .page-number.active {
+            background: linear-gradient(135deg, #FF8AEA, #FF6A8E);
+        }
+        /* 搜索工具显隐样式 */
+        .search-toggle-btn.hidden {
+            opacity: 0;
+            transform: scale(0.25);
+            pointer-events: none;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+        }
+        .search-panel.active {
+            transform: scale(1) !important;
+            opacity: 1 !important;
+            pointer-events: all !important;
+        }
+        .search-highlight {
+            background: #ffe347;
+            color: #1e1e2a;
+            border-radius: 3px;
+            padding: 0 2px;
+            transition: all 0.1s;
+        }
+        .search-highlight.active-highlight {
+            background: #ff9632 !important;
+            color: #000 !important;
+            box-shadow: 0 0 0 2px #ff9632, 0 0 0 4px rgba(255,150,50,0.4);
+            font-weight: bold;
+            border-radius: 4px;
+            padding: 1px 3px;
+        }
+        /* 搜索面板内部样式补充 */
+        .search-widget-container {
+            position: fixed;
+            z-index: 2147483647;
+            font-family: "Microsoft YaHei","PingFang SC","Segoe UI","Helvetica Neue",Arial,sans-serif;
+            direction: ltr;
+            line-height: 1.5;
+            user-select: none;
+        }
+        .search-toggle-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #4a6cf7;
+            color: #fff;
+            border: none;
+            cursor: grab;
+            font-size: 22px;
+            box-shadow: 0 4px 16px rgba(74,108,247,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            outline: none;
+        }
+        .search-toggle-btn:active { cursor: grabbing; }
+        .search-toggle-btn:hover {
+            background: #3b5de7;
+            transform: scale(1.08);
+        }
+        .search-panel {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 480px;
+            max-width: calc(100vw - 56px);
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            padding: 18px 20px;
+            transform-origin: bottom right;
+            transform: scale(0);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.2,0.9,0.4,1.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .search-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: grab;
+        }
+        .search-panel-close {
+            background: none;
+            border: none;
+            font-size: 1.4rem;
+            cursor: pointer;
+            color: #666;
+        }
+        .search-input-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .search-keyword-input, .search-link-input {
+            flex: 1;
+            min-width: 140px;
+            padding: 0 14px;
+            height: 44px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+        .search-btn-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-btn {
+            background: #4a6cf7;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .nav-btn {
+            background: #f1f5f9;
+            border: none;
+            border-radius: 40px;
+            width: 38px;
+            height: 38px;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .search-result-info {
+            font-size: 13px;
+            text-align: center;
+            min-height: 32px;
+            color: #4a6cf7;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+<div class="relative flex h-screen flex-col">
+    <nav class="fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm bg-background/80">
+        <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
+            <div class="flex items-center">
+                <a class="flex items-center gap-1" href="index.html"><p class="font-bold">澪鸢ovo</p></a>
+                <ul class="ml-4 hidden gap-4 sm:flex">
+                    <li><a class="hover:text-foreground/80 text-sm" href="游戏.html">游戏</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm" href="动漫.html">动漫</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm" href="杂乱.html">杂乱</a></li>
+                </ul>
+            </div>
+            <div class="hidden items-center gap-2 sm:flex">
+                <a aria-label="Github" target="_blank" href="https://github.com/Sucimoer/-ovo"><svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg></a>
+                <button type="button" role="switch" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px">
+                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0"><svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-6 py-8 pt-20">
+        <div class="flex flex-col gap-4 px-1 pt-4 md:px-10">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1px_1fr]">
+                <div class="md:pr-6 flex flex-col h-[600px] md:h-[700px]">
+                    <div class="relative overflow-y-auto scrollbar-hide flex-1">
+                        <div id="cardsContainer" class="flex flex-col">
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://omoget.com/#/android" target="_blank" class="text-lg text-blue-600 hover:underline">Omofun</a><p class="text-gray-600 text-sm">&nbsp;</p></div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://sucimoer.lanzouq.com/inK7P3ptq26h" target="_blank" class="text-lg text-blue-600 hover:underline">LK</a><p class="text-gray-600 text-sm">密码:6gj2</p>
+                            </div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://sucimoer.lanzouq.com/b01bjfeqle" target="_blank" class="text-lg text-blue-600 hover:underline">Kazumi</a><p class="text-gray-600 text-sm">密码:gbmc</p>
+                            </div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://sucimoer.lanzouq.com/io2yR3ptpr4j" target="_blank" class="text-lg text-blue-600 hover:underline">Cimoc</a><p class="text-gray-600 text-sm">密码:9bza</p>
+                            </div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://sucimoer.lanzouq.com/b01bjfeqle" target="_blank" class="text-lg text-blue-600 hover:underline">Anich</a><p class="text-gray-600 text-sm">密码:6x43</p>
+                            </div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://sucimoer.lanzouq.com/b01bjfeqle" target="_blank" class="text-lg text-blue-600 hover:underline">轻小说文库</a><p class="text-gray-600 text-sm">密码:4sqh</p>
+                            </div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://sucimoer.lanzouq.com/b01bjfeqle" target="_blank" class="text-lg text-blue-600 hover:underline">轻漫岛</a><p class="text-gray-600 text-sm">密码:95b9</p>
+                            </div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="https://sucimoer.lanzouq.com/illpU3ps8s5i" target="_blank" class="text-lg text-blue-600 hover:underline">动漫共和国（pc）</a><p class="text-gray-600 text-sm">&nbsp;</p></div></div></div>
+                        </div>
+                    </div>
+                    <div id="paginationContainer" class="flex justify-center mt-4 gap-2 flex-wrap py-2"></div>
+                </div>
+                <div class="bg-gray-300 dark:bg-gray-600 w-px hidden md:block"></div>
+                <div class="hidden md:block md:pl-2"><div class="gradient-text text-3xl lg:text-4xl font-semibold">澪鸢ovo</div></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<audio id="bgMusic" autoplay muted loop>
+    <source src="放音乐位置，暂时不想用" type="audio/mpeg">
+</audio>
+
+<script>
+// ========== 分页核心 + 全局API ==========
+(function() {
+    const ITEMS_PER_PAGE = 5;
+    let currentPage = 1;
+    let totalPages = 1;
+    let allCards = [];
+
+    const cardsContainer = document.getElementById('cardsContainer');
+    const paginationContainer = document.getElementById('paginationContainer');
+    
+    if (!cardsContainer) return;
+
+    function collectCards() {
+        return Array.from(cardsContainer.querySelectorAll(':scope > .card-item'));
+    }
+
+    function renderPage(page) {
+        if (!allCards.length) return;
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        currentPage = page;
+        
+        const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIdx = startIdx + ITEMS_PER_PAGE;
+        
+        allCards.forEach((card, idx) => {
+            if (idx >= startIdx && idx < endIdx) {
+                card.style.display = '';
+                card.style.animation = 'none';
+                card.offsetHeight;
+                card.style.animation = 'fadeInUp 0.2s ease';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        updatePaginationButtons();
+    }
+
+    function buildPaginationUI() {
+        if (!paginationContainer) return;
+        totalPages = Math.ceil(allCards.length / ITEMS_PER_PAGE);
+        paginationContainer.innerHTML = '';
+        
+        const prevBtn = document.createElement('button');
+        prevBtn.className = `pagination-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-all flex items-center gap-1 ${currentPage === 1 ? 'disabled opacity-50 cursor-not-allowed' : ''}`;
+        prevBtn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg><span>Previous</span>`;
+        if (currentPage !== 1) prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+        paginationContainer.appendChild(prevBtn);
+        
+        const maxVisible = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+        if (endPage - startPage < maxVisible - 1) startPage = Math.max(1, endPage - maxVisible + 1);
+        
+        if (startPage > 1) {
+            addPageButton(1);
+            if (startPage > 2) addEllipsis();
+        }
+        for (let i = startPage; i <= endPage; i++) addPageButton(i);
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) addEllipsis();
+            addPageButton(totalPages);
+        }
+        
+        function addPageButton(pageNum) {
+            const pageBtn = document.createElement('button');
+            const isActive = (pageNum === currentPage);
+            pageBtn.textContent = pageNum;
+            pageBtn.className = `page-number pagination-btn w-9 h-9 rounded-full text-sm font-medium transition-all mx-0.5 
+                ${isActive ? 'active bg-gradient-to-r from-pink-500 to-rose-400 text-white shadow-md border-none' : 'bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-pink-50 dark:hover:bg-gray-700 hover:border-pink-300'}`;
+            if (!isActive) pageBtn.addEventListener('click', () => goToPage(pageNum));
+            paginationContainer.appendChild(pageBtn);
+        }
+        function addEllipsis() {
+            const ellipsisSpan = document.createElement('span');
+            ellipsisSpan.textContent = '...';
+            ellipsisSpan.className = 'px-2 text-gray-500 dark:text-gray-400 text-sm';
+            paginationContainer.appendChild(ellipsisSpan);
+        }
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.className = `pagination-btn px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-all flex items-center gap-1 ${currentPage === totalPages ? 'disabled opacity-50 cursor-not-allowed' : ''}`;
+        nextBtn.innerHTML = `<span>Next</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`;
+        if (currentPage !== totalPages) nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+        paginationContainer.appendChild(nextBtn);
+    }
+    
+    function updatePaginationButtons() { buildPaginationUI(); }
+    
+    function goToPage(page) {
+        if (page < 1) page = 1;
+        if (page > totalPages) page = totalPages;
+        if (page === currentPage) return;
+        currentPage = page;
+        renderPage(currentPage);
+        window.dispatchEvent(new CustomEvent('paginationChanged', { detail: { page: currentPage } }));
+    }
+    
+    function initPagination() {
+        allCards = collectCards();
+        if (allCards.length === 0) {
+            if (paginationContainer) paginationContainer.style.display = 'none';
+            return;
+        }
+        totalPages = Math.ceil(allCards.length / ITEMS_PER_PAGE);
+        currentPage = 1;
+        allCards.forEach(card => card.style.display = 'none');
+        renderPage(1);
+        if (paginationContainer) paginationContainer.style.display = 'flex';
+    }
+    
+    const style = document.createElement('style');
+    style.textContent = `@keyframes fadeInUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } } .card-item { animation: fadeInUp 0.2s ease-out; }`;
+    document.head.appendChild(style);
+    
+    initPagination();
+    
+    window.__paginationAPI = {
+        goToPage: (page) => { goToPage(page); },
+        getCurrentPage: () => currentPage,
+        getAllCards: () => [...allCards],
+        getItemsPerPage: () => ITEMS_PER_PAGE,
+        getTotalPages: () => totalPages,
+        getCardText: (cardElement) => {
+            if (!cardElement) return '';
+            const clone = cardElement.cloneNode(true);
+            const unwanted = clone.querySelectorAll('script, style, .pagination-btn');
+            unwanted.forEach(el => el.remove());
+            return clone.innerText || clone.textContent || '';
+        }
+    };
+})();
+
+// ========== 主题切换 ==========
+(function() {
+    function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
+    function applyTheme(theme) {
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(theme);
+        document.documentElement.style.colorScheme = theme;
+        localStorage.setItem('theme', theme);
+        const btn = document.querySelector('.theme-switch');
+        if (btn) {
+            const isDark = theme === 'dark';
+            btn.setAttribute('aria-checked', isDark);
+            const span = btn.querySelector('span');
+            if (span) {
+                let svg = span.querySelector('svg');
+                if (svg) svg.innerHTML = isDark ? '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>' : '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
+            }
+        }
+    }
+    function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
+    applyTheme(getStoredTheme());
+    document.querySelector('.theme-switch')?.addEventListener('click', toggleTheme);
+})();
+
+// 背景音乐交互
+const audioElem = document.getElementById('bgMusic');
+audioElem.muted = true;
+audioElem.play().catch(e=>console.log('等待用户交互'));
+function enableAudio(){ if(audioElem && audioElem.muted){ audioElem.muted = false; audioElem.volume = 0.6; audioElem.play().then(()=>document.removeEventListener('click',enableAudio)).catch(e=>console.warn); } }
+document.addEventListener('click', enableAudio);
+
+// 手机跳转检测（保留但不强制）
+(function() {
+    if (!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) return;
+})();
+</script>
+
+<!-- ========== 智能搜索工具（关闭面板时清除搜索状态，恢复自由翻页） ========== -->
+<div class="search-widget-container" id="searchWidget">
+    <button class="search-toggle-btn" id="searchToggleBtn" title="打开搜索工具 (可拖拽)">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+    </button>
+    <div class="search-panel" id="searchPanel">
+        <div class="search-panel-header" id="searchPanelHeader">
+            <span style="font-weight:700;">🔍 智能搜索 · 跨页定位</span>
+            <button class="search-panel-close" id="searchPanelClose">✕</button>
+        </div>
+        <div class="search-input-row">
+            <input type="text" class="search-keyword-input" id="searchKeyword" placeholder="输入关键词..." autocomplete="off">
+            <input type="text" class="search-link-input" id="searchLink" placeholder="目标链接 (可选)" autocomplete="off">
+        </div>
+        <div class="search-btn-row">
+            <button class="search-btn" id="btnPageSearch" style="background:#4a6cf7;">📄 跨页搜索</button>
+            <button class="search-btn" id="btnJumpSearch" style="background:#10b981;">🚀 跳转搜索</button>
+            <button class="search-btn" id="btnBaiduSearch" style="background:#fff; color:#f97316; border:2px solid #f97316;">🌐 百度检索</button>
+            <button class="nav-btn" id="btnPrevHighlight" title="上一个匹配 (跨页)">▲</button>
+            <button class="nav-btn" id="btnNextHighlight" title="下一个匹配 (跨页)">▼</button>
+            <button class="search-btn" id="btnClear" style="background:#f1f5f9; color:#333;">🗑 清除</button>
+        </div>
+        <div id="searchResultInfo" class="search-result-info"></div>
+    </div>
+</div>
+
+<script>
+(function() {
+    // ----- UI 元素绑定 -----
+    const toggleBtn = document.getElementById('searchToggleBtn');
+    const searchPanel = document.getElementById('searchPanel');
+    const panelHeader = document.getElementById('searchPanelHeader');
+    const panelClose = document.getElementById('searchPanelClose');
+    const keywordInput = document.getElementById('searchKeyword');
+    const linkInput = document.getElementById('searchLink');
+    const btnPageSearch = document.getElementById('btnPageSearch');
+    const btnJumpSearch = document.getElementById('btnJumpSearch');
+    const btnBaiduSearch = document.getElementById('btnBaiduSearch');
+    const btnClear = document.getElementById('btnClear');
+    const btnPrev = document.getElementById('btnPrevHighlight');
+    const btnNext = document.getElementById('btnNextHighlight');
+    const resultInfo = document.getElementById('searchResultInfo');
+    
+    let isPanelOpen = false;
+    let currentMatches = [];
+    let currentMatchIdx = -1;
+    let activeKeyword = '';
+    
+    // ----- 拖拽逻辑（与之前一致，省略重复但保留完整）-----
+    let isDragging = false, dragStartX, dragStartY, startLeft, startTop, dragPreventClick = false;
+    const widget = document.getElementById('searchWidget');
+    function setInitPos() { if (!widget.style.left || widget.style.left === 'auto') { widget.style.left = (window.innerWidth - 52 - 28) + 'px'; widget.style.top = (window.innerHeight - 52 - 28) + 'px'; } }
+    setInitPos();
+    function constrainPos() { const rect = widget.getBoundingClientRect(); let left = parseFloat(widget.style.left), top = parseFloat(widget.style.top); if (rect.right > window.innerWidth - 10) left = window.innerWidth - rect.width - 10; if (rect.bottom > window.innerHeight - 10) top = window.innerHeight - rect.height - 10; if (rect.left < 10) left = 10; if (rect.top < 10) top = 10; widget.style.left = left + 'px'; widget.style.top = top + 'px'; }
+    window.addEventListener('resize', constrainPos);
+    function startDrag(e) { const target = e.target; if (!target.closest('#searchToggleBtn') && !target.closest('#searchPanelHeader')) return; if (target.closest('#searchPanelClose')) return; e.preventDefault(); const cx = e.touches ? e.touches[0].clientX : e.clientX; const cy = e.touches ? e.touches[0].clientY : e.clientY; isDragging = true; dragStartX = cx; dragStartY = cy; const rect = widget.getBoundingClientRect(); startLeft = rect.left; startTop = rect.top; document.addEventListener('mousemove', onDragMove); document.addEventListener('mouseup', onDragEnd); document.addEventListener('touchmove', onDragMove, { passive: false }); document.addEventListener('touchend', onDragEnd); document.body.style.userSelect = 'none'; }
+    function onDragMove(e) { if (!isDragging) return; e.preventDefault(); const cx = e.touches ? e.touches[0].clientX : e.clientX; const cy = e.touches ? e.touches[0].clientY : e.clientY; let newLeft = startLeft + (cx - dragStartX); let newTop = startTop + (cy - dragStartY); newLeft = Math.min(Math.max(newLeft, -30), window.innerWidth - 30); newTop = Math.min(Math.max(newTop, -30), window.innerHeight - 30); widget.style.left = newLeft + 'px'; widget.style.top = newTop + 'px'; if (Math.abs(cx - dragStartX) > 3 || Math.abs(cy - dragStartY) > 3) dragPreventClick = true; }
+    function onDragEnd() { isDragging = false; document.body.style.userSelect = ''; document.removeEventListener('mousemove', onDragMove); document.removeEventListener('mouseup', onDragEnd); document.removeEventListener('touchmove', onDragMove); document.removeEventListener('touchend', onDragEnd); if (dragPreventClick) { setTimeout(()=> { dragPreventClick = false; }, 150); } constrainPos(); }
+    toggleBtn.addEventListener('mousedown', startDrag);
+    toggleBtn.addEventListener('touchstart', startDrag, { passive: false });
+    panelHeader.addEventListener('mousedown', startDrag);
+    panelHeader.addEventListener('touchstart', startDrag, { passive: false });
+    
+    // ----- 打开/关闭面板（关闭时彻底清除搜索状态，恢复自由翻页）-----
+    function clearSearchState() {
+        // 清除页面所有高亮
+        document.querySelectorAll('.search-highlight').forEach(span => {
+            if (span.parentNode) {
+                const txt = document.createTextNode(span.textContent);
+                span.parentNode.replaceChild(txt, span);
+            }
+        });
+        document.body.normalize();
+        // 重置搜索数据
+        currentMatches = [];
+        currentMatchIdx = -1;
+        activeKeyword = '';
+        if (resultInfo) resultInfo.innerText = '';
+    }
+    
+    function openPanel() {
+        isPanelOpen = true;
+        toggleBtn.classList.add('hidden');
+        searchPanel.classList.add('active');
+        keywordInput.focus();
+    }
+    
+    function closePanel() {
+        isPanelOpen = false;
+        searchPanel.classList.remove('active');
+        toggleBtn.classList.remove('hidden');
+        // 关键修复：关闭面板时清除所有搜索残留，避免锁定分页
+        clearSearchState();
+    }
+    
+    toggleBtn.addEventListener('click', (e) => {
+        if (dragPreventClick) { e.stopImmediatePropagation(); dragPreventClick = false; return; }
+        if (!isPanelOpen) openPanel();
+        else closePanel();
+    });
+    panelClose.addEventListener('click', () => closePanel());
+    document.addEventListener('click', (e) => { if (isPanelOpen && !widget.contains(e.target)) closePanel(); });
+    
+    // ----- 高亮辅助函数（与之前相同）-----
+    function highlightKeywordOnCurrentPage(keyword) {
+        // 先清除已有高亮（但不重置全局匹配状态，仅清理DOM）
+        document.querySelectorAll('.search-highlight').forEach(span => {
+            if (span.parentNode) {
+                const txt = document.createTextNode(span.textContent);
+                span.parentNode.replaceChild(txt, span);
+            }
+        });
+        document.body.normalize();
+        if (!keyword.trim()) return [];
+        const kw = keyword.trim();
+        const lowerKw = kw.toLowerCase();
+        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+            acceptNode: (node) => {
+                if (!node.textContent || node.textContent.trim() === '') return NodeFilter.FILTER_REJECT;
+                const parent = node.parentNode;
+                if (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE' || parent.closest('.search-panel, .search-widget-container, #searchWidget')) return NodeFilter.FILTER_REJECT;
+                return node.textContent.toLowerCase().includes(lowerKw) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+            }
+        });
+        const nodes = [];
+        let tn;
+        while (tn = walker.nextNode()) nodes.push(tn);
+        const spans = [];
+        const escape = str => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        nodes.forEach(node => {
+            const text = node.textContent;
+            const frag = document.createDocumentFragment();
+            let last = 0;
+            const regex = new RegExp(escape(kw), 'gi');
+            let match;
+            while ((match = regex.exec(text)) !== null) {
+                if (match.index > last) frag.appendChild(document.createTextNode(text.slice(last, match.index)));
+                const span = document.createElement('span');
+                span.className = 'search-highlight';
+                span.textContent = match[0];
+                frag.appendChild(span);
+                spans.push(span);
+                last = regex.lastIndex;
+            }
+            if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+            if (frag.childNodes.length) node.parentNode.replaceChild(frag, node);
+        });
+        return spans;
+    }
+    
+    // 构建全局匹配（基于卡片文本）
+    function buildGlobalMatches(keyword) {
+        const api = window.__paginationAPI;
+        if (!api) return [];
+        const allCards = api.getAllCards();
+        const itemsPerPage = api.getItemsPerPage();
+        const kw = keyword.trim().toLowerCase();
+        if (!kw) return [];
+        const matches = [];
+        for (let i = 0; i < allCards.length; i++) {
+            const cardText = api.getCardText(allCards[i]).toLowerCase();
+            let pos = 0;
+            let occurrence = 0;
+            while ((pos = cardText.indexOf(kw, pos)) !== -1) {
+                occurrence++;
+                const pageNum = Math.floor(i / itemsPerPage) + 1;
+                matches.push({ cardIndex: i, pageNum: pageNum, occurrenceInCard: occurrence });
+                pos++;
+            }
+        }
+        return matches;
+    }
+    
+    // 跳转到指定匹配项（自动翻页 + 高亮激活）
+    async function jumpToMatch(match, keyword) {
+        const api = window.__paginationAPI;
+        if (!api) return false;
+        if (match.pageNum !== api.getCurrentPage()) {
+            resultInfo.innerText = `🔁 跳转至第 ${match.pageNum} 页...`;
+            api.goToPage(match.pageNum);
+            await new Promise(r => setTimeout(r, 200));
+            await new Promise(r => setTimeout(r, 80));
+        }
+        const spans = highlightKeywordOnCurrentPage(keyword);
+        if (!spans.length) {
+            resultInfo.innerText = `⚠️ 页面高亮失败，请重试`;
+            return false;
+        }
+        const targetCard = api.getAllCards()[match.cardIndex];
+        if (!targetCard) return false;
+        const cardSpans = Array.from(targetCard.querySelectorAll('.search-highlight'));
+        if (match.occurrenceInCard <= cardSpans.length) {
+            const activeSpan = cardSpans[match.occurrenceInCard - 1];
+            if (activeSpan) {
+                document.querySelectorAll('.search-highlight').forEach(s => s.classList.remove('active-highlight'));
+                activeSpan.classList.add('active-highlight');
+                activeSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                resultInfo.innerHTML = `✨ 匹配 ${currentMatchIdx+1}/${currentMatches.length} (第${match.pageNum}页) <span style="background:#ff9632;color:white;padding:2px 5px;border-radius:12px;">当前激活</span>`;
+                return true;
+            }
+        }
+        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        resultInfo.innerText = `📍 已定位到卡片 (第${match.pageNum}页)`;
+        return true;
+    }
+    
+    async function performSearch(keyword) {
+        if (!keyword.trim()) { resultInfo.innerText = '请输入关键词'; return false; }
+        const api = window.__paginationAPI;
+        if (!api) { resultInfo.innerText = '分页API未就绪'; return false; }
+        const matches = buildGlobalMatches(keyword);
+        if (matches.length === 0) {
+            // 无匹配时也要清除可能残留的高亮
+            highlightKeywordOnCurrentPage(''); // 实质清除高亮
+            currentMatches = []; currentMatchIdx = -1; activeKeyword = '';
+            resultInfo.innerText = '❌ 未找到任何匹配内容';
+            return false;
+        }
+        currentMatches = matches;
+        currentMatchIdx = 0;
+        activeKeyword = keyword;
+        await jumpToMatch(currentMatches[0], keyword);
+        return true;
+    }
+    
+    async function nextMatch() {
+        if (!currentMatches.length || !activeKeyword) { resultInfo.innerText = '无搜索结果，请先搜索'; return; }
+        currentMatchIdx = (currentMatchIdx + 1) % currentMatches.length;
+        await jumpToMatch(currentMatches[currentMatchIdx], activeKeyword);
+    }
+    
+    async function prevMatch() {
+        if (!currentMatches.length || !activeKeyword) { resultInfo.innerText = '无搜索结果，请先搜索'; return; }
+        currentMatchIdx = (currentMatchIdx - 1 + currentMatches.length) % currentMatches.length;
+        await jumpToMatch(currentMatches[currentMatchIdx], activeKeyword);
+    }
+    
+    function clearAll() {
+        clearSearchState();
+        keywordInput.value = '';
+        linkInput.value = '';
+        resultInfo.innerText = '';
+    }
+    
+    btnPageSearch.addEventListener('click', async () => { await performSearch(keywordInput.value.trim()); });
+    btnNext.addEventListener('click', async () => { await nextMatch(); });
+    btnPrev.addEventListener('click', async () => { await prevMatch(); });
+    btnClear.addEventListener('click', clearAll);
+    
+    btnJumpSearch.addEventListener('click', () => {
+        const kw = keywordInput.value.trim();
+        const link = linkInput.value.trim();
+        if (!kw) { resultInfo.innerText = '请输入关键词'; return; }
+        if (!link) { resultInfo.innerText = '请输入目标链接'; return; }
+        let url = link;
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        window.open(url + '#:~:text=' + encodeURIComponent(kw), '_blank');
+        resultInfo.innerText = '已在新窗口尝试文本高亮';
+    });
+    
+    btnBaiduSearch.addEventListener('click', () => {
+        const kw = keywordInput.value.trim();
+        let domain = linkInput.value.trim();
+        if (!domain) domain = window.location.hostname;
+        if (!kw) { resultInfo.innerText = '请输入关键词'; return; }
+        if (!domain || domain === 'localhost') { resultInfo.innerText = '请输入有效网站域名'; return; }
+        domain = domain.replace(/^https?:\/\//i, '').split('/')[0];
+        window.open(`https://www.baidu.com/s?wd=site:${domain} ${encodeURIComponent(kw)}`, '_blank');
+        resultInfo.innerText = '已打开百度站内搜索';
+    });
+    
+    keywordInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') performSearch(keywordInput.value.trim()); });
+    
+    // 监听分页变化，如果当前有激活的搜索状态，则尝试重新高亮并定位到当前匹配项
+    window.addEventListener('paginationChanged', async () => {
+        if (activeKeyword && currentMatches.length && currentMatchIdx >= 0) {
+            await new Promise(r => setTimeout(r, 60));
+            await jumpToMatch(currentMatches[currentMatchIdx], activeKeyword);
+        }
+    });
+})();
+</script>
+
+<script src="assets/live2d.min.js"></script>
+<script src="assets/waifu-tips.js"></script>
+<script src="assets/autoload.js"></script>
+	<script src="澪鸢_files/pagination.js"></script>
+<script src="澪鸢_files/highlight.js"></script>
+</body>
+</html>
