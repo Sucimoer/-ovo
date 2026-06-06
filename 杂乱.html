@@ -1,337 +1,159 @@
 <!DOCTYPE html>
-
-<html lang="zh-CN" class="light" style="color-scheme: light;">
+<html lang="zh-CN" class="light">
 <head>
+	<link rel="stylesheet" href="assets/waifu.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>澪鸢 · 资源库 - 搜索结果</title>
-	<link rel="icon" href="images/favicon.ico">
-    <!-- Tailwind CSS CDN -->
+    <title>澪鸢 · 杂乱</title>
+    <link rel="icon" href="images/favicon.ico">
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
         body {
             background-image: url(images/6.jpg);
             background-repeat: no-repeat;
             background-size: cover;
-            background-position: center center;
             background-attachment: fixed;
             position: relative;
-            transition: background-color 0.2s ease, color 0.2s ease;
+            margin: 0; padding: 0; min-height: 100vh;
         }
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            transition: background-color 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
-        }
-        html.light body::before {
-            background-color: rgba(255, 248, 240, 0.28);
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+            background-color: rgba(255,248,240,0.28);
         }
         html.dark body::before {
-            background-color: rgba(8, 8, 16, 0.82);
+            background-color: rgba(8,8,16,0.82);
             backdrop-filter: blur(1px);
         }
-        nav, main, footer, .relative, .container {
-            position: relative;
-            z-index: 2;
-        }
-   
-        .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-        }
-        .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
+        nav, main { position: relative; z-index: 2; }
         .result-card {
-            transition: box-shadow 0.2s ease;
-            background-color: rgba(255, 255, 255, 0.8) !important; 
+            background-color: rgba(255,255,255,0.8) !important;
             backdrop-filter: blur(2px);
+            transition: box-shadow 0.2s;
         }
         html.dark .result-card {
-            background-color: rgba(20, 20, 32, 0.75) !important;
+            background-color: rgba(20,20,32,0.75) !important;
         }
-        .result-card:hover {
-            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.2);
-        }
-  
+        .result-card:hover { box-shadow: 0 12px 28px -8px rgba(0,0,0,0.2); }
         .gradient-text {
-            background-image: linear-gradient(to bottom, #FF72E1, #F54C7A);
+            background: linear-gradient(to bottom, #FF72E1, #F54C7A);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
         }
-        html.dark .gradient-text {
-            background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+		/* 分页按钮样式 */
+        .pagination-btn {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            user-select: none;
+        }
+        .pagination-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .page-number.active {
+            background: linear-gradient(135deg, #FF72E1, #F54C7A);
+            color: white !important;
+            border-color: transparent !important;
+            box-shadow: 0 4px 10px rgba(245,76,122,0.3);
+        }
+        html.dark .page-number.active {
+            background: linear-gradient(135deg, #FF8AEA, #FF6A8E);
         }
     </style>
 </head>
 <body class="bg-gray-50 font-sans antialiased">
-
 <div class="relative flex h-screen flex-col">
-  
-    <nav class="bg-background/80 fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm transition-colors duration-300">
+    <nav class="fixed top-0 left-0 z-50 w-full border-b backdrop-blur-sm bg-background/80">
         <div class="mx-auto flex h-14 max-w-[1280px] items-center justify-between px-6">
             <div class="flex items-center">
-                <a class="flex items-center gap-1" href="index.html">
-                    <p class="font-bold text-foreground transition-colors">澪鸢ovo</p>
-                </a>
+                <a class="flex items-center gap-1" href="index.html"><p class="font-bold">澪鸢ovo</p></a>
                 <ul class="ml-4 hidden gap-4 sm:flex">
-                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="游戏.html">游戏</a></li>
-                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="动漫.html">动漫</a></li>
-                    <li><a class="hover:text-foreground/80 text-sm transition-colors" href="杂乱.html">杂乱</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm" href="游戏.html">游戏</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm" href="动漫.html">动漫</a></li>
+                    <li><a class="hover:text-foreground/80 text-sm" href="杂乱.html">杂乱</a></li>
                 </ul>
             </div>
             <div class="hidden items-center gap-2 sm:flex">
-                <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-ovo">
-                    <svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg>
-                </a>
-                <button type="button" role="switch" aria-checked="false" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80">
-                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0">
-                        <svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg>
-                    </span>
+                <a aria-label="Github" target="_blank" href="https://github.com/Sucimoer/-ovo"><svg height="24" viewBox="0 0 24 24" width="24"><path fill="currentColor" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"/></svg></a>
+                <button type="button" role="switch" class="theme-switch peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px">
+                    <span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform translate-x-0"><svg width="16" viewBox="0 0 24 24"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg></span>
                 </button>
             </div>
         </div>
     </nav>
-
-    <!-- 主要内容：搜索结果区域（修复后） -->
-    <main class="max-w-8xl container mx-auto px-6 py-8 pt-20">
+   <main class="container mx-auto px-6 py-8 pt-20">
         <div class="flex flex-col gap-4 px-1 pt-4 md:px-10">
             <div class="grid grid-cols-1 gap-4 md:grid-cols-[2fr_1px_1fr]">
-                <!-- 左侧卡片列表（半透明背景） -->
-                <div class="md:pr-6">
-                    <div class="relative overflow-hidden h-[600px] md:h-[700px] scrollbar-hide" style="overflow-y: auto;">
-                        <div class="flex flex-col">
-                            <!-- 卡片 1 -->
-                            <div class="p-2">
-                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm result-card">
-                                    <div class="flex flex-col space-y-1.5 p-6 pb-0">
-                                        <a href="小说.html" target="_blank" class="text-lg text-blue-600 hover:underline">小说与漫画</a>
-                                        <p class="text-gray-600 dark:text-gray-300 text-sm break-all">&nbsp;</p>
-                                  </div>
-                                </div>
-                            </div>
-                            <!-- 卡片 2 -->
-                            <div class="p-2">
-                                <div class="border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm result-card">
-                                    <div class="flex flex-col space-y-1.5 p-6 pb-0">
-                                        <a href="密码锁.html" target="_blank" class="text-lg text-blue-600 hover:underline">hhh</a>
-                                        <p class="text-gray-600 dark:text-gray-300 text-sm break-all">&nbsp;</p>
-                                    </div>
-                                </div>
-                            </div>
-							 <div class="p-2">
-                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
-                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
-                                        <a href="软件.html" target="_blank" class="text-lg text-blue-600 hover:underline">软件</a>
-                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
-                                   </div>
-                                </div>
-                            </div>
-							<div class="p-2">
-                               <div class="border border-gray-200 rounded-xl shadow-sm result-card">
-                                 <div class="flex flex-col space-y-1.5 p-6 pb-0">
-                                        <a href="一些神奇网页.html" target="_blank" class="text-lg text-blue-600 hover:underline">一些神奇网页</a>
-                                        <p class="text-gray-500 text-sm break-all">&nbsp;</p>
-                                 </div>
-                              </div>
-                            </div>
-					    <!-- 卡片 3 --></div>
+                <div class="md:pr-6 flex flex-col h-[600px] md:h-[700px]">
+                    <!-- 卡片滚动区域（独立滚动） -->
+                    <div class="relative overflow-y-auto scrollbar-hide flex-1">
+                        <div id="cardsContainer" class="flex flex-col">
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="密码锁.html" target="_blank" class="text-lg text-blue-600 hover:underline">hhh</a><p class="text-gray-600 text-sm">&nbsp;</p></div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="软件.html" target="_blank" class="text-lg text-blue-600 hover:underline">软件</a><p class="text-gray-500 text-sm">&nbsp;</p></div></div></div>
+                            <div class="p-2 card-item"><div class="border rounded-xl shadow-sm result-card"><div class="p-6 pb-0"><a href="一些神奇网页.html" target="_blank" class="text-lg text-blue-600 hover:underline">一些神奇网页</a><p class="text-gray-500 text-sm">&nbsp;</p></div></div></div>
+                        </div>
                     </div>
+					 <!-- 分页按钮固定在下方，不随卡片滚动 -->
+                    <div id="paginationContainer" class="flex justify-center mt-4 gap-2 flex-wrap py-2"></div>
                 </div>
-
-                
-                <div aria-orientation="vertical" role="separator" class="bg-gray-300 dark:bg-gray-600 shrink-0 h-full w-px hidden md:block"></div>
-
-               
-                <div class="hidden md:block md:pl-2">
-                    <div class="gradient-text text-3xl lg:text-4xl font-semibold tracking-tight">
-                      <p>澪鸢ovo </p>
-                        <p>有任何想要的文件请联系苏辞沫儿，东西太多而且限制所以有的东西无法全部上传，后续会慢慢补全并且更新</p>
-                    </div>
-                   
-                </div>
+                <div class="bg-gray-300 dark:bg-gray-600 w-px hidden md:block"></div>
+                <div class="hidden md:block md:pl-2"><div class="gradient-text text-3xl lg:text-4xl font-semibold">澪鸢ovo</div></div>
             </div>
         </div>
     </main>
 </div>
-
-
+<audio id="bgMusic" autoplay muted loop><source src="music/LUNA-印子月.mp3" type="audio/mp3"></audio>
 <script>
 (function() {
     function getStoredTheme() { return localStorage.getItem('theme') || 'light'; }
     function applyTheme(theme) {
-        const root = document.documentElement;
-        root.classList.remove('light', 'dark');
-        root.classList.add(theme);
-        root.style.colorScheme = theme;
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(theme);
+        document.documentElement.style.colorScheme = theme;
         localStorage.setItem('theme', theme);
-        const btns = document.querySelectorAll('button[role="switch"]');
-        btns.forEach(btn => {
-            const isDark = (theme === 'dark');
-            btn.setAttribute('data-state', isDark ? 'checked' : 'unchecked');
-            btn.setAttribute('aria-checked', isDark ? 'true' : 'false');
+        const btn = document.querySelector('.theme-switch');
+        if (btn) {
+            const isDark = theme === 'dark';
+            btn.setAttribute('aria-checked', isDark);
             const span = btn.querySelector('span');
             if (span) {
                 let svg = span.querySelector('svg');
-                if (!svg) {
-                    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                    svg.setAttribute('width', '16');
-                    svg.setAttribute('viewBox', '0 0 24 24');
-                    span.innerHTML = '';
-                    span.appendChild(svg);
-                }
-                if (isDark) {
-                    svg.innerHTML = '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>';
-                } else {
-                    svg.innerHTML = '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
-                }
+                if (svg) svg.innerHTML = isDark ? '<path fill="currentColor" d="M12 2a9 9 0 1 0 9 9c0-.46-.04-.92-.12-1.36a7 7 0 1 1-8.52-8.52c-.44-.08-.9-.12-1.36-.12z"/>' : '<g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g>';
             }
-        });
+        }
     }
     function toggleTheme() { applyTheme(getStoredTheme() === 'light' ? 'dark' : 'light'); }
-    function bindEvents() {
-        document.querySelectorAll('button[role="switch"]').forEach(btn => {
-            btn.removeEventListener('click', toggleTheme);
-            btn.addEventListener('click', toggleTheme);
-        });
-    }
     applyTheme(getStoredTheme());
-    bindEvents();
-    new MutationObserver(() => bindEvents()).observe(document.body, { childList: true, subtree: true });
+    document.querySelector('.theme-switch')?.addEventListener('click', toggleTheme);
 })();
-	
+const audio = document.getElementById('bgMusic');
+audio.muted = true;
+audio.play().catch(e=>console.log('等待用户交互'));
+function enableAudio(){ if(audio && audio.muted){ audio.muted = false; audio.volume = 0.8; audio.play().then(()=>document.removeEventListener('click',enableAudio)).catch(e=>console.warn('播放失败',e)); } }
+document.addEventListener('click', enableAudio);
 </script>
-	<!-- 背景音乐模块：静音自动播放，点击页面任意位置开启声音 -->
-<audio id="bgMusic" autoplay muted loop>
-    <source src="music/LUNA-印子月.mp3" type="audio/mp3">
-</audio>
-
 <script>
-    const audio = document.getElementById('bgMusic');
-    // 确保静音自动播放
-    audio.muted = true;
-    audio.play().catch(e => console.log('等待用户交互'));
-
-    // 用户点击页面任意位置 → 开启声音
-    function enableAudio() {
-        if (audio && audio.muted) {
-            audio.muted = false;
-            audio.volume = 0.8;
-            audio.play().then(() => {
-                console.log('音乐已开启');
-                document.removeEventListener('click', enableAudio);
-            }).catch(e => console.warn('播放失败', e));
-        }
-    }
-    document.addEventListener('click', enableAudio);
-</script>
-	<script>
 (function() {
-    // ========== 配置区 ==========
-    const MOBILE_DIR = "phone";               // 手机版文件夹名称
-    const REMEMBER_CANCEL_SESSION = true;     // 是否记住用户“取消”的选择
-    // ============================
-
-    // 根据当前电脑版文件名生成手机版文件名（xxx.html -> xxx（优化）.html）
-    function getMobileFileName(originalFileName) {
-        if (!originalFileName) return "index（优化）.html";
-        // 去掉 .html 后缀（不区分大小写）
-        let nameWithoutExt = originalFileName.replace(/\.html$/i, "");
-        // 如果没有后缀或不是 .html，原样处理（避免出错）
-        if (nameWithoutExt === originalFileName) {
-            // 可能文件没有扩展名，直接加“（优化）”
-            return nameWithoutExt + "（优化）.html";
-        }
-        return nameWithoutExt + "（优化）.html";
-    }
-
-    // 获取当前页面的文件名（含扩展名）
-    function getCurrentFileName() {
-        let path = window.location.pathname;
-        let lastSlash = path.lastIndexOf('/');
-        let fileName = lastSlash !== -1 ? path.substring(lastSlash + 1) : path;
-        if (!fileName || fileName === "") fileName = "index.html";
-        // 处理可能的 query 参数（去掉 ? 后面的部分）
-        let questionMark = fileName.indexOf('?');
-        if (questionMark !== -1) fileName = fileName.substring(0, questionMark);
-        return fileName;
-    }
-
-    // 构建手机版完整URL
-    function getMobileUrl() {
-        // 如果当前已经在 phone/ 目录内，不再跳转（防止死循环）
-        if (window.location.pathname.includes(`/${MOBILE_DIR}/`)) {
-            return null;
-        }
-
-        let currentFile = getCurrentFileName();
-        let mobileFile = getMobileFileName(currentFile);
-        
-        // 获取当前页面的基础路径（目录路径）
-        let basePath = "";
-        if (window.location.protocol === "file:") {
-            // 本地 file 协议：获取当前文件所在目录
-            let fullPath = window.location.pathname;
-            let lastSlash = fullPath.lastIndexOf('/');
-            basePath = lastSlash !== -1 ? fullPath.substring(0, lastSlash + 1) : "";
-        } else {
-            // http/https 协议：获取当前目录的绝对路径
-            let currentUrl = window.location.href;
-            let lastSlash = currentUrl.lastIndexOf('/');
-            basePath = lastSlash !== -1 ? currentUrl.substring(0, lastSlash + 1) : currentUrl;
-        }
-        
-        // 拼接手机版目录和文件名
-        let mobileUrl = basePath + MOBILE_DIR + "/" + mobileFile;
-        return mobileUrl;
-    }
-
-    // 判断是否为移动设备（手机/平板）
-    function isMobileDevice() {
-        const ua = navigator.userAgent;
-        const mobileRegex = /(?:Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone|Opera Mini|IEMobile|Mobile|Silk|Kindle)/i;
-        const hasTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 2);
-        const isIPad = /iPad/i.test(ua) || (/Macintosh/i.test(ua) && hasTouch);
-        if (isIPad) return true;
-        if (mobileRegex.test(ua)) return true;
-        if (hasTouch && window.innerWidth <= 900) return true;
-        return false;
-    }
-
-    // 非手机端 → 不做任何操作
-    if (!isMobileDevice()) return;
-
-    // 获取目标手机版URL
-    const targetUrl = getMobileUrl();
-    if (!targetUrl) return; // 已经在手机目录内
-
-    // 避免跳转到自身
-    const normalize = (url) => url.replace(/\/$/, '').split('#')[0];
-    if (normalize(window.location.href) === normalize(targetUrl)) return;
-
-    // 会话记忆：用户点过“取消”则不再弹窗
-    const SESSION_KEY = 'skip_mobile_redirect';
-    if (REMEMBER_CANCEL_SESSION && sessionStorage.getItem(SESSION_KEY) === 'true') return;
-
-    // 弹出询问框
-    const userConfirmed = confirm("📱 检测到您使用手机访问，是否跳转至手机优化版页面？\n\n“确定”跳转，“取消”继续浏览当前页面。");
-    if (userConfirmed) {
-        window.location.href = targetUrl;
-    } else {
-        if (REMEMBER_CANCEL_SESSION) {
-            try { sessionStorage.setItem(SESSION_KEY, 'true'); } catch(e) {}
-        }
+    if (!/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) return;
+    const mobileFile = window.location.pathname.replace(/\.html$/i, '（优化）.html');
+    if (mobileFile !== window.location.pathname && !window.location.pathname.includes('/phone/')) {
+        const base = window.location.href.substring(0, window.location.href.lastIndexOf('/')+1);
+        const target = base + 'phone/' + mobileFile.split('/').pop();
+        if (confirm("📱 检测到您使用手机访问，是否跳转至手机优化版页面？")) location.href = target;
     }
 })();
 </script>
+	<script src="assets/live2d.min.js"></script>
+<script src="assets/waifu-tips.js"></script>
+<script src="assets/autoload.js"></script>
+<script src="澪鸢_files/pagination.js"></script>
+<script src="澪鸢_files/highlight.js"></script>
+
 </body>
 </html>
