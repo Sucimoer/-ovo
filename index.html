@@ -13,7 +13,6 @@
 <title>澪鸢 ovo </title>
 <link rel="icon" href="images/favicon.ico">
 <style>
-/* 原主体样式（保留所有原有风格） */
 body {
 	background-image: url(images/6.jpg);
 	background-repeat: no-repeat;
@@ -125,7 +124,6 @@ html.dark ::-webkit-scrollbar-thumb {
 html.dark .bg-linear-to-b {
   background-image: linear-gradient(135deg, #FFA0D0, #FF6A88);
 }
-/* ========= 背景切换图层 (原优雅实现，保留) ========= */
 .bg-layer {
     position: fixed;
     top: 0;
@@ -149,7 +147,6 @@ html.dark .bg-linear-to-b {
     opacity: 0;
     z-index: 0;
 }
-/* 修复遮罩层级：主题遮罩位于背景之上，内容位于遮罩之上 */
 body::before {
     z-index: 12 !important;
 }
@@ -168,11 +165,9 @@ main {
     position: relative;
     z-index: 15;
 }
-/* 看板娘工具按钮悬浮样式微调 */
 #waifu-tool span {
     cursor: pointer;
 }
-/* 优化暗色模式下看板娘提示框 */
 html.dark #waifu-tips {
     background-color: rgba(30, 30, 40, 0.92);
     color: #f0f0f4;
@@ -213,10 +208,9 @@ html.dark #waifu-tips:before {
 </style>
 </head>
 <body class="bg-background min-h-screen font-sans antialiased inter_d542793-module__-uZNGW__variable">
-<div hidden=""><!--$--><!--/$--></div>
+<div hidden=""></div>
 <div class="box bg-[url('/assets/GT5Bjdba4AAbCkU.jpeg')] md:bg-[url('/assets/81320307_p0.jpg')]" id="box-main" style="opacity:0.24; display:none;"></div>
 
-<!-- 主题脚本（原有） -->
 <script>((a,b,c,d,e,f,g,h)=>{let i=document.documentElement,j=["light","dark"];function k(b){var c;(Array.isArray(a)?a:[a]).forEach(a=>{let c="class"===a,d=c&&f?e.map(a=>f[a]||a):e;c?(i.classList.remove(...d),i.classList.add(f&&f[b]?f[b]:b)):i.setAttribute(a,b)}),c=b,h&&j.includes(c)&&(i.style.colorScheme=c)}if(d)k(d);else try{let a=localStorage.getItem(b)||c,d=g&&"system"===a?window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light":a;k(d)}catch(a){}})("class","theme","light",null,["light","dark"],null,true,true)</script>
 
 <div class="relative flex h-screen flex-col">
@@ -232,13 +226,11 @@ html.dark #waifu-tips:before {
       </div>
       <div class="hidden items-center gap-2 sm:flex">
         <a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-ovo"><svg height="24" viewBox="0 0 24 24" width="24" class="text-default-500"><path clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z" fill="currentColor" fill-rule="evenodd"></path></svg></a>
-        <!-- 主题切换按钮 (桌面版) 优化 id 便于管理 -->
         <button type="button" role="switch" aria-checked="false" data-state="unchecked" value="on" class="theme-switch-btn peer focus-visible:ring-ring focus-visible:ring-offset-background data-[state=checked]:bg-primary data-[state=unchecked]:bg-input inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer px-px transition-opacity hover:opacity-80" aria-label="Switch theme mode">
           <span data-state="unchecked" class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"><svg aria-hidden="true" focusable="false" height="16" role="presentation" viewBox="0 0 24 24" width="16" class="theme-icon"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"></path><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"></path></g></svg></span>
         </button>
       </div>
       <div class="flex items-center gap-2 sm:hidden"><a aria-label="Github" class="text-default-500" target="_blank" href="https://github.com/Sucimoer/-"><svg height="24" viewBox="0 0 24 24" width="24" class="text-default-500"><path clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z" fill="currentColor" fill-rule="evenodd"></path></svg></a>
-        <!-- 移动版主题切换按钮 -->
         <button type="button" role="switch" aria-checked="false" data-state="unchecked" class="theme-switch-btn peer inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent cursor-pointer px-px transition-opacity hover:opacity-80" aria-label="Switch theme mode"><span class="bg-background pointer-events-none flex h-5 w-5 items-center justify-center rounded-full shadow-lg transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0"><svg width="16" viewBox="0 0 24 24" class="theme-icon"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"/><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"/></g></svg></span></button>
         <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 w-9"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu size-5"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></button>
       </div>
@@ -263,11 +255,9 @@ html.dark #waifu-tips:before {
   <footer class="flex w-full items-center justify-center py-3"></footer>
 </div>
 
-<!-- 背景图层组件（原） -->
 <div class="bg-layer active" id="bgLayerA" aria-hidden="true"></div>
 <div class="bg-layer inactive" id="bgLayerB" aria-hidden="true"></div>
 
-<!-- 全局背景切换函数（保留原实现） -->
 <script>
 (function() {
     const LOCAL_IMAGES = [
@@ -319,7 +309,6 @@ html.dark #waifu-tips:before {
 })();
 </script>
 
-<!-- ========= 看板娘核心组件 + 自定义工具栏 ========= -->
 <link rel="stylesheet" href="https://registry.npmmirror.com/weblive2d/latest/files/css/waifu.css">
 <style>
 #waifu {
@@ -426,7 +415,6 @@ if (screen.width >= 768) {
 }
 </script>
 
-<!-- 背景音乐模块 -->
 <audio id="bgMusic" autoplay muted loop>
     <source src="music/Take Me Hand.mp3" type="audio/mp3">
 </audio>
@@ -444,7 +432,6 @@ if (screen.width >= 768) {
     document.addEventListener('click', enableAudio);
 </script>
 
-<!-- 移动端跳转逻辑 (保留) -->
 <script>
 (function() {
     const MOBILE_DIR = "phone";
@@ -502,29 +489,22 @@ if (screen.width >= 768) {
 })();
 </script>
 
-<!-- ========= 主题切换按钮修复脚本 (优化明暗切换失效问题) ========= -->
 <script>
 (function() {
-    // 预定义月亮和太阳 SVG 内容 (保持与原有风格一致)
     const sunSvg = '<svg aria-hidden="true" focusable="false" height="16" role="presentation" viewBox="0 0 24 24" width="16" class="theme-icon"><g fill="currentColor"><path d="M19 12a7 7 0 11-7-7 7 7 0 017 7z"></path><path d="M12 22.96a.969.969 0 01-1-.96v-.08a1 1 0 012 0 1.038 1.038 0 01-1 1.04zm7.14-2.82a1.024 1.024 0 01-.71-.29l-.13-.13a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.984.984 0 01-.7.29zm-14.28 0a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a1 1 0 01-.7.29zM22 13h-.08a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zM2.08 13H2a1 1 0 010-2 1.038 1.038 0 011.04 1 .969.969 0 01-.96 1zm16.93-7.01a1.024 1.024 0 01-.71-.29 1 1 0 010-1.41l.13-.13a1 1 0 011.41 1.41l-.13.13a.984.984 0 01-.7.29zm-14.02 0a1.024 1.024 0 01-.71-.29l-.13-.14a1 1 0 011.41-1.41l.13.13a1 1 0 010 1.41.97.97 0 01-.7.3zM12 3.04a.969.969 0 01-1-.96V2a1 1 0 012 0 1.038 1.038 0 01-1 1.04z"></path></g></svg>';
     const moonSvg = '<svg aria-hidden="true" focusable="false" height="16" role="presentation" viewBox="0 0 24 24" width="16" class="theme-icon"><g fill="currentColor"><path d="M21.752 15.002A9.718 9.718 0 0112 21a9.75 9.75 0 110-19.5c.535 0 1.054.045 1.563.13a.75.75 0 01.346 1.298 7.25 7.25 0 009.551 9.551.75.75 0 011.298.346 9.72 9.72 0 01-.13 1.563z"/><path d="M12 2a10 10 0 1010 10c0-1.05-.16-2.062-.46-3.01a8.5 8.5 0 01-7.53 7.53 9.968 9.968 0 01-2.01-4.03 8.5 8.5 0 015.49-5.49A9.967 9.967 0 0112 2z"/></g></svg>';
     
-    // 获取所有主题切换按钮（基于 role="switch" 且含有特定主题标识）
-    const themeBtns = document.querySelectorAll('button[role="switch"].theme-switch-btn, button[role="switch"]:has(.theme-icon)');
-    // 更精确的选择器：遍历查找包含 .theme-icon 的按钮
     const allThemeButtons = Array.from(document.querySelectorAll('button[role="switch"]')).filter(btn => btn.querySelector('.theme-icon'));
     
-    // 根据当前主题更新所有按钮图标及 aria-checked 状态
     function updateAllButtonsTheme() {
         const isDark = document.documentElement.classList.contains('dark');
         const targetSvgHtml = isDark ? moonSvg : sunSvg;
-        const checkedState = isDark; // dark模式 aria-checked=true 表示暗色启用
+        const checkedState = isDark;
         allThemeButtons.forEach(btn => {
             const iconSpan = btn.querySelector('span');
             if (iconSpan) {
                 const svgElement = iconSpan.querySelector('.theme-icon');
                 if (svgElement) {
-                    // 替换 SVG 内容，保留原有类名
                     const newSvg = document.createElement('div');
                     newSvg.innerHTML = targetSvgHtml;
                     const newSvgElem = newSvg.firstChild;
@@ -534,15 +514,12 @@ if (screen.width >= 768) {
                 }
             }
             btn.setAttribute('aria-checked', checkedState ? 'true' : 'false');
-            // 更新 data-state 属性（用于样式）
             btn.setAttribute('data-state', checkedState ? 'checked' : 'unchecked');
-            // 更新内部 span 的 data-state
             const innerSpan = btn.querySelector('span[data-state]');
             if (innerSpan) innerSpan.setAttribute('data-state', checkedState ? 'checked' : 'unchecked');
         });
     }
     
-    // 切换主题的核心函数
     function setTheme(theme) {
         const root = document.documentElement;
         const newTheme = theme === 'dark' ? 'dark' : 'light';
@@ -552,7 +529,6 @@ if (screen.width >= 768) {
         root.style.colorScheme = newTheme;
         localStorage.setItem('theme', newTheme);
         updateAllButtonsTheme();
-        // 派发自定义事件，便于其他组件监听（可选）
         window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
     }
     
@@ -561,10 +537,8 @@ if (screen.width >= 768) {
         setTheme(isDark ? 'light' : 'dark');
     }
     
-    // 初始化按钮状态并与当前主题同步
     function initThemeButtons() {
         updateAllButtonsTheme();
-        // 绑定点击事件
         allThemeButtons.forEach(btn => {
             btn.removeEventListener('click', toggleTheme);
             btn.addEventListener('click', (e) => {
@@ -574,7 +548,6 @@ if (screen.width >= 768) {
         });
     }
     
-    // 监听 localStorage 跨页面变化（可选保持同步）
     window.addEventListener('storage', (e) => {
         if (e.key === 'theme') {
             const newTheme = e.newValue || 'light';
@@ -593,7 +566,6 @@ if (screen.width >= 768) {
         }
     });
     
-    // 页面完全加载后初始化按钮
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initThemeButtons);
     } else {
@@ -617,9 +589,7 @@ if (screen.width >= 768) {
 <script src="assets/autoload.js"></script>
 	
 <script>
-// ========== 多页面智能搜索（自动弹出下拉菜单，点击跳转，不自动跳转）==========
 (function() {
-    // ----- 配置：您网站中所有需要被搜索的页面 -----
     const PAGES = [
         { url: 'index.html', title: '🏠 首页' },
         { url: '游戏.html', title: '🎲 游戏' },
@@ -681,7 +651,6 @@ if (screen.width >= 768) {
         dropdown.innerHTML = html;
         dropdown.style.display = 'block';
 
-        // 绑定点击跳转事件
         dropdown.querySelectorAll('.search-dropdown-item[data-url]').forEach(item => {
             item.addEventListener('click', (e) => {
                 e.stopPropagation();
